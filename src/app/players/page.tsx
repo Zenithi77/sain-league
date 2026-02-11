@@ -1,22 +1,11 @@
 import PlayerCard from '@/components/PlayerCard';
-import { PlayerWithAverages, TeamWithAverages } from '@/types';
+import { getPlayersWithAverages, getTeamsWithAverages } from '@/lib/database';
 
-async function getPlayers(): Promise<PlayerWithAverages[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/players`, {
-    cache: 'no-store',
-  });
-  return res.json();
-}
-
-async function getTeams(): Promise<TeamWithAverages[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/teams`, {
-    cache: 'no-store',
-  });
-  return res.json();
-}
+export const dynamic = 'force-dynamic';
 
 export default async function PlayersPage() {
-  const [players, teams] = await Promise.all([getPlayers(), getTeams()]);
+  const players = getPlayersWithAverages();
+  const teams = getTeamsWithAverages();
   
   // Add team names to players
   const playersWithTeams = players.map((player) => {

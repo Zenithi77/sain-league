@@ -3,46 +3,22 @@ import SeasonBanner from '@/components/SeasonBanner';
 import StandingsTable from '@/components/StandingsTable';
 import TopPlayersList from '@/components/TopPlayersList';
 import GameCard from '@/components/GameCard';
-import { TeamWithAverages, PlayerWithAverages, GameWithTeams } from '@/types';
+import { 
+  getStandings, 
+  getPlayersWithAverages, 
+  getGamesWithTeams, 
+  getTopPlayersByCategory 
+} from '@/lib/database';
 
-async function getStandings(): Promise<TeamWithAverages[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/standings`, {
-    cache: 'no-store',
-  });
-  return res.json();
-}
-
-async function getPlayers(): Promise<PlayerWithAverages[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/players`, {
-    cache: 'no-store',
-  });
-  return res.json();
-}
-
-async function getGames(): Promise<GameWithTeams[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/games`, {
-    cache: 'no-store',
-  });
-  return res.json();
-}
-
-async function getRankings(category: string): Promise<PlayerWithAverages[]> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/rankings/${category}`,
-    { cache: 'no-store' }
-  );
-  return res.json();
-}
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const [standings, players, games, topScorers, topRebounders, topAssisters] = await Promise.all([
-    getStandings(),
-    getPlayers(),
-    getGames(),
-    getRankings('points'),
-    getRankings('rebounds'),
-    getRankings('assists'),
-  ]);
+  const standings = getStandings();
+  const players = getPlayersWithAverages();
+  const games = getGamesWithTeams();
+  const topScorers = getTopPlayersByCategory('points', 5);
+  const topRebounders = getTopPlayersByCategory('rebounds', 5);
+  const topAssisters = getTopPlayersByCategory('assists', 5);
 
   const upcomingGames = games.filter((g) => g.status === 'scheduled').slice(0, 6);
 

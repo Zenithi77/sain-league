@@ -1,15 +1,10 @@
 import StandingsTable from '@/components/StandingsTable';
-import { TeamWithAverages } from '@/types';
+import { getStandings } from '@/lib/database';
 
-async function getStandings(): Promise<TeamWithAverages[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/standings`, {
-    cache: 'no-store',
-  });
-  return res.json();
-}
+export const dynamic = 'force-dynamic';
 
 export default async function StandingsPage() {
-  const standings = await getStandings();
+  const standings = getStandings();
 
   return (
     <main className="main-content">

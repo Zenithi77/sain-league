@@ -114,3 +114,78 @@ export function generatePlayerId(): string {
 export function generateGameId(): string {
   return `game-${uuidv4().slice(0, 8)}`;
 }
+
+// Get all standings (teams with averages sorted by wins)
+export function getStandings(): TeamWithAverages[] {
+  const db = readDatabase();
+  const teamsWithAverages = db.teams.map((team) => calculateTeamAverages(team, db.players));
+  return teamsWithAverages.sort((a, b) => b.stats.wins - a.stats.wins);
+}
+
+// Get all players with averages
+export function getPlayersWithAverages(): PlayerWithAverages[] {
+  const db = readDatabase();
+  return db.players.map((player) => calculatePlayerAverages(player));
+}
+
+// Get all teams with averages
+export function getTeamsWithAverages(): TeamWithAverages[] {
+  const db = readDatabase();
+  return db.teams.map((team) => calculateTeamAverages(team, db.players));
+}
+
+// Get team by ID with players
+export function getTeamById(id: string): (TeamWithAverages & { players: PlayerWithAverages[] }) | null {
+  const db = readDatabase();
+  const team = db.teams.find((t) => t.id === id);
+  if (!team) return null;
+
+  const teamWithAverages = calculateTeamAverages(team, db.players);
+  const teamPlayers = db.players
+    .filter((p) => p.teamId === id)
+    .map((player) => calculatePlayerAverages(player));
+
+  return { ...teamWithAverages, players: teamPlayers };
+}
+
+// Get player by ID with team
+export function getPlayerById(id: string): (PlayerWithAverages & { team?: Team }) | null {
+  const db = readDatabase();
+  const player = db.players.find((p) => p.id === id);
+  if (!player) return null;
+
+  const playerWithAverages = calculatePlayerAverages(player);
+  const team = db.teams.find((t) => t.id === player.teamId);
+
+  return { ...playerWithAverages, team };
+}
+
+// Get all games with team data
+export function getGamesWithTeams(): GameWithTeams[] {
+  const db = readDatabase();
+  return db.games.map((game) => {
+    const homeTeam = db.teams.find((t) => t.id === game.homeTeamId);
+    const awayTeam = db.teams.find((t) => t.id === game.awayTeamId);
+    return {
+      ...game,
+      homeTeam: homeTeam || null,
+      awayTeam: awayTeam || null,
+    } as GameWithTeams;
+  });
+}
+
+// Get top players by category
+export function getTopPlayersByCategory(category: string, limit: number = 10): PlayerWithAverages[] {
+  const players = getPlayersWithAverages();
+  
+  const sortFunctions: { [key: string]: (a: PlayerWithAverages, b: PlayerWithAverages) => number } = {
+    points: (a, b) => parseFloat(b.averages.pointsPerGame) - parseFloat(a.averages.pointsPerGame),
+    rebounds: (a, b) => parseFloat(b.averages.reboundsPerGame) - parseFloat(a.averages.reboundsPerGame),
+    assists: (a, b) => parseFloat(b.averages.assistsPerGame) - parseFloat(a.averages.assistsPerGame),
+    steals: (a, b) => parseFloat(b.averages.stealsPerGame) - parseFloat(a.averages.stealsPerGame),
+    blocks: (a, b) => parseFloat(b.averages.blocksPerGame) - parseFloat(a.averages.blocksPerGame),
+  };
+
+  const sortFn = sortFunctions[category] || sortFunctions.points;
+  return players.sort(sortFn).slice(0, limit);
+}

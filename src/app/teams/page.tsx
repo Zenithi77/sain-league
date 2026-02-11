@@ -1,15 +1,10 @@
 import TeamCard from '@/components/TeamCard';
-import { TeamWithAverages } from '@/types';
+import { getTeamsWithAverages } from '@/lib/database';
 
-async function getTeams(): Promise<TeamWithAverages[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/teams`, {
-    cache: 'no-store',
-  });
-  return res.json();
-}
+export const dynamic = 'force-dynamic';
 
 export default async function TeamsPage() {
-  const teams = await getTeams();
+  const teams = getTeamsWithAverages();
 
   return (
     <main className="main-content">

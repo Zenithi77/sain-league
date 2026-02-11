@@ -1,26 +1,11 @@
 import { notFound } from 'next/navigation';
-import { TeamWithAverages, PlayerWithAverages } from '@/types';
 import PlayerCard from '@/components/PlayerCard';
+import { getTeamById } from '@/lib/database';
 
-interface TeamDetailResponse extends TeamWithAverages {
-  players: PlayerWithAverages[];
-}
-
-async function getTeam(id: string): Promise<TeamDetailResponse | null> {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/teams/${id}`,
-      { cache: 'no-store' }
-    );
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
-}
+export const dynamic = 'force-dynamic';
 
 export default async function TeamDetailPage({ params }: { params: { id: string } }) {
-  const team = await getTeam(params.id);
+  const team = getTeamById(params.id);
 
   if (!team) {
     notFound();

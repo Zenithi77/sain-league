@@ -1,25 +1,10 @@
 import { notFound } from 'next/navigation';
-import { PlayerWithAverages, Team } from '@/types';
+import { getPlayerById } from '@/lib/database';
 
-interface PlayerDetailResponse extends PlayerWithAverages {
-  team?: Team;
-}
-
-async function getPlayer(id: string): Promise<PlayerDetailResponse | null> {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/players/${id}`,
-      { cache: 'no-store' }
-    );
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
-}
+export const dynamic = 'force-dynamic';
 
 export default async function PlayerDetailPage({ params }: { params: { id: string } }) {
-  const player = await getPlayer(params.id);
+  const player = getPlayerById(params.id);
 
   if (!player) {
     notFound();
