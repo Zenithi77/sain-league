@@ -1,0 +1,844 @@
+{
+    "season": {
+        "id": "2026",
+        "name": "Sain Girls League 2026",
+        "year": 2026,
+        "startDate": "2026-01-15",
+        "endDate": "2026-06-30",
+        "isActive": true
+    },
+    "teams": [
+        {
+            "id": "team-001",
+            "name": "Ulaanbaatar Warriors",
+            "shortName": "UBW",
+            "logo": "/assets/logos/warriors.png",
+            "city": "Улаанбаатар",
+            "coach": {
+                "id": "coach-001",
+                "name": "Болормаа Батбаяр",
+                "image": "/assets/coaches/coach1.png"
+            },
+            "colors": {
+                "primary": "#FF6B35",
+                "secondary": "#1A1A2E"
+            },
+            "stats": {
+                "wins": 8,
+                "losses": 2,
+                "pointsFor": 720,
+                "pointsAgainst": 650,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-002",
+            "name": "Darkhan Eagles",
+            "shortName": "DKE",
+            "logo": "/assets/logos/eagles.png",
+            "city": "Дархан",
+            "coach": {
+                "id": "coach-002",
+                "name": "Сарангэрэл Дорж",
+                "image": "/assets/coaches/coach2.png"
+            },
+            "colors": {
+                "primary": "#2E86AB",
+                "secondary": "#FFFFFF"
+            },
+            "stats": {
+                "wins": 7,
+                "losses": 3,
+                "pointsFor": 690,
+                "pointsAgainst": 660,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-003",
+            "name": "Erdenet Stars",
+            "shortName": "ERS",
+            "logo": "/assets/logos/stars.png",
+            "city": "Эрдэнэт",
+            "coach": {
+                "id": "coach-003",
+                "name": "Оюунбилэг Ганбат",
+                "image": "/assets/coaches/coach3.png"
+            },
+            "colors": {
+                "primary": "#F18F01",
+                "secondary": "#2C3E50"
+            },
+            "stats": {
+                "wins": 6,
+                "losses": 4,
+                "pointsFor": 680,
+                "pointsAgainst": 670,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-004",
+            "name": "Khovd Wolves",
+            "shortName": "KHW",
+            "logo": "/assets/logos/wolves.png",
+            "city": "Ховд",
+            "coach": {
+                "id": "coach-004",
+                "name": "Мөнхзул Нямаа",
+                "image": "/assets/coaches/coach4.png"
+            },
+            "colors": {
+                "primary": "#6C5B7B",
+                "secondary": "#C06C84"
+            },
+            "stats": {
+                "wins": 6,
+                "losses": 4,
+                "pointsFor": 675,
+                "pointsAgainst": 665,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-005",
+            "name": "Bayankhongor Tigers",
+            "shortName": "BHT",
+            "logo": "/assets/logos/tigers.png",
+            "city": "Баянхонгор",
+            "coach": {
+                "id": "coach-005",
+                "name": "Энхмаа Пүрэв",
+                "image": "/assets/coaches/coach5.png"
+            },
+            "colors": {
+                "primary": "#FF9F1C",
+                "secondary": "#000000"
+            },
+            "stats": {
+                "wins": 5,
+                "losses": 5,
+                "pointsFor": 660,
+                "pointsAgainst": 660,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-006",
+            "name": "Umnugovi Phoenix",
+            "shortName": "UGP",
+            "logo": "/assets/logos/phoenix.png",
+            "city": "Өмнөговь",
+            "coach": {
+                "id": "coach-006",
+                "name": "Наранцэцэг Бат",
+                "image": "/assets/coaches/coach6.png"
+            },
+            "colors": {
+                "primary": "#E63946",
+                "secondary": "#F1FAEE"
+            },
+            "stats": {
+                "wins": 5,
+                "losses": 5,
+                "pointsFor": 655,
+                "pointsAgainst": 665,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-007",
+            "name": "Selenge Storm",
+            "shortName": "SES",
+            "logo": "/assets/logos/storm.png",
+            "city": "Сэлэнгэ",
+            "coach": {
+                "id": "coach-007",
+                "name": "Цолмон Ганболд",
+                "image": "/assets/coaches/coach7.png"
+            },
+            "colors": {
+                "primary": "#457B9D",
+                "secondary": "#A8DADC"
+            },
+            "stats": {
+                "wins": 5,
+                "losses": 5,
+                "pointsFor": 650,
+                "pointsAgainst": 655,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-008",
+            "name": "Dornod Hawks",
+            "shortName": "DOH",
+            "logo": "/assets/logos/hawks.png",
+            "city": "Дорнод",
+            "coach": {
+                "id": "coach-008",
+                "name": "Алтанцэцэг Очир",
+                "image": "/assets/coaches/coach8.png"
+            },
+            "colors": {
+                "primary": "#9B2335",
+                "secondary": "#D4AF37"
+            },
+            "stats": {
+                "wins": 4,
+                "losses": 6,
+                "pointsFor": 640,
+                "pointsAgainst": 670,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-009",
+            "name": "Khentii Riders",
+            "shortName": "KHR",
+            "logo": "/assets/logos/riders.png",
+            "city": "Хэнтий",
+            "coach": {
+                "id": "coach-009",
+                "name": "Гэрэлмаа Сүхбат",
+                "image": "/assets/coaches/coach9.png"
+            },
+            "colors": {
+                "primary": "#355E3B",
+                "secondary": "#C19A6B"
+            },
+            "stats": {
+                "wins": 4,
+                "losses": 6,
+                "pointsFor": 635,
+                "pointsAgainst": 675,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-010",
+            "name": "Uvs Lightning",
+            "shortName": "UVL",
+            "logo": "/assets/logos/lightning.png",
+            "city": "Увс",
+            "coach": {
+                "id": "coach-010",
+                "name": "Дэлгэрмаа Баяр",
+                "image": "/assets/coaches/coach10.png"
+            },
+            "colors": {
+                "primary": "#FFD700",
+                "secondary": "#00008B"
+            },
+            "stats": {
+                "wins": 4,
+                "losses": 6,
+                "pointsFor": 630,
+                "pointsAgainst": 680,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-011",
+            "name": "Arkhangai Bears",
+            "shortName": "AKB",
+            "logo": "/assets/logos/bears.png",
+            "city": "Архангай",
+            "coach": {
+                "id": "coach-011",
+                "name": "Оюунтуяа Мөнхбат",
+                "image": "/assets/coaches/coach11.png"
+            },
+            "colors": {
+                "primary": "#8B4513",
+                "secondary": "#228B22"
+            },
+            "stats": {
+                "wins": 4,
+                "losses": 6,
+                "pointsFor": 625,
+                "pointsAgainst": 665,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-012",
+            "name": "Bulgan Falcons",
+            "shortName": "BGF",
+            "logo": "/assets/logos/falcons.png",
+            "city": "Булган",
+            "coach": {
+                "id": "coach-012",
+                "name": "Солонго Батжаргал",
+                "image": "/assets/coaches/coach12.png"
+            },
+            "colors": {
+                "primary": "#4682B4",
+                "secondary": "#F0E68C"
+            },
+            "stats": {
+                "wins": 3,
+                "losses": 7,
+                "pointsFor": 610,
+                "pointsAgainst": 690,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-013",
+            "name": "Tuv Panthers",
+            "shortName": "TVP",
+            "logo": "/assets/logos/panthers.png",
+            "city": "Төв",
+            "coach": {
+                "id": "coach-013",
+                "name": "Мягмарсүрэн Дамба",
+                "image": "/assets/coaches/coach13.png"
+            },
+            "colors": {
+                "primary": "#2F4F4F",
+                "secondary": "#FF69B4"
+            },
+            "stats": {
+                "wins": 3,
+                "losses": 7,
+                "pointsFor": 605,
+                "pointsAgainst": 695,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-014",
+            "name": "Zavkhan Dragons",
+            "shortName": "ZVD",
+            "logo": "/assets/logos/dragons.png",
+            "city": "Завхан",
+            "coach": {
+                "id": "coach-014",
+                "name": "Нарантуяа Цэрэн",
+                "image": "/assets/coaches/coach14.png"
+            },
+            "colors": {
+                "primary": "#DC143C",
+                "secondary": "#FFD700"
+            },
+            "stats": {
+                "wins": 3,
+                "losses": 7,
+                "pointsFor": 600,
+                "pointsAgainst": 700,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-015",
+            "name": "Bayan-Ulgii Nomads",
+            "shortName": "BUN",
+            "logo": "/assets/logos/nomads.png",
+            "city": "Баян-Өлгий",
+            "coach": {
+                "id": "coach-015",
+                "name": "Айгүл Серик",
+                "image": "/assets/coaches/coach15.png"
+            },
+            "colors": {
+                "primary": "#008080",
+                "secondary": "#FFE4B5"
+            },
+            "stats": {
+                "wins": 2,
+                "losses": 8,
+                "pointsFor": 580,
+                "pointsAgainst": 720,
+                "gamesPlayed": 10
+            }
+        },
+        {
+            "id": "team-016",
+            "name": "Gobi-Altai Stallions",
+            "shortName": "GAS",
+            "logo": "/assets/logos/stallions.png",
+            "city": "Говь-Алтай",
+            "coach": {
+                "id": "coach-016",
+                "name": "Болормаа Ганхуяг",
+                "image": "/assets/coaches/coach16.png"
+            },
+            "colors": {
+                "primary": "#CD853F",
+                "secondary": "#4169E1"
+            },
+            "stats": {
+                "wins": 2,
+                "losses": 8,
+                "pointsFor": 570,
+                "pointsAgainst": 730,
+                "gamesPlayed": 10
+            }
+        }
+    ],
+    "players": [
+        {
+            "id": "player-001",
+            "teamId": "team-001",
+            "name": "Сарангоо Бат-Эрдэнэ",
+            "number": 23,
+            "position": "PG",
+            "height": "175 см",
+            "weight": "65 кг",
+            "age": 24,
+            "image": "/assets/players/player1.png",
+            "stats": {
+                "gamesPlayed": 10,
+                "minutesPlayed": 320,
+                "totalPoints": 185,
+                "totalRebounds": 45,
+                "totalAssists": 78,
+                "totalSteals": 22,
+                "totalBlocks": 5,
+                "totalTurnovers": 28,
+                "totalFouls": 18,
+                "fieldGoalsMade": 72,
+                "fieldGoalsAttempted": 145,
+                "threePointersMade": 25,
+                "threePointersAttempted": 68,
+                "freeThrowsMade": 16,
+                "freeThrowsAttempted": 20
+            }
+        },
+        {
+            "id": "player-002",
+            "teamId": "team-001",
+            "name": "Энхзул Ганбаатар",
+            "number": 11,
+            "position": "SG",
+            "height": "178 см",
+            "weight": "68 кг",
+            "age": 22,
+            "image": "/assets/players/player2.png",
+            "stats": {
+                "gamesPlayed": 10,
+                "minutesPlayed": 300,
+                "totalPoints": 210,
+                "totalRebounds": 38,
+                "totalAssists": 42,
+                "totalSteals": 18,
+                "totalBlocks": 3,
+                "totalTurnovers": 25,
+                "totalFouls": 22,
+                "fieldGoalsMade": 82,
+                "fieldGoalsAttempted": 170,
+                "threePointersMade": 32,
+                "threePointersAttempted": 85,
+                "freeThrowsMade": 14,
+                "freeThrowsAttempted": 18
+            }
+        },
+        {
+            "id": "player-003",
+            "teamId": "team-001",
+            "name": "Номин Цэрэндорж",
+            "number": 5,
+            "position": "SF",
+            "height": "182 см",
+            "weight": "72 кг",
+            "age": 26,
+            "image": "/assets/players/player3.png",
+            "stats": {
+                "gamesPlayed": 10,
+                "minutesPlayed": 310,
+                "totalPoints": 165,
+                "totalRebounds": 62,
+                "totalAssists": 35,
+                "totalSteals": 15,
+                "totalBlocks": 8,
+                "totalTurnovers": 20,
+                "totalFouls": 25,
+                "fieldGoalsMade": 65,
+                "fieldGoalsAttempted": 138,
+                "threePointersMade": 18,
+                "threePointersAttempted": 52,
+                "freeThrowsMade": 17,
+                "freeThrowsAttempted": 22
+            }
+        },
+        {
+            "id": "player-004",
+            "teamId": "team-001",
+            "name": "Оюунбат Мөнхтулга",
+            "number": 32,
+            "position": "PF",
+            "height": "185 см",
+            "weight": "78 кг",
+            "age": 25,
+            "image": "/assets/players/player4.png",
+            "stats": {
+                "gamesPlayed": 10,
+                "minutesPlayed": 280,
+                "totalPoints": 145,
+                "totalRebounds": 85,
+                "totalAssists": 28,
+                "totalSteals": 12,
+                "totalBlocks": 18,
+                "totalTurnovers": 18,
+                "totalFouls": 30,
+                "fieldGoalsMade": 58,
+                "fieldGoalsAttempted": 115,
+                "threePointersMade": 8,
+                "threePointersAttempted": 25,
+                "freeThrowsMade": 21,
+                "freeThrowsAttempted": 28
+            }
+        },
+        {
+            "id": "player-005",
+            "teamId": "team-001",
+            "name": "Мөнхзаяа Сүхбаатар",
+            "number": 15,
+            "position": "C",
+            "height": "190 см",
+            "weight": "85 кг",
+            "age": 27,
+            "image": "/assets/players/player5.png",
+            "stats": {
+                "gamesPlayed": 10,
+                "minutesPlayed": 290,
+                "totalPoints": 155,
+                "totalRebounds": 110,
+                "totalAssists": 22,
+                "totalSteals": 8,
+                "totalBlocks": 32,
+                "totalTurnovers": 22,
+                "totalFouls": 32,
+                "fieldGoalsMade": 68,
+                "fieldGoalsAttempted": 120,
+                "threePointersMade": 2,
+                "threePointersAttempted": 8,
+                "freeThrowsMade": 17,
+                "freeThrowsAttempted": 25
+            }
+        },
+        {
+            "id": "player-006",
+            "teamId": "team-002",
+            "name": "Солонго Энхбат",
+            "number": 7,
+            "position": "PG",
+            "height": "172 см",
+            "weight": "62 кг",
+            "age": 23,
+            "image": "/assets/players/player6.png",
+            "stats": {
+                "gamesPlayed": 10,
+                "minutesPlayed": 315,
+                "totalPoints": 175,
+                "totalRebounds": 42,
+                "totalAssists": 82,
+                "totalSteals": 25,
+                "totalBlocks": 4,
+                "totalTurnovers": 32,
+                "totalFouls": 20,
+                "fieldGoalsMade": 68,
+                "fieldGoalsAttempted": 142,
+                "threePointersMade": 22,
+                "threePointersAttempted": 62,
+                "freeThrowsMade": 17,
+                "freeThrowsAttempted": 22
+            }
+        },
+        {
+            "id": "player-007",
+            "teamId": "team-002",
+            "name": "Нандин Ганзориг",
+            "number": 10,
+            "position": "SG",
+            "height": "176 см",
+            "weight": "66 кг",
+            "age": 21,
+            "image": "/assets/players/player7.png",
+            "stats": {
+                "gamesPlayed": 10,
+                "minutesPlayed": 295,
+                "totalPoints": 198,
+                "totalRebounds": 35,
+                "totalAssists": 38,
+                "totalSteals": 20,
+                "totalBlocks": 2,
+                "totalTurnovers": 22,
+                "totalFouls": 18,
+                "fieldGoalsMade": 78,
+                "fieldGoalsAttempted": 165,
+                "threePointersMade": 28,
+                "threePointersAttempted": 78,
+                "freeThrowsMade": 14,
+                "freeThrowsAttempted": 16
+            }
+        },
+        {
+            "id": "player-008",
+            "teamId": "team-002",
+            "name": "Отгонбаяр Дамдин",
+            "number": 21,
+            "position": "SF",
+            "height": "180 см",
+            "weight": "70 кг",
+            "age": 24,
+            "image": "/assets/players/player8.png",
+            "stats": {
+                "gamesPlayed": 10,
+                "minutesPlayed": 305,
+                "totalPoints": 158,
+                "totalRebounds": 58,
+                "totalAssists": 32,
+                "totalSteals": 14,
+                "totalBlocks": 7,
+                "totalTurnovers": 18,
+                "totalFouls": 22,
+                "fieldGoalsMade": 62,
+                "fieldGoalsAttempted": 132,
+                "threePointersMade": 15,
+                "threePointersAttempted": 45,
+                "freeThrowsMade": 19,
+                "freeThrowsAttempted": 24
+            }
+        },
+        {
+            "id": "player-009",
+            "teamId": "team-003",
+            "name": "Батзаяа Мөнхсайхан",
+            "number": 3,
+            "position": "PG",
+            "height": "170 см",
+            "weight": "60 кг",
+            "age": 22,
+            "image": "/assets/players/player9.png",
+            "stats": {
+                "gamesPlayed": 10,
+                "minutesPlayed": 310,
+                "totalPoints": 168,
+                "totalRebounds": 38,
+                "totalAssists": 75,
+                "totalSteals": 28,
+                "totalBlocks": 3,
+                "totalTurnovers": 30,
+                "totalFouls": 16,
+                "fieldGoalsMade": 65,
+                "fieldGoalsAttempted": 140,
+                "threePointersMade": 20,
+                "threePointersAttempted": 58,
+                "freeThrowsMade": 18,
+                "freeThrowsAttempted": 22
+            }
+        },
+        {
+            "id": "player-010",
+            "teamId": "team-003",
+            "name": "Цэнгэлмаа Батболд",
+            "number": 24,
+            "position": "SG",
+            "height": "177 см",
+            "weight": "67 кг",
+            "age": 25,
+            "image": "/assets/players/player10.png",
+            "stats": {
+                "gamesPlayed": 10,
+                "minutesPlayed": 298,
+                "totalPoints": 205,
+                "totalRebounds": 40,
+                "totalAssists": 35,
+                "totalSteals": 16,
+                "totalBlocks": 4,
+                "totalTurnovers": 24,
+                "totalFouls": 20,
+                "fieldGoalsMade": 80,
+                "fieldGoalsAttempted": 168,
+                "threePointersMade": 30,
+                "threePointersAttempted": 82,
+                "freeThrowsMade": 15,
+                "freeThrowsAttempted": 18
+            }
+        }
+    ],
+    "games": [
+        {
+            "id": "game-001",
+            "date": "2026-02-05",
+            "homeTeamId": "team-007",
+            "awayTeamId": "team-008",
+            "homeScore": 72,
+            "awayScore": 68,
+            "status": "finished",
+            "playerStats": []
+        },
+        {
+            "id": "game-002",
+            "date": "2026-02-06",
+            "homeTeamId": "team-009",
+            "awayTeamId": "team-010",
+            "homeScore": 81,
+            "awayScore": 75,
+            "status": "finished",
+            "playerStats": []
+        },
+        {
+            "id": "game-003",
+            "date": "2026-02-07",
+            "homeTeamId": "team-011",
+            "awayTeamId": "team-012",
+            "homeScore": 69,
+            "awayScore": 64,
+            "status": "finished",
+            "playerStats": []
+        },
+        {
+            "id": "game-004",
+            "date": "2026-02-08",
+            "homeTeamId": "team-013",
+            "awayTeamId": "team-014",
+            "homeScore": 77,
+            "awayScore": 82,
+            "status": "finished",
+            "playerStats": []
+        },
+        {
+            "id": "game-005",
+            "date": "2026-02-08",
+            "homeTeamId": "team-015",
+            "awayTeamId": "team-016",
+            "homeScore": 58,
+            "awayScore": 63,
+            "status": "finished",
+            "playerStats": []
+        },
+        {
+            "id": "game-006",
+            "date": "2026-02-10",
+            "homeTeamId": "team-001",
+            "awayTeamId": "team-002",
+            "homeScore": 78,
+            "awayScore": 72,
+            "status": "finished",
+            "playerStats": []
+        },
+        {
+            "id": "game-007",
+            "date": "2026-02-10",
+            "homeTeamId": "team-003",
+            "awayTeamId": "team-004",
+            "homeScore": 65,
+            "awayScore": 68,
+            "status": "finished",
+            "playerStats": []
+        },
+        {
+            "id": "game-008",
+            "date": "2026-02-11",
+            "homeTeamId": "team-005",
+            "awayTeamId": "team-007",
+            "homeScore": 0,
+            "awayScore": 0,
+            "status": "scheduled",
+            "playerStats": []
+        },
+        {
+            "id": "game-009",
+            "date": "2026-02-11",
+            "homeTeamId": "team-008",
+            "awayTeamId": "team-009",
+            "homeScore": 0,
+            "awayScore": 0,
+            "status": "scheduled",
+            "playerStats": []
+        },
+        {
+            "id": "game-010",
+            "date": "2026-02-12",
+            "homeTeamId": "team-005",
+            "awayTeamId": "team-006",
+            "homeScore": 0,
+            "awayScore": 0,
+            "status": "scheduled",
+            "playerStats": []
+        },
+        {
+            "id": "game-011",
+            "date": "2026-02-12",
+            "homeTeamId": "team-001",
+            "awayTeamId": "team-003",
+            "homeScore": 0,
+            "awayScore": 0,
+            "status": "scheduled",
+            "playerStats": []
+        },
+        {
+            "id": "game-012",
+            "date": "2026-02-13",
+            "homeTeamId": "team-002",
+            "awayTeamId": "team-004",
+            "homeScore": 0,
+            "awayScore": 0,
+            "status": "scheduled",
+            "playerStats": []
+        },
+        {
+            "id": "game-013",
+            "date": "2026-02-14",
+            "homeTeamId": "team-010",
+            "awayTeamId": "team-011",
+            "homeScore": 0,
+            "awayScore": 0,
+            "status": "scheduled",
+            "playerStats": []
+        },
+        {
+            "id": "game-014",
+            "date": "2026-02-14",
+            "homeTeamId": "team-012",
+            "awayTeamId": "team-013",
+            "homeScore": 0,
+            "awayScore": 0,
+            "status": "scheduled",
+            "playerStats": []
+        },
+        {
+            "id": "game-015",
+            "date": "2026-02-15",
+            "homeTeamId": "team-014",
+            "awayTeamId": "team-015",
+            "homeScore": 0,
+            "awayScore": 0,
+            "status": "scheduled",
+            "playerStats": []
+        },
+        {
+            "id": "game-016",
+            "date": "2026-02-16",
+            "homeTeamId": "team-016",
+            "awayTeamId": "team-001",
+            "homeScore": 0,
+            "awayScore": 0,
+            "status": "scheduled",
+            "playerStats": []
+        },
+        {
+            "id": "game-017",
+            "date": "2026-02-17",
+            "homeTeamId": "team-002",
+            "awayTeamId": "team-005",
+            "homeScore": 0,
+            "awayScore": 0,
+            "status": "scheduled",
+            "playerStats": []
+        },
+        {
+            "id": "game-018",
+            "date": "2026-02-18",
+            "homeTeamId": "team-003",
+            "awayTeamId": "team-006",
+            "homeScore": 0,
+            "awayScore": 0,
+            "status": "scheduled",
+            "playerStats": []
+        }
+    ]
+}
