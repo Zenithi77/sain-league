@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Header() {
@@ -10,7 +10,13 @@ export default function Header() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { user, userData, logOut, loading } = useAuth();
+
+  // Fix hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const navLinks = [
     { href: '/', label: 'Нүүр' },
@@ -31,6 +37,9 @@ export default function Header() {
       console.error('Logout error:', error);
     }
   }
+
+  // Show nothing for auth section during SSR to prevent hydration mismatch
+  const showAuth = mounted && !loading;
 
   return (
     <>
@@ -58,7 +67,7 @@ export default function Header() {
             </ul>
           </nav>
           <div className="header-right">
-            {!loading && (
+            {showAuth && (
               <>
                 {user ? (
                   <div className="user-menu-container">
@@ -131,7 +140,7 @@ export default function Header() {
               </li>
             ))}
           </ul>
-          {!loading && (
+          {showAuth && (
             <div className="mobile-auth">
               {user ? (
                 <>

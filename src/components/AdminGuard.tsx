@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface AdminGuardProps {
   children: React.ReactNode;
@@ -11,18 +11,24 @@ interface AdminGuardProps {
 export default function AdminGuard({ children }: AdminGuardProps) {
   const { user, userData, loading } = useAuth();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!loading) {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !loading) {
       if (!user) {
         router.push('/login');
       } else if (userData && userData.role !== 'admin') {
         router.push('/');
       }
     }
-  }, [user, userData, loading, router]);
+  }, [user, userData, loading, router, mounted]);
 
-  if (loading) {
+  // Always show loading during SSR and initial mount
+  if (!mounted || loading) {
     return (
       <div className="admin-loading">
         <div className="loading-spinner"></div>
