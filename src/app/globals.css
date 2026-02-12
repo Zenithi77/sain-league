@@ -1953,6 +1953,40 @@ ul {
     flex-shrink: 0;
 }
 
+/* Main Google Button - Centered and Prominent */
+.auth-btn.google-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 16px 24px;
+    background: #fff;
+    color: #333;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.auth-btn.google-main:hover:not(:disabled) {
+    background: #f5f5f5;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.auth-btn.google-main:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.auth-btn.google-main svg {
+    flex-shrink: 0;
+}
+
 .auth-divider {
     display: flex;
     align-items: center;
