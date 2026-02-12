@@ -2,12 +2,15 @@
 
 import { useState, useEffect, FormEvent } from 'react';
 import { TeamWithAverages } from '@/types';
+import AdminGuard from '@/components/AdminGuard';
+import { useAuth } from '@/contexts/AuthContext';
 
-export default function AdminPage() {
+function AdminContent() {
   const [teams, setTeams] = useState<TeamWithAverages[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const { userData } = useAuth();
 
   useEffect(() => {
     fetchTeams();
@@ -174,12 +177,65 @@ export default function AdminPage() {
     window.open('/api/download/template', '_blank');
   };
 
+  const [isMigrating, setIsMigrating] = useState(false);
+  const [migrationResult, setMigrationResult] = useState<any>(null);
+
+  const handleMigration = async () => {
+    if (!confirm('Бүх өгөгдлийг Firebase руу шилжүүлэх үү? Энэ үйлдлийг буцаах боломжгүй.')) {
+      return;
+    }
+    setIsMigrating(true);
+    try {
+      const res = await fetch('/api/migrate', { method: 'POST' });
+      const data = await res.json();
+      setMigrationResult(data);
+      if (data.success) {
+        alert('Амжилттай шилжүүллээ!');
+      }
+    } catch (error) {
+      alert('Шилжүүлэхэд алдаа гарлаа');
+    }
+    setIsMigrating(false);
+  };
+
   return (
     <main className="main-content">
       <div className="page-header">
         <h1><i className="fas fa-cog"></i> Админ Панел</h1>
         <p>Мэдээлэл удирдах, Excel файл оруулах</p>
+        {userData && (
+          <p style={{ color: 'var(--primary-color)', marginTop: '10px' }}>
+            <i className="fas fa-user-shield"></i> {userData.email} ({userData.role})
+          </p>
+        )}
       </div>
+
+      {/* Firebase Migration Section */}
+      <section className="admin-section" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)' }}>
+        <h3><i className="fas fa-database"></i> Firebase руу өгөгдөл шилжүүлэх</h3>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>
+          Одоогийн database.json файлаас Firebase Firestore руу бүх өгөгдлийг шилжүүлнэ.
+          Энэ үйлдлийг зөвхөн нэг удаа хийнэ.
+        </p>
+        <button 
+          onClick={handleMigration} 
+          className="btn btn-primary"
+          disabled={isMigrating}
+          style={{ background: '#4CAF50' }}
+        >
+          <i className="fas fa-cloud-upload-alt"></i> 
+          {isMigrating ? 'Шилжүүлж байна...' : 'Firebase руу шилжүүлэх'}
+        </button>
+        {migrationResult && (
+          <div style={{ marginTop: '15px', padding: '15px', background: 'var(--bg-card)', borderRadius: '10px' }}>
+            <p><strong>Үр дүн:</strong></p>
+            <p>Багууд: {migrationResult.results?.teams || 0}</p>
+            <p>Тоглогчид: {migrationResult.results?.players || 0}</p>
+            <p>Тоглолтууд: {migrationResult.results?.games || 0}</p>
+            <p>Улирал: {migrationResult.results?.season ? 'Тийм' : 'Үгүй'}</p>
+          </div>
+        )}
+      </section>
 
       {/* Upload Status Alert */}
       {uploadStatus && (
@@ -451,5 +507,13 @@ export default function AdminPage() {
         </form>
       </section>
     </main>
+  );
+}
+
+export default function AdminPage() {
+  return (
+    <AdminGuard>
+      <AdminContent />
+    </AdminGuard>
   );
 }

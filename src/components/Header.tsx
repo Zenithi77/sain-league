@@ -1,12 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const { user, userData, logOut, loading } = useAuth();
 
   const navLinks = [
     { href: '/', label: 'Нүүр' },
@@ -17,6 +21,16 @@ export default function Header() {
     { href: '/players', label: 'Тоглогчид' },
     { href: '/admin', label: 'Админ' },
   ];
+
+  async function handleLogout() {
+    try {
+      await logOut();
+      setUserMenuOpen(false);
+      router.push('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  }
 
   return (
     <>
@@ -44,6 +58,51 @@ export default function Header() {
             </ul>
           </nav>
           <div className="header-right">
+            {!loading && (
+              <>
+                {user ? (
+                  <div className="user-menu-container">
+                    <button
+                      className="user-menu-btn"
+                      onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    >
+                      <div className="user-avatar">
+                        {user.photoURL ? (
+                          <img src={user.photoURL} alt={user.displayName || 'User'} />
+                        ) : (
+                          <span>{(user.displayName || user.email || 'U')[0].toUpperCase()}</span>
+                        )}
+                      </div>
+                      <span className="user-name">{user.displayName || 'Хэрэглэгч'}</span>
+                      <i className={`fas fa-chevron-${userMenuOpen ? 'up' : 'down'}`}></i>
+                    </button>
+                    {userMenuOpen && (
+                      <div className="user-dropdown">
+                        <div className="user-dropdown-header">
+                          <span>{user.email}</span>
+                          {userData?.role === 'admin' && (
+                            <span className="user-role-badge">Админ</span>
+                          )}
+                        </div>
+                        <button onClick={handleLogout} className="user-dropdown-item logout">
+                          <i className="fas fa-sign-out-alt"></i>
+                          Гарах
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="auth-buttons">
+                    <Link href="/login" className="auth-link login">
+                      Нэвтрэх
+                    </Link>
+                    <Link href="/signup" className="auth-link signup">
+                      Бүртгүүлэх
+                    </Link>
+                  </div>
+                )}
+              </>
+            )}
             <button
               className="menu-toggle"
               onClick={() => setMobileMenuOpen(true)}
@@ -72,6 +131,40 @@ export default function Header() {
               </li>
             ))}
           </ul>
+          {!loading && (
+            <div className="mobile-auth">
+              {user ? (
+                <>
+                  <div className="mobile-user-info">
+                    <div className="user-avatar">
+                      {user.photoURL ? (
+                        <img src={user.photoURL} alt={user.displayName || 'User'} />
+                      ) : (
+                        <span>{(user.displayName || user.email || 'U')[0].toUpperCase()}</span>
+                      )}
+                    </div>
+                    <div>
+                      <span className="mobile-user-name">{user.displayName || 'Хэрэглэгч'}</span>
+                      <span className="mobile-user-email">{user.email}</span>
+                    </div>
+                  </div>
+                  <button onClick={handleLogout} className="mobile-logout-btn">
+                    <i className="fas fa-sign-out-alt"></i>
+                    Гарах
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" className="mobile-auth-btn login" onClick={() => setMobileMenuOpen(false)}>
+                    Нэвтрэх
+                  </Link>
+                  <Link href="/signup" className="mobile-auth-btn signup" onClick={() => setMobileMenuOpen(false)}>
+                    Бүртгүүлэх
+                  </Link>
+                </>
+              )}
+            </div>
+          )}
         </nav>
       </div>
     </>
