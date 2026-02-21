@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readDatabase, writeDatabase, calculatePlayerAverages, generatePlayerId } from '@/lib/database';
+import { requireAdmin } from '@/lib/firebase-admin';
+import { validatePlayerInput, validationErrorResponse, unauthorizedResponse, forbiddenResponse, sanitizeString } from '@/lib/validation';
 
 export async function GET() {
   const db = readDatabase();
@@ -8,18 +10,44 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  // Authentication check - admin only
+  const auth = await requireAdmin(request);
+  if (!auth.success) {
+    return auth.error?.includes('Админ') 
+      ? forbiddenResponse(auth.error) 
+      : unauthorizedResponse(auth.error);
+  }
+
+  // Parse and validate input
+  let body: any;
+  try {
+    body = await request.json();
+  } catch {
+    return validationErrorResponse(['Буруу JSON формат']);
+  }
+
+  const validation = validatePlayerInput(body);
+  if (!validation.valid) {
+    return validationErrorResponse(validation.errors);
+  }
+
   const db = readDatabase();
-  const body = await request.json();
+  
+  // Verify team exists
+  const team = db.teams.find(t => t.id === body.teamId);
+  if (!team) {
+    return validationErrorResponse(['Баг олдсонгүй']);
+  }
   
   const newPlayer = {
     id: generatePlayerId(),
-    teamId: body.teamId,
-    name: body.name,
-    number: body.number || 0,
-    position: body.position || 'Unknown',
-    height: body.height || 'N/A',
-    weight: body.weight || 'N/A',
-    age: body.age || 0,
+    teamId: sanitizeString(body.teamId) || '',
+    name: sanitizeString(body.name) || '',
+    number: Math.min(Math.max(parseInt(body.number) || 0, 0), 99),
+    position: sanitizeString(body.position) || 'Unknown',
+    height: sanitizeString(body.height) || 'N/A',
+    weight: sanitizeString(body.weight) || 'N/A',
+    age: Math.min(Math.max(parseInt(body.age) || 0, 0), 100),
     image: body.image || '/assets/players/default.png',
     stats: {
       gamesPlayed: 0,

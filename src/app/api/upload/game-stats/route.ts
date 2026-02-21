@@ -1,24 +1,66 @@
 import { NextResponse } from 'next/server';
 import { readDatabase, writeDatabase, generatePlayerId } from '@/lib/database';
+import { requireAdmin } from '@/lib/firebase-admin';
+import { unauthorizedResponse, forbiddenResponse, errorResponse } from '@/lib/validation';
 import * as XLSX from 'xlsx';
 
+// Max file size: 5MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+// Allowed MIME types for Excel files
+const ALLOWED_MIME_TYPES = [
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+  'application/vnd.ms-excel', // .xls
+  'application/octet-stream', // Sometimes files are sent as this
+];
+
 export async function POST(request: Request) {
+  // Authentication check - admin only
+  const auth = await requireAdmin(request);
+  if (!auth.success) {
+    return auth.error?.includes('Админ') 
+      ? forbiddenResponse(auth.error) 
+      : unauthorizedResponse(auth.error);
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
     
     if (!file) {
-      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+      return errorResponse('Файл оруулна уу', 400);
+    }
+
+    // Check file size
+    if (file.size > MAX_FILE_SIZE) {
+      return errorResponse('Файлын хэмжээ 5MB-с хэтрэхгүй байх ёстой', 400);
     }
     
-    // Check file type
+    // Check file extension
     const ext = file.name.toLowerCase().split('.').pop();
     if (ext !== 'xlsx' && ext !== 'xls') {
-      return NextResponse.json({ error: 'Only Excel files allowed' }, { status: 400 });
+      return errorResponse('Зөвхөн Excel файл (.xlsx, .xls) зөвшөөрөгдөнө', 400);
+    }
+
+    // Check MIME type (additional security layer)
+    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+      console.warn(`Suspicious MIME type: ${file.type} for file: ${file.name}`);
+      // Allow but log - some systems don't report correct MIME types
     }
     
     // Read file buffer
     const buffer = Buffer.from(await file.arrayBuffer());
+    
+    // Validate Excel file magic bytes (PK signature for xlsx or D0 CF for xls)
+    const header = buffer.slice(0, 4);
+    const isValidExcel = 
+      (header[0] === 0x50 && header[1] === 0x4B) || // PK for ZIP/XLSX
+      (header[0] === 0xD0 && header[1] === 0xCF);   // OLE for XLS
+    
+    if (!isValidExcel) {
+      return errorResponse('Буруу файл формат - зөвхөн Excel файл зөвшөөрөгдөнө', 400);
+    }
+
     const workbook = XLSX.read(buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];

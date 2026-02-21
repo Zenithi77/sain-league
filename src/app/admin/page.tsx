@@ -10,7 +10,15 @@ function AdminContent() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const { userData } = useAuth();
+  const { userData, getIdToken } = useAuth();
+
+  // Helper function to get auth headers
+  const getAuthHeaders = async () => {
+    const token = await getIdToken();
+    return {
+      'Authorization': `Bearer ${token}`,
+    };
+  };
 
   useEffect(() => {
     fetchTeams();
@@ -59,8 +67,10 @@ function AdminContent() {
     }
 
     try {
+      const authHeaders = await getAuthHeaders();
       const res = await fetch('/api/upload/game-stats', {
         method: 'POST',
+        headers: authHeaders,
         body: formData,
       });
       const data = await res.json();
@@ -94,9 +104,13 @@ function AdminContent() {
     };
 
     try {
+      const authHeaders = await getAuthHeaders();
       const res = await fetch('/api/players', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...authHeaders,
+        },
         body: JSON.stringify(playerData),
       });
 
@@ -104,7 +118,8 @@ function AdminContent() {
         alert('Тоглогч амжилттай нэмэгдлээ!');
         form.reset();
       } else {
-        alert('Алдаа гарлаа');
+        const data = await res.json();
+        alert(data.error || 'Алдаа гарлаа');
       }
     } catch (error) {
       alert('Сервертэй холбогдоход алдаа гарлаа');
@@ -126,9 +141,13 @@ function AdminContent() {
     };
 
     try {
+      const authHeaders = await getAuthHeaders();
       const res = await fetch('/api/teams', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...authHeaders,
+        },
         body: JSON.stringify(teamData),
       });
 
@@ -137,7 +156,8 @@ function AdminContent() {
         form.reset();
         fetchTeams();
       } else {
-        alert('Алдаа гарлаа');
+        const data = await res.json();
+        alert(data.error || 'Алдаа гарлаа');
       }
     } catch (error) {
       alert('Сервертэй холбогдоход алдаа гарлаа');
@@ -156,9 +176,13 @@ function AdminContent() {
     };
 
     try {
+      const authHeaders = await getAuthHeaders();
       const res = await fetch('/api/games', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...authHeaders,
+        },
         body: JSON.stringify(gameData),
       });
 
@@ -166,7 +190,8 @@ function AdminContent() {
         alert('Тоглолт амжилттай нэмэгдлээ!');
         form.reset();
       } else {
-        alert('Алдаа гарлаа');
+        const data = await res.json();
+        alert(data.error || 'Алдаа гарлаа');
       }
     } catch (error) {
       alert('Сервертэй холбогдоход алдаа гарлаа');
@@ -186,7 +211,11 @@ function AdminContent() {
     }
     setIsMigrating(true);
     try {
-      const res = await fetch('/api/migrate', { method: 'POST' });
+      const authHeaders = await getAuthHeaders();
+      const res = await fetch('/api/migrate', { 
+        method: 'POST',
+        headers: authHeaders, 
+      });
       const data = await res.json();
       setMigrationResult(data);
       if (data.success) {

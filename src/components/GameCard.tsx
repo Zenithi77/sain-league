@@ -6,9 +6,20 @@ interface GameCardProps {
   game: GameWithTeams;
 }
 
-function formatDate(dateString: string) {
-  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString('mn-MN', options);
+// Consistent date formatting to avoid hydration mismatch
+function formatDate(dateString: string): string {
+  const months = [
+    '1-р сарын', '2-р сарын', '3-р сарын', '4-р сарын',
+    '5-р сарын', '6-р сарын', '7-р сарын', '8-р сарын',
+    '9-р сарын', '10-р сарын', '11-р сарын', '12-р сарын'
+  ];
+  
+  const date = new Date(dateString + 'T00:00:00');
+  const year = date.getFullYear();
+  const month = months[date.getMonth()];
+  const day = date.getDate();
+  
+  return `${year} оны ${month} ${day}`;
 }
 
 export default function GameCard({ game }: GameCardProps) {

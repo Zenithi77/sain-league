@@ -31,6 +31,7 @@ interface AuthContextType {
   logIn: (email: string, password: string) => Promise<void>;
   logOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
+  getIdToken: () => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -126,6 +127,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     await fetchUserData(user.uid);
   }
 
+  // Get ID Token for API authentication
+  async function getIdToken(): Promise<string | null> {
+    if (!user) return null;
+    try {
+      return await user.getIdToken();
+    } catch (error) {
+      console.error('Error getting ID token:', error);
+      return null;
+    }
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
@@ -148,6 +160,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     logIn,
     logOut,
     signInWithGoogle,
+    getIdToken,
   };
 
   return (
