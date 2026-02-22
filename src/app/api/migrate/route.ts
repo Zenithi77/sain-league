@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readDatabase } from '@/lib/database';
+import { requireAdmin } from '@/lib/firebase-admin';
+import { unauthorizedResponse, forbiddenResponse } from '@/lib/validation';
 import { 
   doc, 
   setDoc, 
@@ -8,6 +10,14 @@ import {
 import { db } from '@/lib/firebase';
 
 export async function POST(request: Request) {
+  // Authentication check - admin only
+  const auth = await requireAdmin(request);
+  if (!auth.success) {
+    return auth.error?.includes('Админ') 
+      ? forbiddenResponse(auth.error) 
+      : unauthorizedResponse(auth.error);
+  }
+
   try {
     // Read existing data from database.json
     const data = readDatabase();

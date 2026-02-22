@@ -7,25 +7,8 @@ interface GameCardProps {
 }
 
 function formatDate(dateString: string) {
-  const months = [
-    "нэгдүгээр",
-    "хоёрдугаар",
-    "гуравдугаар",
-    "дөрөвдүгээр",
-    "тавдугаар",
-    "зургаадугаар",
-    "долоодугаар",
-    "наймдугаар",
-    "есдүгээр",
-    "аравдугаар",
-    "арван нэгдүгээр",
-    "арван хоёрдугаар",
-  ];
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = months[date.getMonth()];
-  const day = date.getDate();
-  return `${year} оны ${month} сарын ${day}`;
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString('mn-MN', options);
 }
 
 export default function GameCard({ game }: GameCardProps) {
