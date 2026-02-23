@@ -289,7 +289,7 @@ function AdminContent() {
           <div className="form-row">
             <div className="form-group">
               <label>Үндсэн өнгө</label>
-              <input type="color" name="primaryColor" defaultValue="#FF6B35" />
+              <input type="color" name="primaryColor" defaultValue="#F15F22" />
             </div>
             <div className="form-group">
               <label>Хоёрдогч өнгө</label>

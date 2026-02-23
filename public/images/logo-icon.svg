@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 46 55" fill="none">
+  <!-- Orange badge background -->
+  <rect x="1" y="1" width="44" height="53" rx="8" fill="#F15F22"/>
+  
+  <!-- Basketball player silhouette (simplified) -->
+  <g fill="white" transform="translate(8, 5) scale(0.35)">
+    <!-- Head -->
+    <circle cx="55" cy="18" r="14"/>
+    <!-- Body -->
+    <path d="M40,35 C38,40 35,55 38,70 L42,70 L48,50 L55,65 L50,95 L42,95 L45,75 L35,75 L30,95 L22,95 L35,55 L28,45 C25,42 22,38 25,35 Z"/>
+    <!-- Right arm with ball -->
+    <path d="M55,40 L75,25 L80,28 L62,45 Z"/>
+    <!-- Basketball -->
+    <circle cx="82" cy="22" r="10" fill="white"/>
+    <path d="M72,22 C76,18 88,18 92,22" stroke="#F15F22" stroke-width="2" fill="none"/>
+    <path d="M82,12 L82,32" stroke="#F15F22" stroke-width="2"/>
+    <path d="M72,22 L92,22" stroke="#F15F22" stroke-width="2"/>
+    <!-- Left arm -->
+    <path d="M40,38 L20,55 L24,58 L42,44 Z"/>
+  </g>
+  
+  <!-- SGL text -->
+  <text x="23" y="50" text-anchor="middle" font-family="Oswald, Arial, sans-serif" font-weight="700" font-size="10" fill="white" letter-spacing="1">SGL</text>
+</svg>

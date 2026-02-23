@@ -16,7 +16,7 @@ export default function PlayerCard({ player, teamName }: PlayerCardProps) {
       </div>
       <div className="player-details">
         <h3>{player.name}</h3>
-        <p className="player-position">#{player.number} | {player.position}</p>
+        <p className="player-position">#{player.number} &middot; {player.position}</p>
         <p className="player-team-name">{teamName || player.teamShortName}</p>
       </div>
       <div className="player-quick-stats">
