@@ -6,9 +6,27 @@ interface GameCardProps {
   game: GameWithTeams;
 }
 
+const MN_MONTHS = [
+  "Нэгдүгээр сар",
+  "Хоёрдугаар сар",
+  "Гуравдугаар сар",
+  "Дөрөвдүгээр сар",
+  "Тавдугаар сар",
+  "Зургадугаар сар",
+  "Долдугаар сар",
+  "Наймдугаар сар",
+  "Есдүгээр сар",
+  "Аравдугаар сар",
+  "Арван нэгдүгээр сар",
+  "Арван хоёрдугаар сар",
+];
+
 function formatDate(dateString: string) {
-  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString('mn-MN', options);
+  const d = new Date(dateString);
+  const year = d.getFullYear();
+  const month = MN_MONTHS[d.getMonth()];
+  const day = d.getDate();
+  return `${year} оны ${month} ${day}`;
 }
 
 export default function GameCard({ game }: GameCardProps) {
