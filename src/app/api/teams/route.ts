@@ -58,8 +58,8 @@ export async function POST(request: Request) {
       image: '/assets/coaches/default.png',
     },
     colors: {
-      primary: body.primaryColor || '#FF6B35',
-      secondary: body.secondaryColor || '#1A1A2E',
+      primary: body.primaryColor || '#F15F22',
+      secondary: body.secondaryColor || '#0072BC',
     },
     stats: {
       wins: 0,

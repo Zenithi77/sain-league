@@ -1,11 +1,18 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
     <footer className="main-footer">
       <div className="footer-container">
         <div className="footer-brand">
-          <span className="footer-logo">🏀 SAIN GIRLS LEAGUE</span>
+          <Image
+            src="/images/logo.png"
+            alt="Sain Girls League"
+            width={180}
+            height={55}
+            className="footer-logo-image"
+          />
           <p>Монголын Охидын Сагсан Бөмбөгийн Лиг</p>
         </div>
         <div className="footer-links">

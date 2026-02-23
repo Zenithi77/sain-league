@@ -15,9 +15,9 @@ export default async function PlayersPage() {
 
   return (
     <main className="main-content">
-      <div className="page-header">
+      <div className="page-header" style={{ marginBottom: '32px' }}>
         <h1><i className="fas fa-user"></i> Тоглогчид</h1>
-        <p>Sain Girls League-ийн бүх тоглогчид</p>
+        <p>Sain Girls League-ийн бүх тоглогчид — {playersWithTeams.length} тоглогч</p>
       </div>
       <div className="players-grid">
         {playersWithTeams.map((player) => (
