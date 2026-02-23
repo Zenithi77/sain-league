@@ -385,9 +385,6 @@ export async function handleUploadGameCsv(
         incrFields[field] = FieldValue.increment(delta);
       }
     }
-    // Also store denormalised identity fields
-    incrFields.playerName = FieldValue.serverTimestamp(); // placeholder overwritten below
-
     const batch = currentBatch();
     batch.set(
       aggRef,
@@ -402,12 +399,6 @@ export async function handleUploadGameCsv(
       },
       { merge: true },
     );
-    // Overwrite the identity fields that shouldn't be incremented —
-    // set them in a separate update so the increment fields work correctly
-    // Actually, FieldValue.increment in a set-merge works fine alongside
-    // plain fields. We remove the erroneous serverTimestamp placeholder:
-    // The set-merge above already handles it correctly since both plain
-    // fields and increment sentinels can coexist in one set({merge:true}).
     opCount++;
 
     // byPhase increments  (e.g. byPhase.regular.points += delta)

@@ -277,7 +277,18 @@ export function useTeams(_seasonId?: string | null) {
     getDocs(colRef)
       .then((snap) => {
         setTeams(
-          snap.docs.map((d) => ({ id: d.id, ...d.data() }) as FirestoreTeam),
+          snap.docs.map((d) => {
+            const raw = d.data();
+            return {
+              id: d.id,
+              name: String(raw.name ?? ""),
+              shortName: String(raw.shortName ?? ""),
+              city: String(raw.city ?? ""),
+              conference: (raw.conference ?? "east") as "east" | "west",
+              school: String(raw.school ?? ""),
+              colors: raw.colors ?? { primary: "#333", secondary: "#666" },
+            } as FirestoreTeam;
+          }),
         );
         setLoading(false);
       })
@@ -317,7 +328,15 @@ export function useActiveSeason() {
       .then((snap) => {
         if (!snap.empty) {
           const d = snap.docs[0];
-          setSeason({ id: d.id, ...d.data() } as FirestoreSeason);
+          const raw = d.data();
+          setSeason({
+            id: d.id,
+            name: String(raw.name ?? ""),
+            year: Number(raw.year ?? 0),
+            startDate: String(raw.startDate ?? ""),
+            endDate: String(raw.endDate ?? ""),
+            isActive: !!raw.isActive,
+          });
         }
         setLoading(false);
       })
@@ -335,51 +354,180 @@ export function useActiveSeason() {
 // ---------------------------------------------------------------------------
 
 export interface LeaderEntry {
+  rank: number;
   playerId: string;
   playerName: string;
+  teamId: string;
+  jerseyNumber?: number;
+  value: number;
+  gamesPlayed: number;
+}
+
+export interface TeamLeaderEntry {
+  rank: number;
   teamId: string;
   value: number;
   gamesPlayed: number;
 }
 
-export interface PlayerLeadersDoc {
-  seasonId: string;
-  categories: Record<string, LeaderEntry[]>;
-  updatedAt: unknown;
+// ---------------------------------------------------------------------------
+// Raw aggregate interfaces
+// ---------------------------------------------------------------------------
+
+export interface PlayerAggregateDoc {
+  playerId: string;
+  teamId: string;
+  playerName: string;
+  jerseyNumber: number;
+  gamesPlayed: number;
+  points: number;
+  totalRebounds: number;
+  assists: number;
+  steals: number;
+  blocks: number;
+  turnovers: number;
+  minutesPlayed: number;
+  fieldGoalsMade: number;
+  fieldGoalsAttempted: number;
+  threePointFieldGoalsMade: number;
+  threePointFieldGoalsAttempted: number;
+  freeThrowsMade: number;
+  freeThrowsAttempted: number;
+  personalFoulsCommitted: number;
+  [key: string]: unknown;
 }
 
+export interface TeamAggregateDoc {
+  teamId: string;
+  gamesPlayed: number;
+  wins: number;
+  losses: number;
+  pointsFor: number;
+  pointsAgainst: number;
+  points: number;
+  totalRebounds: number;
+  assists: number;
+  steals: number;
+  blocks: number;
+  turnovers: number;
+  [key: string]: unknown;
+}
+
+// ---------------------------------------------------------------------------
+// Player Aggregates hook
+// ---------------------------------------------------------------------------
+
 /**
- * Fetch cached player leaders for a season.
+ * Fetch all player aggregate docs for a season.
  *
- * Path: `seasons/{seasonId}/cached/playerLeaders`
+ * Path: `seasons/{seasonId}/playerAggregates`
  */
-export function usePlayerLeaders(seasonId: string | null) {
-  const [leaders, setLeaders] = useState<Record<string, LeaderEntry[]>>({});
+export function usePlayerAggregates(seasonId: string | null) {
+  const [aggregates, setAggregates] = useState<PlayerAggregateDoc[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!seasonId) {
-      setLeaders({});
+      setAggregates([]);
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    const ref = doc(db, `seasons/${seasonId}/cached/playerLeaders`);
+    const colRef = collection(db, `seasons/${seasonId}/playerAggregates`);
 
-    getDoc(ref)
+    getDocs(colRef)
       .then((snap) => {
-        if (snap.exists()) {
-          const data = snap.data() as PlayerLeadersDoc;
-          setLeaders(data.categories ?? {});
-        }
+        const rows: PlayerAggregateDoc[] = [];
+        snap.forEach((d) => {
+          const data = d.data();
+          if ((data.gamesPlayed ?? 0) > 0) {
+            rows.push({
+              playerId: d.id,
+              teamId: String(data.teamId ?? ""),
+              playerName: String(data.playerName ?? ""),
+              jerseyNumber: Number(data.jerseyNumber ?? 0),
+              gamesPlayed: Number(data.gamesPlayed ?? 0),
+              points: Number(data.points ?? 0),
+              totalRebounds: data.totalRebounds ?? 0,
+              assists: data.assists ?? 0,
+              steals: data.steals ?? 0,
+              blocks: data.blocks ?? 0,
+              turnovers: data.turnovers ?? 0,
+              minutesPlayed: data.minutesPlayed ?? 0,
+              fieldGoalsMade: data.fieldGoalsMade ?? 0,
+              fieldGoalsAttempted: data.fieldGoalsAttempted ?? 0,
+              threePointFieldGoalsMade: data.threePointFieldGoalsMade ?? 0,
+              threePointFieldGoalsAttempted: data.threePointFieldGoalsAttempted ?? 0,
+              freeThrowsMade: data.freeThrowsMade ?? 0,
+              freeThrowsAttempted: data.freeThrowsAttempted ?? 0,
+              personalFoulsCommitted: data.personalFoulsCommitted ?? 0,
+            });
+          }
+        });
+        setAggregates(rows);
         setLoading(false);
       })
       .catch((err) => {
-        console.error("[usePlayerLeaders]", err);
+        console.error("[usePlayerAggregates]", err);
         setLoading(false);
       });
   }, [seasonId]);
 
-  return { leaders, loading };
+  return { aggregates, loading };
+}
+
+// ---------------------------------------------------------------------------
+// Team Aggregates hook
+// ---------------------------------------------------------------------------
+
+/**
+ * Fetch all team aggregate docs for a season.
+ *
+ * Path: `seasons/{seasonId}/teamAggregates`
+ */
+export function useTeamAggregates(seasonId: string | null) {
+  const [aggregates, setAggregates] = useState<TeamAggregateDoc[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!seasonId) {
+      setAggregates([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    const colRef = collection(db, `seasons/${seasonId}/teamAggregates`);
+
+    getDocs(colRef)
+      .then((snap) => {
+        const rows: TeamAggregateDoc[] = [];
+        snap.forEach((d) => {
+          const data = d.data();
+          rows.push({
+            teamId: d.id,
+            gamesPlayed: data.gamesPlayed ?? 0,
+            wins: data.wins ?? 0,
+            losses: data.losses ?? 0,
+            pointsFor: data.pointsFor ?? 0,
+            pointsAgainst: data.pointsAgainst ?? 0,
+            points: data.points ?? 0,
+            totalRebounds: data.totalRebounds ?? 0,
+            assists: data.assists ?? 0,
+            steals: data.steals ?? 0,
+            blocks: data.blocks ?? 0,
+            turnovers: data.turnovers ?? 0,
+          });
+        });
+        setAggregates(rows);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("[useTeamAggregates]", err);
+        setLoading(false);
+      });
+  }, [seasonId]);
+
+  return { aggregates, loading };
 }
