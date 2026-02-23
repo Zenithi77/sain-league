@@ -143,9 +143,29 @@ export interface Season {
   isActive: boolean;
 }
 
+export type NewsCategory = "highlight" | "recap" | "announcement" | "interview" | "transfer";
+
+export interface NewsArticle {
+  id: string;
+  title: string;
+  summary: string;
+  content: string;
+  image: string;
+  category: NewsCategory;
+  teamIds: string[];
+  author: string;
+  date: string;
+  featured: boolean;
+}
+
+export interface NewsArticleWithTeams extends NewsArticle {
+  teams: Team[];
+}
+
 export interface Database {
   season: Season;
   teams: Team[];
   players: Player[];
   games: Game[];
+  news: NewsArticle[];
 }

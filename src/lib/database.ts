@@ -9,6 +9,8 @@ import {
   PlayerWithAverages,
   Game,
   GameWithTeams,
+  NewsArticle,
+  NewsArticleWithTeams,
 } from "@/types";
 
 const DB_PATH = path.join(process.cwd(), "data", "database.json");
@@ -20,7 +22,7 @@ export function readDatabase(): Database {
     return JSON.parse(data);
   } catch (error) {
     console.error("Error reading database:", error);
-    return { teams: [], players: [], games: [], season: {} as any };
+    return { teams: [], players: [], games: [], news: [], season: {} as any };
   }
 }
 
@@ -213,6 +215,39 @@ export function getGamesWithTeams(): GameWithTeams[] {
       awayTeam: awayTeam || null,
     } as GameWithTeams;
   });
+}
+
+// ============================================
+// NEWS HELPERS
+// ============================================
+
+export function generateNewsId(): string {
+  return `news-${uuidv4().slice(0, 8)}`;
+}
+
+export function getNewsArticles(): NewsArticleWithTeams[] {
+  const db = readDatabase();
+  const articles = db.news || [];
+  return articles
+    .map((article) => ({
+      ...article,
+      teams: (article.teamIds || []).map(
+        (tid) => db.teams.find((t) => t.id === tid)!
+      ).filter(Boolean),
+    }))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+export function getNewsById(id: string): NewsArticleWithTeams | null {
+  const db = readDatabase();
+  const article = (db.news || []).find((n) => n.id === id);
+  if (!article) return null;
+  return {
+    ...article,
+    teams: (article.teamIds || []).map(
+      (tid) => db.teams.find((t) => t.id === tid)!
+    ).filter(Boolean),
+  };
 }
 
 // Get top players by category

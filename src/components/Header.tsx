@@ -26,6 +26,7 @@ export default function Header() {
     { href: '/stats', label: 'Статистик' },
     { href: '/teams', label: 'Багууд' },
     { href: '/players', label: 'Тоглогчид' },
+    { href: '/news', label: 'Мэдээ' },
     { href: '/admin', label: 'Админ' },
   ];
 
