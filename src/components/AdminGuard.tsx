@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface AdminGuardProps {
   children: React.ReactNode;
@@ -20,7 +20,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
   useEffect(() => {
     if (mounted && !loading) {
       if (!user) {
-        router.push('/login');
+        router.push("/login");
       }
       // TODO: re-enable admin check after testing
       // else if (userData && userData.role !== 'admin') {
@@ -46,7 +46,9 @@ export default function AdminGuard({ children }: AdminGuardProps) {
           <i className="fas fa-lock"></i>
           <h2>Нэвтрэх шаардлагатай</h2>
           <p>Админ хуудас руу орохын тулд нэвтрэнэ үү</p>
-          <a href="/login" className="btn-primary">Нэвтрэх</a>
+          <a href="/login" className="btn-primary">
+            Нэвтрэх
+          </a>
         </div>
       </div>
     );

@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import fs from "fs";
+import path from "path";
+import { v4 as uuidv4 } from "uuid";
 import {
   Database,
   Team,
@@ -9,17 +9,17 @@ import {
   PlayerWithAverages,
   Game,
   GameWithTeams,
-} from '@/types';
+} from "@/types";
 
-const DB_PATH = path.join(process.cwd(), 'data', 'database.json');
+const DB_PATH = path.join(process.cwd(), "data", "database.json");
 
 // Read database
 export function readDatabase(): Database {
   try {
-    const data = fs.readFileSync(DB_PATH, 'utf8');
+    const data = fs.readFileSync(DB_PATH, "utf8");
     return JSON.parse(data);
   } catch (error) {
-    console.error('Error reading database:', error);
+    console.error("Error reading database:", error);
     return { teams: [], players: [], games: [], season: {} as any };
   }
 }
@@ -27,10 +27,10 @@ export function readDatabase(): Database {
 // Write database
 export function writeDatabase(data: Database): boolean {
   try {
-    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 4), 'utf8');
+    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 4), "utf8");
     return true;
   } catch (error) {
-    console.error('Error writing database:', error);
+    console.error("Error writing database:", error);
     return false;
   }
 }
@@ -53,22 +53,32 @@ export function calculatePlayerAverages(player: Player): PlayerWithAverages {
       minutesPerGame: (stats.minutesPlayed / gp).toFixed(1),
       fieldGoalPercentage:
         stats.fieldGoalsAttempted > 0
-          ? ((stats.fieldGoalsMade / stats.fieldGoalsAttempted) * 100).toFixed(1)
-          : '0.0',
+          ? ((stats.fieldGoalsMade / stats.fieldGoalsAttempted) * 100).toFixed(
+              1,
+            )
+          : "0.0",
       threePointPercentage:
         stats.threePointersAttempted > 0
-          ? ((stats.threePointersMade / stats.threePointersAttempted) * 100).toFixed(1)
-          : '0.0',
+          ? (
+              (stats.threePointersMade / stats.threePointersAttempted) *
+              100
+            ).toFixed(1)
+          : "0.0",
       freeThrowPercentage:
         stats.freeThrowsAttempted > 0
-          ? ((stats.freeThrowsMade / stats.freeThrowsAttempted) * 100).toFixed(1)
-          : '0.0',
+          ? ((stats.freeThrowsMade / stats.freeThrowsAttempted) * 100).toFixed(
+              1,
+            )
+          : "0.0",
     },
   };
 }
 
 // Calculate team averages
-export function calculateTeamAverages(team: Team, players: Player[]): TeamWithAverages {
+export function calculateTeamAverages(
+  team: Team,
+  players: Player[],
+): TeamWithAverages {
   const teamPlayers = players.filter((p) => p.teamId === team.id);
   const gp = team.stats.gamesPlayed || 1;
 
@@ -118,7 +128,9 @@ export function generateGameId(): string {
 // Get all standings (teams with averages sorted by wins)
 export function getStandings(): TeamWithAverages[] {
   const db = readDatabase();
-  const teamsWithAverages = db.teams.map((team) => calculateTeamAverages(team, db.players));
+  const teamsWithAverages = db.teams.map((team) =>
+    calculateTeamAverages(team, db.players),
+  );
   return teamsWithAverages.sort((a, b) => b.stats.wins - a.stats.wins);
 }
 
@@ -135,7 +147,9 @@ export function getTeamsWithAverages(): TeamWithAverages[] {
 }
 
 // Get team by ID with players
-export function getTeamById(id: string): (TeamWithAverages & { players: PlayerWithAverages[] }) | null {
+export function getTeamById(
+  id: string,
+): (TeamWithAverages & { players: PlayerWithAverages[] }) | null {
   const db = readDatabase();
   const team = db.teams.find((t) => t.id === id);
   if (!team) return null;
@@ -149,7 +163,9 @@ export function getTeamById(id: string): (TeamWithAverages & { players: PlayerWi
 }
 
 // Get player by ID with team
-export function getPlayerById(id: string): (PlayerWithAverages & { team?: Team }) | null {
+export function getPlayerById(
+  id: string,
+): (PlayerWithAverages & { team?: Team }) | null {
   const db = readDatabase();
   const player = db.players.find((p) => p.id === id);
   if (!player) return null;
@@ -161,15 +177,26 @@ export function getPlayerById(id: string): (PlayerWithAverages & { team?: Team }
 }
 
 // Get game by ID with team data and player details
-export function getGameById(id: string): (GameWithTeams & { homePlayers: PlayerWithAverages[]; awayPlayers: PlayerWithAverages[] }) | null {
+export function getGameById(
+  id: string,
+):
+  | (GameWithTeams & {
+      homePlayers: PlayerWithAverages[];
+      awayPlayers: PlayerWithAverages[];
+    })
+  | null {
   const db = readDatabase();
   const game = db.games.find((g) => g.id === id);
   if (!game) return null;
 
   const homeTeam = db.teams.find((t) => t.id === game.homeTeamId) || null;
   const awayTeam = db.teams.find((t) => t.id === game.awayTeamId) || null;
-  const homePlayers = db.players.filter((p) => p.teamId === game.homeTeamId).map((p) => calculatePlayerAverages(p));
-  const awayPlayers = db.players.filter((p) => p.teamId === game.awayTeamId).map((p) => calculatePlayerAverages(p));
+  const homePlayers = db.players
+    .filter((p) => p.teamId === game.homeTeamId)
+    .map((p) => calculatePlayerAverages(p));
+  const awayPlayers = db.players
+    .filter((p) => p.teamId === game.awayTeamId)
+    .map((p) => calculatePlayerAverages(p));
 
   return { ...game, homeTeam, awayTeam, homePlayers, awayPlayers };
 }
@@ -189,15 +216,30 @@ export function getGamesWithTeams(): GameWithTeams[] {
 }
 
 // Get top players by category
-export function getTopPlayersByCategory(category: string, limit: number = 10): PlayerWithAverages[] {
+export function getTopPlayersByCategory(
+  category: string,
+  limit: number = 10,
+): PlayerWithAverages[] {
   const players = getPlayersWithAverages();
-  
-  const sortFunctions: { [key: string]: (a: PlayerWithAverages, b: PlayerWithAverages) => number } = {
-    points: (a, b) => parseFloat(b.averages.pointsPerGame) - parseFloat(a.averages.pointsPerGame),
-    rebounds: (a, b) => parseFloat(b.averages.reboundsPerGame) - parseFloat(a.averages.reboundsPerGame),
-    assists: (a, b) => parseFloat(b.averages.assistsPerGame) - parseFloat(a.averages.assistsPerGame),
-    steals: (a, b) => parseFloat(b.averages.stealsPerGame) - parseFloat(a.averages.stealsPerGame),
-    blocks: (a, b) => parseFloat(b.averages.blocksPerGame) - parseFloat(a.averages.blocksPerGame),
+
+  const sortFunctions: {
+    [key: string]: (a: PlayerWithAverages, b: PlayerWithAverages) => number;
+  } = {
+    points: (a, b) =>
+      parseFloat(b.averages.pointsPerGame) -
+      parseFloat(a.averages.pointsPerGame),
+    rebounds: (a, b) =>
+      parseFloat(b.averages.reboundsPerGame) -
+      parseFloat(a.averages.reboundsPerGame),
+    assists: (a, b) =>
+      parseFloat(b.averages.assistsPerGame) -
+      parseFloat(a.averages.assistsPerGame),
+    steals: (a, b) =>
+      parseFloat(b.averages.stealsPerGame) -
+      parseFloat(a.averages.stealsPerGame),
+    blocks: (a, b) =>
+      parseFloat(b.averages.blocksPerGame) -
+      parseFloat(a.averages.blocksPerGame),
   };
 
   const sortFn = sortFunctions[category] || sortFunctions.points;

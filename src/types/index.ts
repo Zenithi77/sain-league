@@ -19,7 +19,7 @@ export interface TeamStats {
   gamesPlayed: number;
 }
 
-export type Conference = 'east' | 'west';
+export type Conference = "east" | "west";
 
 export interface Team {
   id: string;
@@ -125,7 +125,7 @@ export interface Game {
   awayTeamId: string;
   homeScore: number;
   awayScore: number;
-  status: 'scheduled' | 'live' | 'finished';
+  status: "scheduled" | "live" | "finished";
   playerStats: GamePlayerStats[];
 }
 

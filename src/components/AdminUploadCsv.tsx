@@ -37,13 +37,37 @@ const MANUAL_COLUMNS = [
   { key: "jerseyNumber", label: "#", type: "number", width: 50 },
   { key: "playerName", label: "Нэр", type: "text", width: 140 },
   { key: "minutesPlayed", label: "MIN", type: "text", width: 55 },
-  { key: "fieldGoals", label: "FG", type: "text", width: 60, placeholder: "5/12" },
+  {
+    key: "fieldGoals",
+    label: "FG",
+    type: "text",
+    width: 60,
+    placeholder: "5/12",
+  },
   { key: "fieldGoalPercentage", label: "FG%", type: "text", width: 55 },
-  { key: "twoPointFieldGoals", label: "2PT", type: "text", width: 60, placeholder: "3/8" },
+  {
+    key: "twoPointFieldGoals",
+    label: "2PT",
+    type: "text",
+    width: 60,
+    placeholder: "3/8",
+  },
   { key: "twoPointPercentage", label: "2P%", type: "text", width: 55 },
-  { key: "threePointFieldGoals", label: "3PT", type: "text", width: 60, placeholder: "2/4" },
+  {
+    key: "threePointFieldGoals",
+    label: "3PT",
+    type: "text",
+    width: 60,
+    placeholder: "2/4",
+  },
   { key: "threePointPercentage", label: "3P%", type: "text", width: 55 },
-  { key: "freeThrows", label: "FT", type: "text", width: 60, placeholder: "4/5" },
+  {
+    key: "freeThrows",
+    label: "FT",
+    type: "text",
+    width: 60,
+    placeholder: "4/5",
+  },
   { key: "freeThrowPercentage", label: "FT%", type: "text", width: 55 },
   { key: "offensiveRebounds", label: "OREB", type: "number", width: 55 },
   { key: "defensiveRebounds", label: "DREB", type: "number", width: 55 },
@@ -127,8 +151,7 @@ export default function AdminUploadCsv() {
     });
   };
 
-  const addRow = () =>
-    setManualRows((prev) => [...prev, emptyRow()]);
+  const addRow = () => setManualRows((prev) => [...prev, emptyRow()]);
 
   const removeRow = (idx: number) =>
     setManualRows((prev) => prev.filter((_, i) => i !== idx));
@@ -162,7 +185,10 @@ export default function AdminUploadCsv() {
       const csvText = rowsToCsv(manualRows);
       const nonEmptyLines = csvText.split("\n").length - 1; // subtract header
       if (nonEmptyLines < 1) {
-        setResult({ ok: false, error: "Хамгийн багадаа 1 тоглогчийн мэдээлэл оруулна уу." });
+        setResult({
+          ok: false,
+          error: "Хамгийн багадаа 1 тоглогчийн мэдээлэл оруулна уу.",
+        });
         return;
       }
       const blob = new Blob([csvText], { type: "text/csv" });
@@ -225,8 +251,7 @@ export default function AdminUploadCsv() {
         <i className="fas fa-file-csv"></i> Статистик оруулах (Cloud Function)
       </h3>
       <p style={{ color: "var(--text-muted)", marginBottom: 20 }}>
-        Тоглолт сонгоно → Баг сонгоно → CSV файл эсвэл гараар оруулна →
-        Upload.
+        Тоглолт сонгоно → Баг сонгоно → CSV файл эсвэл гараар оруулна → Upload.
       </p>
 
       <form onSubmit={handleSubmit}>

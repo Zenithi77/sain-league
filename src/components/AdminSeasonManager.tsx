@@ -50,7 +50,7 @@ export default function AdminSeasonManager() {
       const q = query(collection(db, "seasons"), orderBy("year", "desc"));
       const snap = await getDocs(q);
       const list = snap.docs.map(
-        (d) => ({ id: d.id, ...d.data() }) as SeasonDoc
+        (d) => ({ id: d.id, ...d.data() }) as SeasonDoc,
       );
       setSeasons(list);
     } catch (err) {
@@ -182,15 +182,13 @@ export default function AdminSeasonManager() {
                   </div>
                   <div className="season-card-meta">
                     <span>
-                      <i className="fas fa-calendar"></i> {s.startDate} – {s.endDate}
+                      <i className="fas fa-calendar"></i> {s.startDate} –{" "}
+                      {s.endDate}
                     </span>
                     <span>
                       <i className="fas fa-hashtag"></i> {s.year}
                     </span>
-                    <span
-                      className="season-card-id"
-                      title={s.id}
-                    >
+                    <span className="season-card-id" title={s.id}>
                       ID: {s.id.slice(0, 8)}...
                     </span>
                   </div>

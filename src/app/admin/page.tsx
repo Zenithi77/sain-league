@@ -78,7 +78,9 @@ function AdminContent() {
     const name = ((formData.get("name") as string) || "").trim();
     const shortName = ((formData.get("shortName") as string) || "").trim();
     const city = ((formData.get("city") as string) || "").trim();
-    const conference = ((formData.get("conference") as string) || "").trim() as 'east' | 'west';
+    const conference = ((formData.get("conference") as string) || "").trim() as
+      | "east"
+      | "west";
     const school = ((formData.get("school") as string) || "").trim();
     const coachName = ((formData.get("coachName") as string) || "").trim();
     const primaryColor = (formData.get("primaryColor") as string) || "#FF6B35";
@@ -93,7 +95,7 @@ function AdminContent() {
       alert("Товчилсон нэр заавал оруулах шаардлагатай");
       return;
     }
-    if (!conference || (conference !== 'east' && conference !== 'west')) {
+    if (!conference || (conference !== "east" && conference !== "west")) {
       alert("Бүс заавал сонгох шаардлагатай (East/West)");
       return;
     }

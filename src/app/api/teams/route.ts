@@ -93,7 +93,7 @@ export async function POST(request: Request) {
       shortNameLower,
       logo: body.logo || "/assets/logos/default.png",
       city: sanitizeString(body.city) || "",
-      conference: body.conference as 'east' | 'west',
+      conference: body.conference as "east" | "west",
       school: sanitizeString(body.school) || "",
       coach: {
         id: `coach-${Date.now()}`,
