@@ -1,14 +1,27 @@
 "use client";
 
+import { useMemo } from "react";
 import StandingsTable from "@/components/StandingsTable";
-import { useActiveSeason, useStandings } from "@/lib/firestore-hooks";
+import {
+  useActiveSeason,
+  useStandings,
+  useTeams,
+  FirestoreTeam,
+} from "@/lib/firestore-hooks";
 
 export default function StandingsPage() {
   const { season, loading: seasonLoading } = useActiveSeason();
   const { standings, loading: standingsLoading } = useStandings(
     season?.id ?? null,
   );
-  const loading = seasonLoading || standingsLoading;
+  const { teams, loading: teamsLoading } = useTeams();
+  const loading = seasonLoading || standingsLoading || teamsLoading;
+
+  const teamMap = useMemo(() => {
+    const map = new Map<string, FirestoreTeam>();
+    teams.forEach((t) => map.set(t.id, t));
+    return map;
+  }, [teams]);
 
   return (
     <main className="main-content">
@@ -23,7 +36,7 @@ export default function StandingsPage() {
       ) : standings.length === 0 ? (
         <p style={{ textAlign: "center", padding: 40 }}>Мэдээлэл олдсонгүй</p>
       ) : (
-        <StandingsTable standings={standings} />
+        <StandingsTable standings={standings} teamMap={teamMap} />
       )}
     </main>
   );

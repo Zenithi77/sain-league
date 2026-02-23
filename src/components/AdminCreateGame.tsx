@@ -128,7 +128,7 @@ export default function AdminCreateGame() {
         <div className="form-row">
           <div className="form-group">
             <label>
-              <i className="fas fa-home"></i> Гэрийн баг
+              <i className="fas fa-home"></i> Эзэн баг
             </label>
             <select
               value={homeTeamId}

@@ -1,6 +1,6 @@
 "use client";
 
-import { CachedStandingEntry } from "@/lib/firestore-hooks";
+import { CachedStandingEntry, FirestoreTeam } from "@/lib/firestore-hooks";
 import { TeamWithAverages } from "@/types";
 
 /* Accept EITHER the new cached Firestore rows or the legacy TeamWithAverages. */
@@ -8,6 +8,7 @@ type StandingsRow = CachedStandingEntry | TeamWithAverages;
 
 interface StandingsTableProps {
   standings: StandingsRow[];
+  teamMap?: Map<string, FirestoreTeam>;
   limit?: number;
 }
 
@@ -17,6 +18,7 @@ function isCachedEntry(row: StandingsRow): row is CachedStandingEntry {
 
 export default function StandingsTable({
   standings,
+  teamMap,
   limit,
 }: StandingsTableProps) {
   const displayData = limit ? standings.slice(0, limit) : standings;
@@ -56,7 +58,21 @@ export default function StandingsTable({
                   <td className="rank">{row.rank}</td>
                   <td>
                     <div className="team-name">
-                      <span>{row.teamId}</span>
+                      {teamMap?.get(row.teamId)?.colors && (
+                        <div
+                          className="team-logo-small"
+                          style={{
+                            backgroundColor:
+                              teamMap.get(row.teamId)?.colors?.primary ||
+                              "#333",
+                          }}
+                        >
+                          {teamMap.get(row.teamId)?.shortName?.charAt(0) || "T"}
+                        </div>
+                      )}
+                      <span>
+                        {teamMap?.get(row.teamId)?.name || row.teamId}
+                      </span>
                     </div>
                   </td>
                   <td>{row.gamesPlayed}</td>
