@@ -1,19 +1,14 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
-import { TeamWithAverages } from "@/types";
+import type { Team, TeamWithAverages } from "@/types";
 import AdminGuard from "@/components/AdminGuard";
-import AdminUploadCsv from "@/components/AdminUploadCsv";
+import AdminSeasonManager from "@/components/AdminSeasonManager";
 import { useAuth } from "@/contexts/AuthContext";
+import { getTeams, createTeam } from "@/lib/firestore";
 
 function AdminContent() {
   const [teams, setTeams] = useState<TeamWithAverages[]>([]);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadStatus, setUploadStatus] = useState<{
-    message: string;
-    type: "success" | "error";
-  } | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const { userData, getIdToken } = useAuth();
 
   // Helper function to get auth headers
@@ -30,81 +25,11 @@ function AdminContent() {
 
   const fetchTeams = async () => {
     try {
-      const res = await fetch("/api/teams");
-      const data = await res.json();
-      setTeams(data);
+      const data = await getTeams();
+      setTeams(data as TeamWithAverages[]);
     } catch (error) {
       console.error("Error fetching teams:", error);
     }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
-
-  const handleUploadSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!selectedFile) {
-      setUploadStatus({ message: "Файл сонгоно уу", type: "error" });
-      return;
-    }
-
-    setIsUploading(true);
-    setUploadStatus(null);
-
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-
-    // Get optional game result
-    const homeTeamSelect = document.getElementById(
-      "homeTeamSelect",
-    ) as HTMLSelectElement;
-    const awayTeamSelect = document.getElementById(
-      "awayTeamSelect",
-    ) as HTMLSelectElement;
-    const homeScore = document.getElementById("homeScore") as HTMLInputElement;
-    const awayScore = document.getElementById("awayScore") as HTMLInputElement;
-
-    if (
-      homeTeamSelect.value &&
-      awayTeamSelect.value &&
-      homeScore.value &&
-      awayScore.value
-    ) {
-      formData.append("homeTeamId", homeTeamSelect.value);
-      formData.append("awayTeamId", awayTeamSelect.value);
-      formData.append("homeScore", homeScore.value);
-      formData.append("awayScore", awayScore.value);
-    }
-
-    try {
-      const authHeaders = await getAuthHeaders();
-      const res = await fetch("/api/upload/game-stats", {
-        method: "POST",
-        headers: authHeaders,
-        body: formData,
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        setUploadStatus({ message: data.message, type: "success" });
-        setSelectedFile(null);
-        (document.getElementById("excelFile") as HTMLInputElement).value = "";
-      } else {
-        setUploadStatus({
-          message: data.error || "Алдаа гарлаа",
-          type: "error",
-        });
-      }
-    } catch (error) {
-      setUploadStatus({
-        message: "Сервертэй холбогдоход алдаа гарлаа",
-        type: "error",
-      });
-    }
-    setIsUploading(false);
   };
 
   const handleAddPlayer = async (e: FormEvent) => {
@@ -150,104 +75,67 @@ function AdminContent() {
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
 
-    const teamData = {
-      name: formData.get("name"),
-      shortName: formData.get("shortName"),
-      city: formData.get("city"),
-      coachName: formData.get("coachName"),
-      primaryColor: formData.get("primaryColor"),
-      secondaryColor: formData.get("secondaryColor"),
-    };
+    const name = ((formData.get("name") as string) || "").trim();
+    const shortName = ((formData.get("shortName") as string) || "").trim();
+    const city = ((formData.get("city") as string) || "").trim();
+    const conference = ((formData.get("conference") as string) || "").trim() as 'east' | 'west';
+    const school = ((formData.get("school") as string) || "").trim();
+    const coachName = ((formData.get("coachName") as string) || "").trim();
+    const primaryColor = (formData.get("primaryColor") as string) || "#FF6B35";
+    const secondaryColor =
+      (formData.get("secondaryColor") as string) || "#1A1A2E";
 
-    try {
-      const authHeaders = await getAuthHeaders();
-      const res = await fetch("/api/teams", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeaders,
-        },
-        body: JSON.stringify(teamData),
-      });
-
-      if (res.ok) {
-        alert("Баг амжилттай нэмэгдлээ!");
-        form.reset();
-        fetchTeams();
-      } else {
-        const data = await res.json();
-        alert(data.error || "Алдаа гарлаа");
-      }
-    } catch (error) {
-      alert("Сервертэй холбогдоход алдаа гарлаа");
-    }
-  };
-
-  const handleAddGame = async (e: FormEvent) => {
-    e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-
-    const gameData = {
-      date: formData.get("date"),
-      homeTeamId: formData.get("homeTeamId"),
-      awayTeamId: formData.get("awayTeamId"),
-    };
-
-    try {
-      const authHeaders = await getAuthHeaders();
-      const res = await fetch("/api/games", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeaders,
-        },
-        body: JSON.stringify(gameData),
-      });
-
-      if (res.ok) {
-        alert("Тоглолт амжилттай нэмэгдлээ!");
-        form.reset();
-      } else {
-        const data = await res.json();
-        alert(data.error || "Алдаа гарлаа");
-      }
-    } catch (error) {
-      alert("Сервертэй холбогдоход алдаа гарлаа");
-    }
-  };
-
-  const downloadTemplate = () => {
-    window.open("/api/download/template", "_blank");
-  };
-
-  const [isMigrating, setIsMigrating] = useState(false);
-  const [migrationResult, setMigrationResult] = useState<any>(null);
-
-  const handleMigration = async () => {
-    if (
-      !confirm(
-        "Бүх өгөгдлийг Firebase руу шилжүүлэх үү? Энэ үйлдлийг буцаах боломжгүй.",
-      )
-    ) {
+    if (!name || name.length < 2) {
+      alert("Багийн нэр заавал оруулах шаардлагатай (2+ тэмдэгт)");
       return;
     }
-    setIsMigrating(true);
-    try {
-      const authHeaders = await getAuthHeaders();
-      const res = await fetch("/api/migrate", {
-        method: "POST",
-        headers: authHeaders,
-      });
-      const data = await res.json();
-      setMigrationResult(data);
-      if (data.success) {
-        alert("Амжилттай шилжүүллээ!");
-      }
-    } catch (error) {
-      alert("Шилжүүлэхэд алдаа гарлаа");
+    if (!shortName || shortName.length < 2) {
+      alert("Товчилсон нэр заавал оруулах шаардлагатай");
+      return;
     }
-    setIsMigrating(false);
+    if (!conference || (conference !== 'east' && conference !== 'west')) {
+      alert("Бүс заавал сонгох шаардлагатай (East/West)");
+      return;
+    }
+    if (!school || school.length < 2) {
+      alert("Сургуулийн нэр заавал оруулах шаардлагатай (2+ тэмдэгт)");
+      return;
+    }
+
+    try {
+      const teamData: Omit<Team, "id"> = {
+        name,
+        shortName,
+        logo: "/assets/logos/default.png",
+        city,
+        conference,
+        school,
+        coach: {
+          id: `coach-${Date.now()}`,
+          name: coachName,
+          image: "/assets/coaches/default.png",
+        },
+        colors: {
+          primary: primaryColor,
+          secondary: secondaryColor,
+        },
+        stats: {
+          wins: 0,
+          losses: 0,
+          pointsFor: 0,
+          pointsAgainst: 0,
+          gamesPlayed: 0,
+        },
+      };
+
+      await createTeam(teamData);
+      alert("Баг амжилттай нэмэгдлээ!");
+      form.reset();
+      fetchTeams();
+    } catch (error) {
+      console.error("Error creating team:", error);
+      alert("Баг үүсгэхэд алдаа гарлаа");
+    }
   };
 
   return (
@@ -256,7 +144,7 @@ function AdminContent() {
         <h1>
           <i className="fas fa-cog"></i> Админ Панел
         </h1>
-        <p>Мэдээлэл удирдах, Excel файл оруулах</p>
+        <p>Улирал удирдах, баг болон тоглогч нэмэх</p>
         {userData && (
           <p style={{ color: "var(--primary-color)", marginTop: "10px" }}>
             <i className="fas fa-user-shield"></i> {userData.email} (
@@ -265,226 +153,8 @@ function AdminContent() {
         )}
       </div>
 
-      {/* Firebase Migration Section */}
-      <section
-        className="admin-section"
-        style={{
-          background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)",
-        }}
-      >
-        <h3>
-          <i className="fas fa-database"></i> Firebase руу өгөгдөл шилжүүлэх
-        </h3>
-        <p style={{ color: "var(--text-muted)", marginBottom: "20px" }}>
-          Одоогийн database.json файлаас Firebase Firestore руу бүх өгөгдлийг
-          шилжүүлнэ. Энэ үйлдлийг зөвхөн нэг удаа хийнэ.
-        </p>
-        <button
-          onClick={handleMigration}
-          className="btn btn-primary"
-          disabled={isMigrating}
-          style={{ background: "#4CAF50" }}
-        >
-          <i className="fas fa-cloud-upload-alt"></i>
-          {isMigrating ? "Шилжүүлж байна..." : "Firebase руу шилжүүлэх"}
-        </button>
-        {migrationResult && (
-          <div
-            style={{
-              marginTop: "15px",
-              padding: "15px",
-              background: "var(--bg-card)",
-              borderRadius: "10px",
-            }}
-          >
-            <p>
-              <strong>Үр дүн:</strong>
-            </p>
-            <p>Багууд: {migrationResult.results?.teams || 0}</p>
-            <p>Тоглогчид: {migrationResult.results?.players || 0}</p>
-            <p>Тоглолтууд: {migrationResult.results?.games || 0}</p>
-            <p>Улирал: {migrationResult.results?.season ? "Тийм" : "Үгүй"}</p>
-          </div>
-        )}
-      </section>
-
-      {/* CSV Upload via Cloud Function (new) */}
-      <AdminUploadCsv />
-
-      {/* Upload Status Alert */}
-      {uploadStatus && (
-        <div className={`alert alert-${uploadStatus.type}`}>
-          <i
-            className={`fas fa-${uploadStatus.type === "success" ? "check-circle" : "exclamation-circle"}`}
-          ></i>
-          {uploadStatus.message}
-        </div>
-      )}
-
-      {/* Upload Game Stats Section */}
-      <section className="admin-section">
-        <h3>
-          <i className="fas fa-file-excel"></i> Тоглолтын статистик оруулах
-          (Excel)
-        </h3>
-        <p style={{ color: "var(--text-muted)", marginBottom: "20px" }}>
-          Тоглолт дууссаны дараа тоглогчдын статистик мэдээллийг Excel файлаар
-          оруулна. Системд мэдээлэл шинэчлэгдэж, дундаж тооцоолол автоматаар
-          хийгдэнэ.
-        </p>
-
-        <form onSubmit={handleUploadSubmit}>
-          {/* File Upload Area */}
-          <div
-            className="file-upload"
-            onClick={() => document.getElementById("excelFile")?.click()}
-          >
-            <i className="fas fa-cloud-upload-alt"></i>
-            <p>Excel файлаа энд чирж тавина уу</p>
-            <p>эсвэл дарж сонгоно уу</p>
-            <input
-              type="file"
-              id="excelFile"
-              accept=".xlsx,.xls"
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-            />
-          </div>
-          {selectedFile && (
-            <p style={{ marginTop: "10px", color: "var(--primary-color)" }}>
-              <i className="fas fa-file-excel"></i> {selectedFile.name}
-            </p>
-          )}
-
-          {/* Optional: Game Result */}
-          <div
-            style={{
-              marginTop: "25px",
-              paddingTop: "20px",
-              borderTop: "1px solid var(--border-color)",
-            }}
-          >
-            <h4 style={{ marginBottom: "15px" }}>
-              Тоглолтын үр дүн (заавал биш)
-            </h4>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Гэрийн баг</label>
-                <select id="homeTeamSelect" className="team-select">
-                  <option value="">Баг сонгох</option>
-                  {teams.map((team) => (
-                    <option key={team.id} value={team.id}>
-                      {team.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Гэрийн оноо</label>
-                <input type="number" id="homeScore" placeholder="0" />
-              </div>
-              <div className="form-group">
-                <label>Зочин баг</label>
-                <select id="awayTeamSelect" className="team-select">
-                  <option value="">Баг сонгох</option>
-                  {teams.map((team) => (
-                    <option key={team.id} value={team.id}>
-                      {team.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Зочин оноо</label>
-                <input type="number" id="awayScore" placeholder="0" />
-              </div>
-            </div>
-          </div>
-
-          <div
-            style={{
-              marginTop: "20px",
-              display: "flex",
-              gap: "15px",
-              flexWrap: "wrap",
-            }}
-          >
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isUploading}
-            >
-              <i className="fas fa-upload"></i>{" "}
-              {isUploading ? "Уншиж байна..." : "Upload хийх"}
-            </button>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={downloadTemplate}
-            >
-              <i className="fas fa-download"></i> Загвар татах
-            </button>
-          </div>
-        </form>
-      </section>
-
-      {/* Excel Format Guide */}
-      <section className="admin-section">
-        <h3>
-          <i className="fas fa-info-circle"></i> Excel файлын формат
-        </h3>
-        <p style={{ color: "var(--text-muted)", marginBottom: "15px" }}>
-          Excel файл дараах баганатай байх ёстой:
-        </p>
-        <div style={{ overflowX: "auto" }}>
-          <table className="stats-table">
-            <thead>
-              <tr>
-                <th>PlayerName</th>
-                <th>Team</th>
-                <th>Number</th>
-                <th>Position</th>
-                <th>Minutes</th>
-                <th>Points</th>
-                <th>Rebounds</th>
-                <th>Assists</th>
-                <th>Steals</th>
-                <th>Blocks</th>
-                <th>Turnovers</th>
-                <th>Fouls</th>
-                <th>FGM</th>
-                <th>FGA</th>
-                <th>3PM</th>
-                <th>3PA</th>
-                <th>FTM</th>
-                <th>FTA</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Сарангоо</td>
-                <td>UBW</td>
-                <td>23</td>
-                <td>PG</td>
-                <td>32</td>
-                <td>18</td>
-                <td>5</td>
-                <td>8</td>
-                <td>2</td>
-                <td>1</td>
-                <td>3</td>
-                <td>2</td>
-                <td>7</td>
-                <td>14</td>
-                <td>2</td>
-                <td>5</td>
-                <td>2</td>
-                <td>3</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      {/* Season Manager */}
+      <AdminSeasonManager />
 
       {/* Add New Player Section */}
       <section className="admin-section">
@@ -591,6 +261,25 @@ function AdminContent() {
               />
             </div>
             <div className="form-group">
+              <label>Бүс</label>
+              <select name="conference" required>
+                <option value="">Бүс сонгох</option>
+                <option value="east">East</option>
+                <option value="west">West</option>
+              </select>
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Сургууль</label>
+              <input
+                type="text"
+                name="school"
+                required
+                placeholder="Сургуулийн нэр"
+              />
+            </div>
+            <div className="form-group">
               <label>Дасгалжуулагч</label>
               <input type="text" name="coachName" placeholder="Нэр" />
             </div>
@@ -616,53 +305,6 @@ function AdminContent() {
                 style={{ width: "100%" }}
               >
                 <i className="fas fa-plus"></i> Баг нэмэх
-              </button>
-            </div>
-          </div>
-        </form>
-      </section>
-
-      {/* Add New Game Section */}
-      <section className="admin-section">
-        <h3>
-          <i className="fas fa-calendar-plus"></i> Шинэ тоглолт нэмэх
-        </h3>
-        <form onSubmit={handleAddGame}>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Огноо</label>
-              <input type="date" name="date" required />
-            </div>
-            <div className="form-group">
-              <label>Гэрийн баг</label>
-              <select name="homeTeamId" className="team-select" required>
-                <option value="">Баг сонгох</option>
-                {teams.map((team) => (
-                  <option key={team.id} value={team.id}>
-                    {team.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Зочин баг</label>
-              <select name="awayTeamId" className="team-select" required>
-                <option value="">Баг сонгох</option>
-                {teams.map((team) => (
-                  <option key={team.id} value={team.id}>
-                    {team.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>&nbsp;</label>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                style={{ width: "100%" }}
-              >
-                <i className="fas fa-plus"></i> Тоглолт нэмэх
               </button>
             </div>
           </div>

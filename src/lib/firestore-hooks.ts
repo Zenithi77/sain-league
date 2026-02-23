@@ -163,10 +163,30 @@ export function useBoxscores(seasonId: string | null, gameId: string | null) {
 
     getDocs(colRef)
       .then((snap) => {
-        const rows = snap.docs.map((d) => ({
-          id: d.id,
-          ...d.data(),
-        })) as BoxscoreEntry[];
+        const rows = snap.docs.map((d) => {
+          const raw = d.data();
+          return {
+            id: d.id,
+            teamId: raw.teamId ?? "",
+            playerName: raw.playerName ?? "",
+            jerseyNumber: raw.jerseyNumber ?? 0,
+            minutes: raw.minutesPlayed ?? raw.minutes ?? 0,
+            points: raw.points ?? 0,
+            rebounds: raw.totalRebounds ?? raw.rebounds ?? 0,
+            assists: raw.assists ?? 0,
+            steals: raw.steals ?? 0,
+            blocks: raw.blocks ?? 0,
+            turnovers: raw.turnovers ?? 0,
+            fouls: raw.personalFoulsCommitted ?? raw.fouls ?? 0,
+            fgMade: raw.fieldGoalsMade ?? raw.fgMade ?? 0,
+            fgAttempted: raw.fieldGoalsAttempted ?? raw.fgAttempted ?? 0,
+            threeMade: raw.threePointFieldGoalsMade ?? raw.threeMade ?? 0,
+            threeAttempted:
+              raw.threePointFieldGoalsAttempted ?? raw.threeAttempted ?? 0,
+            ftMade: raw.freeThrowsMade ?? raw.ftMade ?? 0,
+            ftAttempted: raw.freeThrowsAttempted ?? raw.ftAttempted ?? 0,
+          } as BoxscoreEntry;
+        });
         setBoxscores(rows);
         setLoading(false);
       })
@@ -237,26 +257,22 @@ export interface FirestoreTeam {
   name: string;
   shortName: string;
   city: string;
+  conference: "east" | "west";
+  school: string;
   colors: { primary: string; secondary: string };
   [key: string]: unknown;
 }
 
 /**
- * Fetch all teams for a season.
+ * Fetch all teams from the top-level `teams` collection.
  */
-export function useTeams(seasonId: string | null) {
+export function useTeams(_seasonId?: string | null) {
   const [teams, setTeams] = useState<FirestoreTeam[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!seasonId) {
-      setTeams([]);
-      setLoading(false);
-      return;
-    }
-
     setLoading(true);
-    const colRef = collection(db, `seasons/${seasonId}/teams`);
+    const colRef = collection(db, "teams");
 
     getDocs(colRef)
       .then((snap) => {
@@ -269,7 +285,7 @@ export function useTeams(seasonId: string | null) {
         console.error("[useTeams]", err);
         setLoading(false);
       });
-  }, [seasonId]);
+  }, []);
 
   return { teams, loading };
 }

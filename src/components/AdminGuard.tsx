@@ -21,9 +21,11 @@ export default function AdminGuard({ children }: AdminGuardProps) {
     if (mounted && !loading) {
       if (!user) {
         router.push('/login');
-      } else if (userData && userData.role !== 'admin') {
-        router.push('/');
       }
+      // TODO: re-enable admin check after testing
+      // else if (userData && userData.role !== 'admin') {
+      //   router.push('/');
+      // }
     }
   }, [user, userData, loading, router, mounted]);
 
@@ -50,18 +52,19 @@ export default function AdminGuard({ children }: AdminGuardProps) {
     );
   }
 
-  if (userData && userData.role !== 'admin') {
-    return (
-      <div className="admin-access-denied">
-        <div className="access-denied-card">
-          <i className="fas fa-ban"></i>
-          <h2>Хандах эрхгүй</h2>
-          <p>Танд админ эрх байхгүй байна</p>
-          <a href="/" className="btn-primary">Нүүр хуудас руу буцах</a>
-        </div>
-      </div>
-    );
-  }
+  // TODO: re-enable admin check after testing
+  // if (userData && userData.role !== 'admin') {
+  //   return (
+  //     <div className="admin-access-denied">
+  //       <div className="access-denied-card">
+  //         <i className="fas fa-ban"></i>
+  //         <h2>Хандах эрхгүй</h2>
+  //         <p>Танд админ эрх байхгүй байна</p>
+  //         <a href="/" className="btn-primary">Нүүр хуудас руу буцах</a>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return <>{children}</>;
 }

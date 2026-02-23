@@ -160,6 +160,20 @@ export function getPlayerById(id: string): (PlayerWithAverages & { team?: Team }
   return { ...playerWithAverages, team };
 }
 
+// Get game by ID with team data and player details
+export function getGameById(id: string): (GameWithTeams & { homePlayers: PlayerWithAverages[]; awayPlayers: PlayerWithAverages[] }) | null {
+  const db = readDatabase();
+  const game = db.games.find((g) => g.id === id);
+  if (!game) return null;
+
+  const homeTeam = db.teams.find((t) => t.id === game.homeTeamId) || null;
+  const awayTeam = db.teams.find((t) => t.id === game.awayTeamId) || null;
+  const homePlayers = db.players.filter((p) => p.teamId === game.homeTeamId).map((p) => calculatePlayerAverages(p));
+  const awayPlayers = db.players.filter((p) => p.teamId === game.awayTeamId).map((p) => calculatePlayerAverages(p));
+
+  return { ...game, homeTeam, awayTeam, homePlayers, awayPlayers };
+}
+
 // Get all games with team data
 export function getGamesWithTeams(): GameWithTeams[] {
   const db = readDatabase();

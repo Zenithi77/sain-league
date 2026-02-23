@@ -839,6 +839,16 @@
             "awayScore": 0,
             "status": "scheduled",
             "playerStats": []
+        },
+        {
+            "id": "game-c051ad16",
+            "date": "2026-02-24",
+            "homeTeamId": "team-003",
+            "awayTeamId": "team-002",
+            "homeScore": 0,
+            "awayScore": 0,
+            "status": "scheduled",
+            "playerStats": []
         }
     ]
 }

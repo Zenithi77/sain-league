@@ -29,8 +29,16 @@ export default async function TeamDetailPage({ params }: { params: { id: string 
           <h1>{team.name}</h1>
           <div className="profile-meta">
             <div className="profile-meta-item">
+              <span className="label">Сургууль</span>
+              <span className="value">{team.school}</span>
+            </div>
+            <div className="profile-meta-item">
               <span className="label">Хот</span>
               <span className="value">{team.city}</span>
+            </div>
+            <div className="profile-meta-item">
+              <span className="label">Бүс</span>
+              <span className="value">{team.conference === 'east' ? 'East' : team.conference === 'west' ? 'West' : 'N/A'}</span>
             </div>
             <div className="profile-meta-item">
               <span className="label">Дасгалжуулагч</span>

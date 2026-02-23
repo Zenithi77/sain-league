@@ -19,12 +19,16 @@ export interface TeamStats {
   gamesPlayed: number;
 }
 
+export type Conference = 'east' | 'west';
+
 export interface Team {
   id: string;
   name: string;
   shortName: string;
   logo: string;
   city: string;
+  conference: Conference;
+  school: string;
   coach: Coach;
   colors: TeamColors;
   stats: TeamStats;

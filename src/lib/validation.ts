@@ -84,6 +84,14 @@ export function validateTeamInput(body: unknown): ValidationResult {
   if (!data.city || typeof data.city !== 'string') {
     errors.push('Хот заавал оруулах шаардлагатай');
   }
+
+  if (!data.conference || (data.conference !== 'east' && data.conference !== 'west')) {
+    errors.push('Бүс (east/west) заавал оруулах шаардлагатай');
+  }
+
+  if (!data.school || typeof data.school !== 'string' || (data.school as string).trim().length < 2) {
+    errors.push('Сургуулийн нэр заавал оруулах шаардлагатай (2+ тэмдэгт)');
+  }
   
   return {
     valid: errors.length === 0,

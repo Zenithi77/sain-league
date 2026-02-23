@@ -75,8 +75,23 @@ export async function requireAdmin(req: Request): Promise<AuthenticatedUser> {
     throw new Error(`Unauthorized – invalid token: ${message}`);
   }
 
-  // Check the custom claim
-  if (decoded.admin !== true) {
+  // Check admin via custom claim first
+  let isAdmin = decoded.admin === true;
+
+  // Fallback: check Firestore users collection for role === 'admin'
+  if (!isAdmin && decoded.uid) {
+    try {
+      const userDoc = await db.collection("users").doc(decoded.uid).get();
+      if (userDoc.exists) {
+        const data = userDoc.data();
+        isAdmin = data?.role === "admin";
+      }
+    } catch (fsErr) {
+      console.error("Firestore admin check failed:", fsErr);
+    }
+  }
+
+  if (!isAdmin) {
     throw new Error("Forbidden – user does not have admin privileges");
   }
 

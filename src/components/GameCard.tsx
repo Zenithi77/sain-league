@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { GameWithTeams } from "@/types";
 
 interface GameCardProps {
@@ -31,7 +32,7 @@ function formatDate(dateString: string) {
 
 export default function GameCard({ game }: GameCardProps) {
   return (
-    <div className="game-card">
+    <Link href={`/game/${game.id}`} className="game-card">
       <div className="game-date">
         <i className="fas fa-calendar"></i>
         {formatDate(game.date)}
@@ -85,6 +86,6 @@ export default function GameCard({ game }: GameCardProps) {
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
