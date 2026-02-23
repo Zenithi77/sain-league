@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
-import type { Team, TeamWithAverages } from "@/types";
+import type { Team, TeamWithAverages, NewsArticleWithTeams } from "@/types";
 import AdminGuard from "@/components/AdminGuard";
 import AdminSeasonManager from "@/components/AdminSeasonManager";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,6 +9,7 @@ import { getTeams, createTeam } from "@/lib/firestore";
 
 function AdminContent() {
   const [teams, setTeams] = useState<TeamWithAverages[]>([]);
+  const [newsArticles, setNewsArticles] = useState<NewsArticleWithTeams[]>([]);
   const { userData, getIdToken } = useAuth();
 
   // Helper function to get auth headers
@@ -21,6 +22,7 @@ function AdminContent() {
 
   useEffect(() => {
     fetchTeams();
+    fetchNews();
   }, []);
 
   const fetchTeams = async () => {
@@ -29,6 +31,68 @@ function AdminContent() {
       setTeams(data as TeamWithAverages[]);
     } catch (error) {
       console.error("Error fetching teams:", error);
+    }
+  };
+
+  const fetchNews = async () => {
+    try {
+      const res = await fetch("/api/news");
+      if (res.ok) {
+        const data = await res.json();
+        setNewsArticles(data);
+      }
+    } catch (error) {
+      console.error("Error fetching news:", error);
+    }
+  };
+
+  const handleAddNews = async (e: FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const newsData = {
+      title: formData.get("newsTitle"),
+      summary: formData.get("newsSummary"),
+      content: formData.get("newsContent"),
+      image: formData.get("newsImage") || "",
+      category: formData.get("newsCategory") || "announcement",
+      featured: formData.get("newsFeatured") === "on",
+      teamIds: Array.from(form.querySelectorAll<HTMLInputElement>('input[name="newsTeamIds"]:checked')).map(cb => cb.value),
+      author: formData.get("newsAuthor") || "SGL Admin",
+    };
+
+    try {
+      const res = await fetch("/api/news", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newsData),
+      });
+
+      if (res.ok) {
+        alert("Мэдээ амжилттай нэмэгдлээ!");
+        form.reset();
+        fetchNews();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Алдаа гарлаа");
+      }
+    } catch (error) {
+      alert("Сервертэй холбогдоход алдаа гарлаа");
+    }
+  };
+
+  const handleDeleteNews = async (id: string) => {
+    if (!confirm("Энэ мэдээг устгах уу?")) return;
+    try {
+      const res = await fetch(`/api/news/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        fetchNews();
+      } else {
+        alert("Устгахад алдаа гарлаа");
+      }
+    } catch (error) {
+      alert("Сервертэй холбогдоход алдаа гарлаа");
     }
   };
 
@@ -312,6 +376,162 @@ function AdminContent() {
           </div>
         </form>
       </section>
+
+      {/* News Management Section */}
+      <section className="admin-section">
+        <h3>
+          <i className="fas fa-newspaper"></i> Мэдээ нэмэх
+        </h3>
+        <form onSubmit={handleAddNews}>
+          <div className="form-row">
+            <div className="form-group" style={{ flex: 2 }}>
+              <label>Гарчиг</label>
+              <input
+                type="text"
+                name="newsTitle"
+                required
+                placeholder="Тоглолтын тойм: 33 Sparks vs Storm Team"
+              />
+            </div>
+            <div className="form-group">
+              <label>Ангилал</label>
+              <select name="newsCategory" required>
+                <option value="highlight">Тоглолтын тойм</option>
+                <option value="recap">Тоглолтын дүн</option>
+                <option value="announcement">Мэдээлэл</option>
+                <option value="interview">Ярилцлага</option>
+                <option value="transfer">Шилжилт</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Зохиогч</label>
+              <input
+                type="text"
+                name="newsAuthor"
+                placeholder="SGL Admin"
+              />
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group" style={{ flex: 2 }}>
+              <label>Товч тайлбар</label>
+              <input
+                type="text"
+                name="newsSummary"
+                required
+                placeholder="Тоглолтын гол онцлог мэдээлэл..."
+              />
+            </div>
+            <div className="form-group">
+              <label>Зургийн URL</label>
+              <input
+                type="text"
+                name="newsImage"
+                placeholder="https://... эсвэл /images/..."
+              />
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group" style={{ flex: 1 }}>
+              <label>Дэлгэрэнгүй агуулга</label>
+              <textarea
+                name="newsContent"
+                required
+                rows={5}
+                placeholder="Мэдээний бүрэн агуулга энд бичнэ... Мөр тус бүр шинэ параграф болно."
+                style={{
+                  width: "100%",
+                  background: "var(--bg-dark)",
+                  border: "1px solid var(--border-color)",
+                  borderRadius: "8px",
+                  padding: "12px",
+                  color: "var(--text-light)",
+                  fontSize: "14px",
+                  fontFamily: "inherit",
+                  resize: "vertical",
+                }}
+              />
+            </div>
+          </div>
+          <div className="form-row" style={{ alignItems: "flex-start" }}>
+            <div className="form-group">
+              <label>Холбогдох багууд</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "4px" }}>
+                {teams.map((team) => (
+                  <label
+                    key={team.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "4px 10px",
+                      background: "var(--bg-dark)",
+                      borderRadius: "6px",
+                      fontSize: "13px",
+                      cursor: "pointer",
+                      border: "1px solid var(--border-color)",
+                    }}
+                  >
+                    <input type="checkbox" name="newsTeamIds" value={team.id} />
+                    {team.shortName}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="form-group">
+              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+                <input type="checkbox" name="newsFeatured" />
+                Онцлох мэдээ (Featured)
+              </label>
+            </div>
+            <div className="form-group">
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ width: "100%" }}
+              >
+                <i className="fas fa-plus"></i> Мэдээ нэмэх
+              </button>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      {/* Existing News List */}
+      {newsArticles.length > 0 && (
+        <section className="admin-section">
+          <h3>
+            <i className="fas fa-list"></i> Нэмсэн мэдээнүүд ({newsArticles.length})
+          </h3>
+          <div className="admin-news-list">
+            {newsArticles.map((article) => (
+              <div key={article.id} className="admin-news-item">
+                <div className="admin-news-info">
+                  <span className={`news-badge small ${article.category}`}>
+                    {article.category}
+                  </span>
+                  <strong>{article.title}</strong>
+                  <span style={{ color: "var(--text-muted)", fontSize: "12px" }}>
+                    {article.date}
+                  </span>
+                  {article.featured && (
+                    <span style={{ color: "var(--warning-color)", fontSize: "11px" }}>
+                      <i className="fas fa-star"></i> Featured
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={() => handleDeleteNews(article.id)}
+                  className="btn-delete-news"
+                  title="Устгах"
+                >
+                  <i className="fas fa-trash"></i>
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }
