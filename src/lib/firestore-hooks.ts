@@ -458,7 +458,8 @@ export function usePlayerAggregates(seasonId: string | null) {
               fieldGoalsMade: data.fieldGoalsMade ?? 0,
               fieldGoalsAttempted: data.fieldGoalsAttempted ?? 0,
               threePointFieldGoalsMade: data.threePointFieldGoalsMade ?? 0,
-              threePointFieldGoalsAttempted: data.threePointFieldGoalsAttempted ?? 0,
+              threePointFieldGoalsAttempted:
+                data.threePointFieldGoalsAttempted ?? 0,
               freeThrowsMade: data.freeThrowsMade ?? 0,
               freeThrowsAttempted: data.freeThrowsAttempted ?? 0,
               personalFoulsCommitted: data.personalFoulsCommitted ?? 0,

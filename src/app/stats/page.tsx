@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo } from "react";
 import {
   useActiveSeason,
   usePlayerAggregates,
@@ -9,9 +9,9 @@ import {
   PlayerAggregateDoc,
   TeamAggregateDoc,
   FirestoreTeam,
-} from '@/lib/firestore-hooks';
+} from "@/lib/firestore-hooks";
 
-type TabType = 'players' | 'teams';
+type TabType = "players" | "teams";
 
 const TOP_N = 5;
 
@@ -23,74 +23,75 @@ const playerCategories: {
   format: (v: number) => string;
 }[] = [
   {
-    key: 'ppg',
-    label: 'ОНОО',
+    key: "ppg",
+    label: "ОНОО",
     getValue: (p) => p.points / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: 'rpg',
-    label: 'САМБАР',
+    key: "rpg",
+    label: "САМБАР",
     getValue: (p) => p.totalRebounds / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: 'apg',
-    label: 'ДАМЖУУЛАЛТ',
+    key: "apg",
+    label: "ДАМЖУУЛАЛТ",
     getValue: (p) => p.assists / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: 'spg',
-    label: 'ХУЛГАЙ',
+    key: "spg",
+    label: "ХУЛГАЙ",
     getValue: (p) => p.steals / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: 'bpg',
-    label: 'ДАРАЛТ',
+    key: "bpg",
+    label: "ДАРАЛТ",
     getValue: (p) => p.blocks / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: 'topg',
-    label: 'АЛДАА',
+    key: "topg",
+    label: "АЛДАА",
     getValue: (p) => p.turnovers / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: 'threepm',
-    label: '3 ОНОО (3PM)',
+    key: "threepm",
+    label: "3 ОНОО (3PM)",
     getValue: (p) => p.threePointFieldGoalsMade / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: 'ftm',
-    label: 'ТОРГУУЛЬ (FTM)',
+    key: "ftm",
+    label: "ТОРГУУЛЬ (FTM)",
     getValue: (p) => p.freeThrowsMade / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: 'fgPct',
-    label: 'ШИДЭЛТ (FG%)',
-    getValue: (p) => p.fieldGoalsAttempted > 0 ? p.fieldGoalsMade / p.fieldGoalsAttempted : 0,
-    format: (v) => (v * 100).toFixed(1) + '%',
+    key: "fgPct",
+    label: "ШИДЭЛТ (FG%)",
+    getValue: (p) =>
+      p.fieldGoalsAttempted > 0 ? p.fieldGoalsMade / p.fieldGoalsAttempted : 0,
+    format: (v) => (v * 100).toFixed(1) + "%",
   },
   {
-    key: 'threePct',
-    label: '3 ОНОО (3PT%)',
+    key: "threePct",
+    label: "3 ОНОО (3PT%)",
     getValue: (p) =>
       p.threePointFieldGoalsAttempted > 0
         ? p.threePointFieldGoalsMade / p.threePointFieldGoalsAttempted
         : 0,
-    format: (v) => (v * 100).toFixed(1) + '%',
+    format: (v) => (v * 100).toFixed(1) + "%",
   },
   {
-    key: 'ftPct',
-    label: 'ТОРГУУЛЬ (FT%)',
+    key: "ftPct",
+    label: "ТОРГУУЛЬ (FT%)",
     getValue: (p) =>
       p.freeThrowsAttempted > 0 ? p.freeThrowsMade / p.freeThrowsAttempted : 0,
-    format: (v) => (v * 100).toFixed(1) + '%',
+    format: (v) => (v * 100).toFixed(1) + "%",
   },
 ];
 
@@ -102,42 +103,45 @@ const teamCategories: {
   format: (v: number) => string;
 }[] = [
   {
-    key: 'ppg',
-    label: 'ОНОО',
+    key: "ppg",
+    label: "ОНОО",
     getValue: (t) => t.points / (t.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: 'rpg',
-    label: 'САМБАР',
+    key: "rpg",
+    label: "САМБАР",
     getValue: (t) => t.totalRebounds / (t.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: 'apg',
-    label: 'ДАМЖУУЛАЛТ',
+    key: "apg",
+    label: "ДАМЖУУЛАЛТ",
     getValue: (t) => t.assists / (t.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: 'spg',
-    label: 'ХУЛГАЙ',
+    key: "spg",
+    label: "ХУЛГАЙ",
     getValue: (t) => t.steals / (t.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: 'bpg',
-    label: 'ДАРАЛТ',
+    key: "bpg",
+    label: "ДАРАЛТ",
     getValue: (t) => t.blocks / (t.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
 ];
 
 export default function StatsPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('players');
+  const [activeTab, setActiveTab] = useState<TabType>("players");
   const { season, loading: seasonLoading } = useActiveSeason();
-  const { aggregates: playerAggs, loading: playerLoading } = usePlayerAggregates(season?.id ?? null);
-  const { aggregates: teamAggs, loading: teamLoading } = useTeamAggregates(season?.id ?? null);
+  const { aggregates: playerAggs, loading: playerLoading } =
+    usePlayerAggregates(season?.id ?? null);
+  const { aggregates: teamAggs, loading: teamLoading } = useTeamAggregates(
+    season?.id ?? null,
+  );
   const { teams, loading: teamsLoading } = useTeams();
 
   const loading = seasonLoading || playerLoading || teamLoading || teamsLoading;
@@ -153,11 +157,19 @@ export default function StatsPage() {
     if (!playerAggs.length) return {};
     const result: Record<
       string,
-      { playerId: string; playerName: string; teamId: string; value: number; gamesPlayed: number }[]
+      {
+        playerId: string;
+        playerName: string;
+        teamId: string;
+        value: number;
+        gamesPlayed: number;
+      }[]
     > = {};
 
     for (const cat of playerCategories) {
-      const sorted = [...playerAggs].sort((a, b) => cat.getValue(b) - cat.getValue(a));
+      const sorted = [...playerAggs].sort(
+        (a, b) => cat.getValue(b) - cat.getValue(a),
+      );
       result[cat.key] = sorted.slice(0, TOP_N).map((p, idx) => ({
         rank: idx + 1,
         playerId: p.playerId,
@@ -179,7 +191,9 @@ export default function StatsPage() {
     > = {};
 
     for (const cat of teamCategories) {
-      const sorted = [...teamAggs].sort((a, b) => cat.getValue(b) - cat.getValue(a));
+      const sorted = [...teamAggs].sort(
+        (a, b) => cat.getValue(b) - cat.getValue(a),
+      );
       result[cat.key] = sorted.slice(0, TOP_N).map((t, idx) => ({
         rank: idx + 1,
         teamId: t.teamId,
@@ -193,29 +207,31 @@ export default function StatsPage() {
   return (
     <main className="main-content">
       <div className="page-header">
-        <h1><i className="fas fa-chart-bar"></i> Статистик</h1>
+        <h1>
+          <i className="fas fa-chart-bar"></i> Статистик
+        </h1>
         <p>Тоглогчид болон багийн эрэмбэ</p>
       </div>
 
       {/* Player / Team Tabs */}
       <div className="stats-main-tabs">
         <button
-          className={`stats-main-tab ${activeTab === 'players' ? 'active' : ''}`}
-          onClick={() => setActiveTab('players')}
+          className={`stats-main-tab ${activeTab === "players" ? "active" : ""}`}
+          onClick={() => setActiveTab("players")}
         >
           ТОГЛОГЧИД
         </button>
         <button
-          className={`stats-main-tab ${activeTab === 'teams' ? 'active' : ''}`}
-          onClick={() => setActiveTab('teams')}
+          className={`stats-main-tab ${activeTab === "teams" ? "active" : ""}`}
+          onClick={() => setActiveTab("teams")}
         >
           БАГУУД
         </button>
       </div>
 
       {loading ? (
-        <p style={{ textAlign: 'center', padding: '40px' }}>Уншиж байна...</p>
-      ) : activeTab === 'players' ? (
+        <p style={{ textAlign: "center", padding: "40px" }}>Уншиж байна...</p>
+      ) : activeTab === "players" ? (
         <div className="leaders-grid">
           {playerCategories.map((cat) => {
             const entries = playerLeaders[cat.key] ?? [];
@@ -230,12 +246,14 @@ export default function StatsPage() {
                     <li
                       key={entry.playerId}
                       className="leaders-list-item"
-                      onClick={() => (window.location.href = `/players/${entry.playerId}`)}
+                      onClick={() =>
+                        (window.location.href = `/players/${entry.playerId}`)
+                      }
                     >
                       <span className="leaders-rank">{idx + 1}.</span>
                       <span className="leaders-name">{entry.playerName}</span>
                       <span className="leaders-team">
-                        {teamMap.get(entry.teamId)?.shortName ?? ''}
+                        {teamMap.get(entry.teamId)?.shortName ?? ""}
                       </span>
                       <span className="leaders-stat">
                         {cat.format(entry.value)}
@@ -264,11 +282,17 @@ export default function StatsPage() {
                       <li
                         key={entry.teamId}
                         className="leaders-list-item"
-                        onClick={() => (window.location.href = `/teams/${entry.teamId}`)}
+                        onClick={() =>
+                          (window.location.href = `/teams/${entry.teamId}`)
+                        }
                       >
                         <span className="leaders-rank">{idx + 1}.</span>
-                        <span className="leaders-name">{team?.name ?? entry.teamId}</span>
-                        <span className="leaders-team">{team?.shortName ?? ''}</span>
+                        <span className="leaders-name">
+                          {team?.name ?? entry.teamId}
+                        </span>
+                        <span className="leaders-team">
+                          {team?.shortName ?? ""}
+                        </span>
                         <span className="leaders-stat">
                           {cat.format(entry.value)}
                         </span>
