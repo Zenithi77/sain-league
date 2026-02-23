@@ -26,7 +26,8 @@ export default function TeamCard({ team }: TeamCardProps) {
           {team.shortName}
         </div>
         <h3>{team.name}</h3>
-        <p className="team-city">{team.city}</p>
+        <p className="team-school">{team.school || team.city}</p>
+        <p className="team-conference">{team.conference === 'west' ? 'Баруун бүс' : 'Зүүн бүс'}</p>
         <div className="team-card-stats">
           <div className="team-card-stat">
             <span className="stat-value wins">{team.stats.wins}</span>
