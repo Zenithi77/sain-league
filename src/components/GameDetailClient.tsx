@@ -366,12 +366,12 @@ export default function GameDetailClient({ gameId }: GameDetailProps) {
       away: awayTotals.assists.toString(),
     },
     {
-      label: "Тасалт",
+      label: "Steal",
       home: homeTotals.steals.toString(),
       away: awayTotals.steals.toString(),
     },
     {
-      label: "Блок",
+      label: "Block",
       home: homeTotals.blocks.toString(),
       away: awayTotals.blocks.toString(),
     },

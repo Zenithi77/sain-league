@@ -116,8 +116,8 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
                 <th>Оноо</th>
                 <th>Самбар</th>
                 <th>Дамжуулалт</th>
-                <th>Хулгай</th>
-                <th>Даралт</th>
+                <th>Steal</th>
+                <th>Block</th>
                 <th>Алдаа</th>
                 <th>Фол</th>
               </tr>

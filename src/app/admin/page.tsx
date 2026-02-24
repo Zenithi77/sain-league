@@ -4,6 +4,7 @@ import { useState, useEffect, FormEvent } from "react";
 import type { Team, TeamWithAverages, NewsArticleWithTeams } from "@/types";
 import AdminGuard from "@/components/AdminGuard";
 import AdminSeasonManager from "@/components/AdminSeasonManager";
+import AdminProfileImages from "@/components/AdminProfileImages";
 import { useAuth } from "@/contexts/AuthContext";
 import { getTeams, createTeam } from "@/lib/firestore";
 
@@ -496,6 +497,9 @@ function AdminContent() {
           </div>
         </form>
       </section>
+
+      {/* Profile Images Manager */}
+      <AdminProfileImages />
 
       {/* Existing News List */}
       {newsArticles.length > 0 && (

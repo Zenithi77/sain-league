@@ -75,6 +75,8 @@ export interface Player {
   weight: string;
   age: number;
   image: string;
+  country?: string;
+  college?: string;
   stats: PlayerStats;
 }
 

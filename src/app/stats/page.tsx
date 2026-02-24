@@ -42,13 +42,13 @@ const playerCategories: {
   },
   {
     key: "spg",
-    label: "ХУЛГАЙ",
+    label: "STEAL",
     getValue: (p) => p.steals / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
     key: "bpg",
-    label: "ДАРАЛТ",
+    label: "BLOCK",
     getValue: (p) => p.blocks / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
@@ -122,13 +122,13 @@ const teamCategories: {
   },
   {
     key: "spg",
-    label: "ХУЛГАЙ",
+    label: "STEAL",
     getValue: (t) => t.steals / (t.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
     key: "bpg",
-    label: "ДАРАЛТ",
+    label: "BLOCK",
     getValue: (t) => t.blocks / (t.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },

@@ -18,7 +18,11 @@ const DB_PATH = path.join(process.cwd(), "data", "database.json");
 // Read database
 export function readDatabase(): Database {
   try {
-    const data = fs.readFileSync(DB_PATH, "utf8");
+    let data = fs.readFileSync(DB_PATH, "utf8");
+    // Strip BOM if present
+    if (data.charCodeAt(0) === 0xFEFF) {
+      data = data.slice(1);
+    }
     return JSON.parse(data);
   } catch (error) {
     console.error("Error reading database:", error);

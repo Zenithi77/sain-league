@@ -1,41 +1,24 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/firebase-admin";
 import {
+  readDatabase,
+  writeDatabase,
+  calculateTeamAverages,
+} from "@/lib/database";
+import {
   validateTeamInput,
   validationErrorResponse,
   unauthorizedResponse,
   forbiddenResponse,
   sanitizeString,
 } from "@/lib/validation";
-import { db } from "@/lib/firebase";
-import {
-  collection,
-  getDocs,
-  addDoc,
-  query,
-  where,
-  serverTimestamp,
-} from "firebase/firestore";
-
-const TEAMS_COLLECTION = "teams";
 
 export async function GET() {
-  try {
-    const teamsRef = collection(db, TEAMS_COLLECTION);
-    const snapshot = await getDocs(teamsRef);
-    const teams = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    return NextResponse.json(teams);
-  } catch (error) {
-    console.error("Error fetching teams from Firestore:", error);
-    // Fallback to local database
-    const { readDatabase, calculateTeamAverages } =
-      await import("@/lib/database");
-    const localDb = readDatabase();
-    const teamsWithAverages = localDb.teams.map((team) =>
-      calculateTeamAverages(team, localDb.players),
-    );
-    return NextResponse.json(teamsWithAverages);
-  }
+  const db = readDatabase();
+  const teamsWithAverages = db.teams.map((team) =>
+    calculateTeamAverages(team, db.players),
+  );
+  return NextResponse.json(teamsWithAverages);
 }
 
 export async function POST(request: Request) {
@@ -60,69 +43,59 @@ export async function POST(request: Request) {
     return validationErrorResponse(validation.errors);
   }
 
-  try {
-    const teamsRef = collection(db, TEAMS_COLLECTION);
+  const db = readDatabase();
 
-    // Check if team with same name exists in Firestore
-    const nameLower = (body.name as string).trim().toLowerCase();
-    const nameQuery = query(teamsRef, where("nameLower", "==", nameLower));
-    const nameSnapshot = await getDocs(nameQuery);
-    if (!nameSnapshot.empty) {
-      return validationErrorResponse([
-        "Энэ нэртэй баг аль хэдийн бүртгэлтэй байна",
-      ]);
-    }
-
-    // Check if team with same shortName exists
-    const shortNameLower = (body.shortName as string).trim().toLowerCase();
-    const shortNameQuery = query(
-      teamsRef,
-      where("shortNameLower", "==", shortNameLower),
-    );
-    const shortNameSnapshot = await getDocs(shortNameQuery);
-    if (!shortNameSnapshot.empty) {
-      return validationErrorResponse([
-        "Энэ товчилсон нэртэй баг аль хэдийн бүртгэлтэй байна",
-      ]);
-    }
-
-    const newTeamData = {
-      name: sanitizeString(body.name) || "",
-      nameLower,
-      shortName: sanitizeString(body.shortName) || "",
-      shortNameLower,
-      logo: body.logo || "/assets/logos/default.png",
-      city: sanitizeString(body.city) || "",
-      conference: body.conference as "east" | "west",
-      school: sanitizeString(body.school) || "",
-      coach: {
-        id: `coach-${Date.now()}`,
-        name: sanitizeString(body.coachName) || "",
-        image: "/assets/coaches/default.png",
-      },
-      colors: {
-        primary: body.primaryColor || "#FF6B35",
-        secondary: body.secondaryColor || "#1A1A2E",
-      },
-      stats: {
-        wins: 0,
-        losses: 0,
-        pointsFor: 0,
-        pointsAgainst: 0,
-        gamesPlayed: 0,
-      },
-      createdAt: serverTimestamp(),
-    };
-
-    const docRef = await addDoc(teamsRef, newTeamData);
-    const newTeam = { id: docRef.id, ...newTeamData };
-
-    return NextResponse.json(newTeam, { status: 201 });
-  } catch (error) {
-    console.error("Error creating team in Firestore:", error);
-    return NextResponse.json(
-      { error: "Баг үүсгэхэд алдаа гарлаа" },
-      { status: 500 },
-    );
+  // Check if team with same name exists
+  const nameLower = (body.name as string).trim().toLowerCase();
+  if (db.teams.some((t) => t.name.toLowerCase() === nameLower)) {
+    return validationErrorResponse([
+      "Энэ нэртэй баг аль хэдийн бүртгэлтэй байна",
+    ]);
   }
+
+  // Check if team with same shortName exists
+  const shortNameLower = (body.shortName as string).trim().toLowerCase();
+  if (db.teams.some((t) => t.shortName.toLowerCase() === shortNameLower)) {
+    return validationErrorResponse([
+      "Энэ товчилсон нэртэй баг аль хэдийн бүртгэлтэй байна",
+    ]);
+  }
+
+  // Generate a new team ID
+  const maxNum = db.teams.reduce((max, t) => {
+    const match = t.id.match(/^team-(\d+)$/);
+    return match ? Math.max(max, parseInt(match[1])) : max;
+  }, 0);
+  const newId = `team-${String(maxNum + 1).padStart(3, "0")}`;
+
+  const newTeam = {
+    id: newId,
+    name: sanitizeString(body.name) || "",
+    shortName: sanitizeString(body.shortName) || "",
+    logo: body.logo || "/assets/logos/default.png",
+    city: sanitizeString(body.city) || "",
+    conference: (body.conference as "east" | "west") || "east",
+    school: sanitizeString(body.school) || "",
+    coach: {
+      id: `coach-${Date.now()}`,
+      name: sanitizeString(body.coachName) || "",
+      image: "/assets/coaches/default.png",
+    },
+    colors: {
+      primary: body.primaryColor || "#FF6B35",
+      secondary: body.secondaryColor || "#1A1A2E",
+    },
+    stats: {
+      wins: 0,
+      losses: 0,
+      pointsFor: 0,
+      pointsAgainst: 0,
+      gamesPlayed: 0,
+    },
+  };
+
+  db.teams.push(newTeam);
+  writeDatabase(db);
+
+  return NextResponse.json(newTeam, { status: 201 });
 }

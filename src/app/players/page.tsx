@@ -1,4 +1,4 @@
-import PlayerCard from '@/components/PlayerCard';
+import PlayersClient from './PlayersClient';
 import { getPlayersWithAverages, getTeamsWithAverages } from '@/lib/database';
 
 export const dynamic = 'force-dynamic';
@@ -13,17 +13,8 @@ export default async function PlayersPage() {
     return { ...player, teamName: team?.name, teamShortName: team?.shortName };
   });
 
-  return (
-    <main className="main-content">
-      <div className="page-header" style={{ marginBottom: '32px' }}>
-        <h1><i className="fas fa-user"></i> Тоглогчид</h1>
-        <p>Sain Girls League-ийн бүх тоглогчид — {playersWithTeams.length} тоглогч</p>
-      </div>
-      <div className="players-grid">
-        {playersWithTeams.map((player) => (
-          <PlayerCard key={player.id} player={player} teamName={player.teamName} />
-        ))}
-      </div>
-    </main>
-  );
+  // Get unique teams for filter
+  const uniqueTeams = teams.map(t => ({ id: t.id, name: t.name, shortName: t.shortName }));
+
+  return <PlayersClient players={playersWithTeams} teams={uniqueTeams} />;
 }
