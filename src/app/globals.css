@@ -5378,6 +5378,694 @@ ul {
 }
 
 /* ============================================
+   PLAYER PROFILE PAGE (WNBA-STYLE)
+   ============================================ */
+
+/* Hero Section */
+.pp-hero {
+  background: linear-gradient(135deg, #1a1a3e 0%, #2d1b4e 40%, #3a1f5e 100%);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.pp-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--team-color, #F15F22);
+}
+
+.pp-hero-inner {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding: 60px 40px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Photo with frame */
+.pp-hero-photo {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.pp-photo-frame {
+  width: 260px;
+  height: 280px;
+  border: 5px solid var(--team-color, #F15F22);
+  border-radius: 4px;
+  overflow: hidden;
+  background: #2a2a4a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pp-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pp-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2a2a4a 0%, #3a3a6a 100%);
+}
+
+.pp-photo-placeholder span {
+  font-family: 'Oswald', sans-serif;
+  font-size: 72px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 4px;
+}
+
+/* Team badge overlay */
+.pp-team-badge {
+  position: absolute;
+  bottom: 12px;
+  right: -10px;
+  width: 50px;
+  height: 50px;
+  background: var(--team-color, #F15F22);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.pp-team-badge-text {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+/* Name + position */
+.pp-hero-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pp-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 52px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+  margin: 0 0 8px;
+  letter-spacing: 1px;
+}
+
+.pp-team-position {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Jersey Number */
+.pp-jersey-number {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  color: rgba(255, 255, 255, 0.2);
+  user-select: none;
+}
+
+.pp-jersey-hash {
+  font-family: 'Oswald', sans-serif;
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 1;
+  margin-top: 16px;
+}
+
+.pp-jersey-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 120px;
+  font-weight: 700;
+  line-height: 1;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.15);
+  color: transparent;
+}
+
+/* Hero Bottom — Stats + Info Grid */
+.pp-hero-bottom {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px 40px;
+}
+
+/* Big Stats Row (WNBA style) */
+.pp-big-stats {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+}
+
+.pp-big-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 28px;
+  position: relative;
+}
+
+.pp-big-stat:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.pp-big-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.pp-big-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 6px;
+}
+
+/* Info Grid */
+.pp-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pp-info-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pp-info-row:last-child {
+  border-bottom: none;
+}
+
+.pp-info-cell {
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.pp-info-cell:last-child {
+  border-right: none;
+}
+
+.pp-info-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.pp-info-value {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ===== Content Sections ===== */
+.pp-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 40px 60px;
+}
+
+.pp-section {
+  margin-bottom: 30px;
+}
+
+.pp-section-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.pp-section-header h2 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pp-section-header h2 i {
+  color: var(--primary-color);
+}
+
+/* Shooting circles */
+.pp-shooting-grid {
+  display: flex;
+  gap: 24px;
+}
+
+.pp-shoot-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.pp-shoot-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 3px solid var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pp-shoot-pct {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.pp-shoot-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ===== Season Stats Table (WNBA style) ===== */
+.pp-season-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 0;
+}
+
+.pp-season-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pp-season-icon {
+  font-size: 22px;
+}
+
+.pp-season-tabs {
+  display: flex;
+  gap: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.pp-season-tab {
+  padding: 8px 20px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.pp-season-tab-active {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.pp-season-tab:hover:not(.pp-season-tab-active) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-light);
+}
+
+.pp-season-table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(20, 20, 30, 0.9) 0%, rgba(15, 15, 25, 0.95) 100%);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.pp-season-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 800px;
+}
+
+.pp-season-table thead tr {
+  background: linear-gradient(90deg, rgba(241, 95, 34, 0.12) 0%, rgba(0, 114, 188, 0.08) 100%);
+}
+
+.pp-season-table thead th {
+  border-bottom: 2px solid rgba(241, 95, 34, 0.3);
+}
+
+.pp-season-table th {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  padding: 14px 14px;
+  text-align: center;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+}
+
+.pp-season-col-sticky {
+  text-align: left !important;
+  padding-left: 20px !important;
+  min-width: 100px;
+}
+
+/* Season data rows */
+.pp-season-row {
+  transition: all 0.2s;
+}
+
+.pp-season-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.pp-season-row-current {
+  background: rgba(241, 95, 34, 0.06);
+}
+
+.pp-season-row-current td:first-child {
+  border-left: 3px solid var(--primary-color);
+}
+
+.pp-season-year {
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.pp-season-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  margin-left: 8px;
+  vertical-align: middle;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.5);
+}
+
+.pp-season-team {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.pp-season-stat {
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+  padding: 14px 12px;
+}
+
+.pp-stat-highlight {
+  color: var(--primary-color) !important;
+  font-weight: 700 !important;
+  font-size: 17px !important;
+}
+
+/* Career totals row */
+.pp-season-row-career {
+  background: linear-gradient(90deg, rgba(241, 95, 34, 0.15) 0%, rgba(0, 114, 188, 0.1) 50%, rgba(241, 95, 34, 0.08) 100%);
+}
+
+.pp-season-row-career td {
+  border-top: 2px solid rgba(241, 95, 34, 0.3);
+  border-bottom: none;
+}
+
+.pp-career-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.pp-career-stat {
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-align: center;
+  padding: 16px 12px;
+}
+
+.pp-career-highlight {
+  color: var(--primary-color) !important;
+  font-size: 17px !important;
+}
+
+/* Back links */
+.pp-back {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.pp-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.pp-back-link:hover {
+  background: var(--bg-hover);
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .pp-hero-inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 50px 24px 30px;
+    gap: 24px;
+  }
+
+  .pp-name {
+    font-size: 36px;
+  }
+
+  .pp-jersey-number {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+
+  .pp-jersey-hash {
+    font-size: 24px;
+    margin-top: 8px;
+  }
+
+  .pp-jersey-num {
+    font-size: 64px;
+  }
+
+  .pp-hero-bottom {
+    grid-template-columns: 1fr;
+    padding: 0 24px 30px;
+  }
+
+  .pp-content {
+    padding: 24px 20px 40px;
+  }
+
+  .pp-photo-frame {
+    width: 200px;
+    height: 220px;
+  }
+
+  .pp-photo-placeholder span {
+    font-size: 56px;
+  }
+
+  .pp-season-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .pp-season-title {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 600px) {
+  .pp-hero-inner {
+    padding: 40px 16px 20px;
+  }
+
+  .pp-name {
+    font-size: 28px;
+  }
+
+  .pp-team-position {
+    font-size: 14px;
+  }
+
+  .pp-photo-frame {
+    width: 160px;
+    height: 180px;
+  }
+
+  .pp-photo-placeholder span {
+    font-size: 44px;
+  }
+
+  .pp-jersey-hash {
+    font-size: 18px;
+    margin-top: 6px;
+  }
+
+  .pp-jersey-num {
+    font-size: 48px;
+  }
+
+  .pp-hero-bottom {
+    padding: 0 16px 20px;
+    gap: 12px;
+  }
+
+  .pp-info-cell {
+    padding: 8px 12px;
+  }
+
+  .pp-info-value {
+    font-size: 15px;
+  }
+
+  .pp-big-stat {
+    padding: 12px 16px;
+  }
+
+  .pp-big-num {
+    font-size: 28px;
+  }
+
+  .pp-big-label {
+    font-size: 10px;
+  }
+
+  .pp-shooting-grid {
+    gap: 16px;
+  }
+
+  .pp-shoot-circle {
+    width: 80px;
+    height: 80px;
+  }
+
+  .pp-shoot-pct {
+    font-size: 18px;
+  }
+
+  .pp-content {
+    padding: 20px 16px 30px;
+  }
+
+  .pp-season-header {
+    gap: 8px;
+  }
+
+  .pp-season-title {
+    font-size: 18px;
+  }
+
+  .pp-season-tab {
+    padding: 6px 14px;
+    font-size: 11px;
+  }
+
+  .pp-season-stat,
+  .pp-career-stat {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+
+  .pp-back {
+    flex-direction: column;
+  }
+}
+
+/* ============================================
    ONBOARDING FLOW
    ============================================ */
 
