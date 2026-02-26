@@ -1,71 +1,51 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
+import { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { TeamWithAverages, NewsArticleWithTeams } from "@/types";
 import { getTeams } from "@/lib/firestore";
 
-// Dynamically import CKEditor to avoid SSR issues
-const BlogEditor = dynamic(() => import("@/components/BlogEditor"), {
-  ssr: false,
-  loading: () => (
-    <div
-      style={{
-        minHeight: 400,
-        border: "1px solid var(--border-color)",
-        borderRadius: 8,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "var(--bg-dark)",
-      }}
-    >
-      <span style={{ color: "var(--text-muted)" }}>Эдитор ачаалж байна...</span>
-    </div>
-  ),
-});
+type TabKey = "all" | "published" | "draft" | "featured";
 
-const CATEGORY_LABELS: Record<string, string> = {
-  highlight: "Тоглолтын тойм",
-  recap: "Тоглолтын дүн",
-  announcement: "Мэдээлэл",
-  interview: "Ярилцлага",
-  transfer: "Шилжилт",
-};
-
-interface NewsFormData {
-  title: string;
-  summary: string;
-  contentHtml: string;
-  coverImage: string;
-  category: string;
-  author: string;
-  featured: boolean;
-  teamIds: string[];
-}
-
-const INITIAL_FORM: NewsFormData = {
-  title: "",
-  summary: "",
-  contentHtml: "",
-  coverImage: "",
-  category: "highlight",
-  author: "SGL Admin",
-  featured: false,
-  teamIds: [],
-};
+const TABS: { key: TabKey; label: string }[] = [
+  { key: "all", label: "Бүгд" },
+  { key: "published", label: "Нийтлэгдсэн" },
+  { key: "draft", label: "Ноорог" },
+  { key: "featured", label: "Онцлох" },
+];
 
 export default function AdminNewsPage() {
+  const router = useRouter();
   const [teams, setTeams] = useState<TeamWithAverages[]>([]);
   const [newsArticles, setNewsArticles] = useState<NewsArticleWithTeams[]>([]);
-  const [formData, setFormData] = useState<NewsFormData>(INITIAL_FORM);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [publishing, setPublishing] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Categories (dynamic from Firestore)
+  const [categoryLabels, setCategoryLabels] = useState<Record<string, string>>(
+    {},
+  );
+  const [catLoading, setCatLoading] = useState(true);
+
+  // Category modal
+  const [showCatModal, setShowCatModal] = useState(false);
+  const [modalCategories, setModalCategories] = useState<
+    Record<string, string>
+  >({});
+  const [newCatKey, setNewCatKey] = useState("");
+  const [newCatLabel, setNewCatLabel] = useState("");
+  const [catSaving, setCatSaving] = useState(false);
+
+  // Filters
+  const [activeTab, setActiveTab] = useState<TabKey>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [filterTeam, setFilterTeam] = useState<string>("all");
 
   useEffect(() => {
     fetchTeams();
     fetchNews();
+    fetchCategories();
   }, []);
 
   const fetchTeams = async () => {
@@ -78,6 +58,7 @@ export default function AdminNewsPage() {
   };
 
   const fetchNews = async () => {
+    setLoading(true);
     try {
       const res = await fetch("/api/news");
       if (res.ok) {
@@ -86,129 +67,136 @@ export default function AdminNewsPage() {
       }
     } catch (error) {
       console.error("Error fetching news:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleUploadImage = async (file: File): Promise<string> => {
-    const fd = new FormData();
-    fd.append("file", file);
-
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: fd,
-    });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "Upload failed");
-    }
-
-    const data = await res.json();
-    return data.url;
-  };
-
-  const handleCoverImageChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const fetchCategories = async () => {
+    setCatLoading(true);
     try {
-      const url = await handleUploadImage(file);
-      setFormData((prev) => ({ ...prev, coverImage: url }));
-    } catch (error) {
-      alert("Зураг байршуулахад алдаа гарлаа");
-    }
-  };
-
-  const handleTeamToggle = (teamId: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      teamIds: prev.teamIds.includes(teamId)
-        ? prev.teamIds.filter((id) => id !== teamId)
-        : [...prev.teamIds, teamId],
-    }));
-  };
-
-  const handleSave = async (publish: boolean) => {
-    if (!formData.title.trim()) {
-      alert("Гарчиг оруулна уу");
-      return;
-    }
-    if (!formData.summary.trim()) {
-      alert("Товч тайлбар оруулна уу");
-      return;
-    }
-    if (!formData.contentHtml.trim()) {
-      alert("Агуулга оруулна уу");
-      return;
-    }
-
-    if (publish) {
-      setPublishing(true);
-    } else {
-      setSaving(true);
-    }
-
-    try {
-      const payload = {
-        ...formData,
-        status: publish ? "published" : "draft",
-      };
-
-      let res: Response;
-      if (editingId) {
-        res = await fetch(`/api/news/${editingId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      } else {
-        res = await fetch("/api/news", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      }
-
+      const res = await fetch("/api/news/categories");
       if (res.ok) {
-        alert(
-          editingId
-            ? "Мэдээ амжилттай шинэчлэгдлээ!"
-            : publish
-              ? "Мэдээ амжилттай нийтлэгдлээ!"
-              : "Ноорог амжилттай хадгалагдлаа!",
-        );
-        resetForm();
-        fetchNews();
-      } else {
         const data = await res.json();
-        alert(data.error || "Алдаа гарлаа");
+        setCategoryLabels(data.categories || {});
       }
     } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setCatLoading(false);
+    }
+  };
+
+  // ── Category modal helpers ──
+
+  const openCatModal = () => {
+    setModalCategories({ ...categoryLabels });
+    setNewCatKey("");
+    setNewCatLabel("");
+    setShowCatModal(true);
+  };
+
+  const handleAddCategory = () => {
+    const label = newCatLabel.trim();
+    if (!label) return;
+    // Auto-generate key from label (lowercase, no spaces)
+    const key =
+      newCatKey.trim() ||
+      label
+        .toLowerCase()
+        .replace(/\s+/g, "_")
+        .replace(/[^a-z0-9_]/g, "");
+    if (!key) return;
+    if (modalCategories[key]) {
+      alert("Энэ түлхүүр аль хэдийн байна");
+      return;
+    }
+    setModalCategories((prev) => ({ ...prev, [key]: label }));
+    setNewCatKey("");
+    setNewCatLabel("");
+  };
+
+  const handleRemoveCategory = (key: string) => {
+    setModalCategories((prev) => {
+      const copy = { ...prev };
+      delete copy[key];
+      return copy;
+    });
+  };
+
+  const handleSaveCategories = async () => {
+    setCatSaving(true);
+    try {
+      const res = await fetch("/api/news/categories", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ categories: modalCategories }),
+      });
+      if (res.ok) {
+        setCategoryLabels(modalCategories);
+        setShowCatModal(false);
+      } else {
+        alert("Хадгалахад алдаа гарлаа");
+      }
+    } catch {
       alert("Сервертэй холбогдоход алдаа гарлаа");
     } finally {
-      setSaving(false);
-      setPublishing(false);
+      setCatSaving(false);
     }
   };
 
-  const handleEdit = (article: NewsArticleWithTeams) => {
-    setEditingId(article.id);
-    setFormData({
-      title: article.title,
-      summary: article.summary,
-      contentHtml: article.contentHtml || "",
-      coverImage: article.coverImage || "",
-      category: article.category,
-      author: article.author,
-      featured: article.featured,
-      teamIds: article.teamIds || [],
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  // Filtered articles
+  const filteredArticles = useMemo(() => {
+    let result = [...newsArticles];
 
-  const handleDeleteNews = async (id: string) => {
+    // Tab filter
+    switch (activeTab) {
+      case "published":
+        result = result.filter((a) => a.status === "published");
+        break;
+      case "draft":
+        result = result.filter((a) => a.status === "draft");
+        break;
+      case "featured":
+        result = result.filter((a) => a.featured);
+        break;
+    }
+
+    // Category filter
+    if (filterCategory !== "all") {
+      result = result.filter((a) => a.category === filterCategory);
+    }
+
+    // Team filter
+    if (filterTeam !== "all") {
+      result = result.filter((a) => a.teamIds?.includes(filterTeam));
+    }
+
+    // Search
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (a) =>
+          a.title.toLowerCase().includes(q) ||
+          a.summary.toLowerCase().includes(q) ||
+          a.author.toLowerCase().includes(q),
+      );
+    }
+
+    return result;
+  }, [newsArticles, activeTab, filterCategory, filterTeam, searchQuery]);
+
+  // Tab counts
+  const counts = useMemo(() => {
+    return {
+      all: newsArticles.length,
+      published: newsArticles.filter((a) => a.status === "published").length,
+      draft: newsArticles.filter((a) => a.status === "draft").length,
+      featured: newsArticles.filter((a) => a.featured).length,
+    };
+  }, [newsArticles]);
+
+  const handleDelete = async (id: string) => {
     if (!confirm("Энэ мэдээг устгах уу?")) return;
     try {
       const res = await fetch(`/api/news/${id}`, { method: "DELETE" });
@@ -217,7 +205,7 @@ export default function AdminNewsPage() {
       } else {
         alert("Устгахад алдаа гарлаа");
       }
-    } catch (error) {
+    } catch {
       alert("Сервертэй холбогдоход алдаа гарлаа");
     }
   };
@@ -235,401 +223,385 @@ export default function AdminNewsPage() {
       } else {
         alert("Статус солиход алдаа гарлаа");
       }
-    } catch (error) {
+    } catch {
       alert("Сервертэй холбогдоход алдаа гарлаа");
     }
   };
 
-  const resetForm = () => {
-    setFormData(INITIAL_FORM);
-    setEditingId(null);
+  const handleToggleFeatured = async (article: NewsArticleWithTeams) => {
+    try {
+      const res = await fetch(`/api/news/${article.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ featured: !article.featured }),
+      });
+      if (res.ok) {
+        fetchNews();
+      } else {
+        alert("Онцлох статус солиход алдаа гарлаа");
+      }
+    } catch {
+      alert("Сервертэй холбогдоход алдаа гарлаа");
+    }
+  };
+
+  const formatDate = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString("mn-MN", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    } catch {
+      return dateStr;
+    }
   };
 
   return (
     <div className="admin-page-content">
-      <div className="admin-page-header">
-        <h1>
-          <i className="fas fa-newspaper"></i> Мэдээ удирдах
-        </h1>
-        <p>Мэдээ нэмэх, засах, устгах</p>
+      {/* Header */}
+      <div
+        className="admin-page-header"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
+      >
+        <div>
+          <h1>
+            <i className="fas fa-newspaper"></i> Мэдээ удирдлага
+          </h1>
+          <p>Мэдээ нийтлэл үүсгэх, засах, устгах</p>
+        </div>
+        <Link
+          href="/admin/news/add"
+          className="btn btn-primary"
+          style={{ fontSize: 15, whiteSpace: "nowrap" }}
+        >
+          <i className="fas fa-plus"></i> Шинэ мэдээ
+        </Link>
       </div>
 
-      {/* News Form */}
-      <section className="admin-section">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <h3>
-            <i className={`fas fa-${editingId ? "edit" : "plus"}`}></i>{" "}
-            {editingId ? "Мэдээ засах" : "Мэдээ нэмэх"}
-          </h3>
-          {editingId && (
-            <button
-              onClick={resetForm}
-              className="btn btn-secondary"
-              style={{ fontSize: 13 }}
-            >
-              <i className="fas fa-times"></i> Цуцлах
-            </button>
-          )}
-        </div>
+      {/* Tabs */}
+      <div className="news-admin-tabs">
+        {TABS.map((tab) => (
+          <button
+            key={tab.key}
+            className={`news-admin-tab ${activeTab === tab.key ? "active" : ""}`}
+            onClick={() => setActiveTab(tab.key)}
+          >
+            {tab.label}
+            <span className="news-admin-tab-count">{counts[tab.key]}</span>
+          </button>
+        ))}
+      </div>
 
-        {/* Title & Category Row */}
-        <div className="form-row" style={{ marginTop: 16 }}>
-          <div className="form-group" style={{ flex: 2 }}>
-            <label>
-              Гарчиг <span style={{ color: "var(--danger-color)" }}>*</span>
-            </label>
+      {/* Toolbar: Search + Filters */}
+      <div className="admin-section" style={{ marginBottom: 0 }}>
+        <div className="news-admin-toolbar">
+          {/* Search */}
+          <div className="news-admin-search">
+            <i className="fas fa-search"></i>
             <input
               type="text"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, title: e.target.value }))
-              }
-              placeholder="Тоглолтын тойм: 33 Sparks vs Storm Team"
+              placeholder="Гарчгаар хайх..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="form-group">
-            <label>Ангилал</label>
+
+          {/* Category filter */}
+          <div className="news-admin-filter">
             <select
-              value={formData.category}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, category: e.target.value }))
-              }
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
             >
-              <option value="highlight">Тоглолтын тойм</option>
-              <option value="recap">Тоглолтын дүн</option>
-              <option value="announcement">Мэдээлэл</option>
-              <option value="interview">Ярилцлага</option>
-              <option value="transfer">Шилжилт</option>
+              <option value="all">Бүх ангилал</option>
+              {Object.entries(categoryLabels).map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
             </select>
           </div>
-          <div className="form-group">
-            <label>Зохиогч</label>
-            <input
-              type="text"
-              value={formData.author}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, author: e.target.value }))
-              }
-              placeholder="SGL Admin"
-            />
-          </div>
-        </div>
 
-        {/* Summary Row */}
-        <div className="form-row">
-          <div className="form-group" style={{ flex: 1 }}>
-            <label>
-              Товч тайлбар{" "}
-              <span style={{ color: "var(--danger-color)" }}>*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.summary}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, summary: e.target.value }))
-              }
-              placeholder="Тоглолтын гол онцлог мэдээлэл..."
-            />
-          </div>
-        </div>
-
-        {/* Cover Image */}
-        <div className="form-row">
-          <div className="form-group" style={{ flex: 1 }}>
-            <label>Нүүр зураг</label>
-            <div
-              style={{
-                display: "flex",
-                gap: 12,
-                alignItems: "flex-start",
-              }}
-            >
-              <div style={{ flex: 1 }}>
-                <input
-                  type="text"
-                  value={formData.coverImage}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      coverImage: e.target.value,
-                    }))
-                  }
-                  placeholder="https://... эсвэл /images/..."
-                />
-                <div style={{ marginTop: 8 }}>
-                  <label
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 6,
-                      padding: "6px 14px",
-                      background: "var(--bg-dark)",
-                      border: "1px solid var(--border-color)",
-                      borderRadius: 6,
-                      cursor: "pointer",
-                      fontSize: 13,
-                    }}
-                  >
-                    <i className="fas fa-upload"></i> Зураг байршуулах
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleCoverImageChange}
-                      style={{ display: "none" }}
-                    />
-                  </label>
-                </div>
-              </div>
-              {formData.coverImage && (
-                <div
-                  style={{
-                    width: 120,
-                    height: 80,
-                    borderRadius: 8,
-                    overflow: "hidden",
-                    border: "1px solid var(--border-color)",
-                    flexShrink: 0,
-                  }}
-                >
-                  <img
-                    src={formData.coverImage}
-                    alt="Cover"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Rich Text Content Editor */}
-        <div className="form-row">
-          <div className="form-group" style={{ flex: 1 }}>
-            <label>
-              Дэлгэрэнгүй агуулга{" "}
-              <span style={{ color: "var(--danger-color)" }}>*</span>
-            </label>
-            <BlogEditor
-              value={formData.contentHtml}
-              onChange={(content) =>
-                setFormData((prev) => ({ ...prev, contentHtml: content }))
-              }
-              onImageUpload={handleUploadImage}
-            />
-          </div>
-        </div>
-
-        {/* Teams, Featured, Buttons */}
-        <div className="form-row" style={{ alignItems: "flex-start" }}>
-          <div className="form-group">
-            <label>Холбогдох багууд</label>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "8px",
-                marginTop: "4px",
-              }}
-            >
-              {teams.map((team) => (
-                <label
-                  key={team.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    padding: "4px 10px",
-                    background: formData.teamIds.includes(team.id)
-                      ? "var(--primary-color)"
-                      : "var(--bg-dark)",
-                    color: formData.teamIds.includes(team.id)
-                      ? "#fff"
-                      : "inherit",
-                    borderRadius: "6px",
-                    fontSize: "13px",
-                    cursor: "pointer",
-                    border: "1px solid var(--border-color)",
-                    transition: "all 0.2s",
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={formData.teamIds.includes(team.id)}
-                    onChange={() => handleTeamToggle(team.id)}
-                    style={{ display: "none" }}
-                  />
-                  {team.shortName}
-                </label>
-              ))}
-            </div>
-          </div>
-          <div className="form-group">
-            <label
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                cursor: "pointer",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={formData.featured}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    featured: e.target.checked,
-                  }))
-                }
-              />
-              Онцлох мэдээ (Featured)
-            </label>
-          </div>
-          <div
-            className="form-group"
-            style={{ display: "flex", gap: 8, flexDirection: "column" }}
+          {/* Category manage button */}
+          <button
+            className="news-admin-action-btn"
+            style={{
+              width: "auto",
+              height: "auto",
+              padding: "8px 14px",
+              fontSize: 13,
+              gap: 6,
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+            onClick={openCatModal}
+            title="Ангилал удирдах"
           >
-            <button
-              type="button"
-              onClick={() => handleSave(false)}
-              disabled={saving || publishing}
-              className="btn btn-secondary"
-              style={{ width: "100%" }}
+            <i className="fas fa-cog"></i> Ангилал
+          </button>
+
+          {/* Team filter */}
+          <div className="news-admin-filter">
+            <select
+              value={filterTeam}
+              onChange={(e) => setFilterTeam(e.target.value)}
             >
-              {saving ? (
-                <i className="fas fa-spinner fa-spin"></i>
-              ) : (
-                <i className="fas fa-save"></i>
-              )}{" "}
-              Ноорог хадгалах
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSave(true)}
-              disabled={saving || publishing}
-              className="btn btn-primary"
-              style={{ width: "100%" }}
-            >
-              {publishing ? (
-                <i className="fas fa-spinner fa-spin"></i>
-              ) : (
-                <i className="fas fa-paper-plane"></i>
-              )}{" "}
-              Нийтлэх
-            </button>
+              <option value="all">Бүх баг</option>
+              {teams.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.shortName}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-      </section>
 
-      {/* Existing News List */}
-      {newsArticles.length > 0 && (
-        <section className="admin-section">
-          <h3>
-            <i className="fas fa-list"></i> Нэмсэн мэдээнүүд (
-            {newsArticles.length})
-          </h3>
-          <div className="admin-news-list">
-            {newsArticles.map((article) => (
-              <div key={article.id} className="admin-news-item">
-                <div className="admin-news-info">
-                  <span
-                    style={{
-                      display: "inline-block",
-                      padding: "2px 8px",
-                      borderRadius: 4,
-                      fontSize: 11,
-                      fontWeight: 600,
-                      background:
-                        article.status === "published"
-                          ? "var(--success-color, #22c55e)"
-                          : "var(--warning-color, #f59e0b)",
-                      color: "#fff",
-                      marginRight: 6,
-                    }}
-                  >
-                    {article.status === "published" ? "Нийтлэгдсэн" : "Ноорог"}
-                  </span>
-                  <span className={`news-badge small ${article.category}`}>
-                    {CATEGORY_LABELS[article.category] || article.category}
-                  </span>
-                  <strong>{article.title}</strong>
-                  <span
-                    style={{ color: "var(--text-muted)", fontSize: "12px" }}
-                  >
-                    {article.date}
-                  </span>
-                  {article.featured && (
+        {/* Result count */}
+        <div
+          style={{
+            color: "var(--text-muted)",
+            fontSize: 13,
+            marginTop: 12,
+          }}
+        >
+          {filteredArticles.length} нийтлэл олдлоо
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="news-admin-table-wrap">
+        {loading ? (
+          <div
+            style={{
+              textAlign: "center",
+              padding: 60,
+              color: "var(--text-muted)",
+            }}
+          >
+            <i className="fas fa-spinner fa-spin" style={{ fontSize: 24 }}></i>
+            <p style={{ marginTop: 12 }}>Ачааллаж байна...</p>
+          </div>
+        ) : filteredArticles.length === 0 ? (
+          <div
+            style={{
+              textAlign: "center",
+              padding: 60,
+              color: "var(--text-muted)",
+            }}
+          >
+            <i
+              className="fas fa-newspaper"
+              style={{ fontSize: 36, marginBottom: 12, display: "block" }}
+            ></i>
+            <p>Мэдээ олдсонгүй</p>
+          </div>
+        ) : (
+          <table className="news-admin-table">
+            <thead>
+              <tr>
+                <th style={{ width: "40%" }}>МЭДЭЭ</th>
+                <th>СТАТУС</th>
+                <th>АНГИЛАЛ</th>
+                <th>ОГНОО</th>
+                <th style={{ textAlign: "right" }}>ҮЙЛДЭЛ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredArticles.map((article) => (
+                <tr key={article.id}>
+                  {/* Article info */}
+                  <td>
+                    <div className="news-admin-article-cell">
+                      <div className="news-admin-article-thumb">
+                        {article.coverImage ? (
+                          <img src={article.coverImage} alt="" />
+                        ) : (
+                          <div className="news-admin-article-thumb-placeholder">
+                            <i className="fas fa-image"></i>
+                          </div>
+                        )}
+                      </div>
+                      <div className="news-admin-article-info">
+                        <strong>{article.title}</strong>
+                        {article.teams && article.teams.length > 0 && (
+                          <div className="news-admin-article-teams">
+                            {article.teams.map((t) => (
+                              <span key={t.id} className="news-admin-team-chip">
+                                {t.shortName}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Status */}
+                  <td>
                     <span
-                      style={{
-                        color: "var(--warning-color)",
-                        fontSize: "11px",
-                      }}
+                      className={`news-admin-status-badge ${article.status}`}
                     >
-                      <i className="fas fa-star"></i> Featured
+                      {article.status === "published"
+                        ? "Нийтлэгдсэн"
+                        : "Ноорог"}
                     </span>
-                  )}
-                </div>
-                <div style={{ display: "flex", gap: 6 }}>
+                  </td>
+
+                  {/* Category */}
+                  <td>
+                    <span className="news-admin-category-chip">
+                      {categoryLabels[article.category] || article.category}
+                    </span>
+                  </td>
+
+                  {/* Date */}
+                  <td>
+                    <span style={{ fontSize: 13 }}>
+                      {formatDate(article.date)}
+                    </span>
+                  </td>
+
+                  {/* Actions */}
+                  <td>
+                    <div className="news-admin-actions">
+                      <button
+                        onClick={() =>
+                          router.push(`/admin/news/add?edit=${article.id}`)
+                        }
+                        className="news-admin-action-btn"
+                        title="Засах"
+                      >
+                        <i className="fas fa-edit"></i>
+                      </button>
+                      <button
+                        onClick={() => handleToggleStatus(article)}
+                        className="news-admin-action-btn"
+                        title={
+                          article.status === "published"
+                            ? "Ноорог болгох"
+                            : "Нийтлэх"
+                        }
+                      >
+                        <i
+                          className={`fas fa-${article.status === "published" ? "eye-slash" : "eye"}`}
+                        ></i>
+                      </button>
+                      <button
+                        onClick={() => handleToggleFeatured(article)}
+                        className={`news-admin-action-btn ${article.featured ? "featured-active" : ""}`}
+                        title={
+                          article.featured ? "Онцлохоос хасах" : "Онцлох болгох"
+                        }
+                      >
+                        <i className={`fas fa-star`}></i>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(article.id)}
+                        className="news-admin-action-btn danger"
+                        title="Устгах"
+                      >
+                        <i className="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+      {/* Category Management Modal */}
+      {showCatModal && (
+        <div
+          className="cat-modal-overlay"
+          onClick={() => setShowCatModal(false)}
+        >
+          <div className="cat-modal" onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="cat-modal-header">
+              <div>
+                <h3>Ангилал удирдах</h3>
+                <p>
+                  Эдгээр ангилалууд мэдээний хуудсанд шүүлтүүр болон харагдана.
+                </p>
+              </div>
+              <button
+                className="cat-modal-close"
+                onClick={() => setShowCatModal(false)}
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+
+            {/* Add new */}
+            <div className="cat-modal-add-row">
+              <input
+                type="text"
+                placeholder="Шинэ ангилал нэмэх..."
+                value={newCatLabel}
+                onChange={(e) => setNewCatLabel(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddCategory()}
+              />
+              <button
+                className="btn btn-primary"
+                style={{ padding: "8px 18px", fontSize: 14 }}
+                onClick={handleAddCategory}
+                disabled={!newCatLabel.trim()}
+              >
+                Нэмэх
+              </button>
+            </div>
+
+            {/* List */}
+            <div className="cat-modal-list">
+              {Object.entries(modalCategories).map(([key, label]) => (
+                <span key={key} className="cat-modal-chip">
+                  {label}
                   <button
-                    onClick={() => handleToggleStatus(article)}
-                    className="btn-edit-news"
-                    title={
-                      article.status === "published"
-                        ? "Ноорог болгох"
-                        : "Нийтлэх"
-                    }
-                    style={{
-                      background: "none",
-                      border: "1px solid var(--border-color)",
-                      borderRadius: 6,
-                      padding: "4px 8px",
-                      cursor: "pointer",
-                      color: "var(--text-muted)",
-                      fontSize: 13,
-                    }}
-                  >
-                    <i
-                      className={`fas fa-${article.status === "published" ? "eye-slash" : "eye"}`}
-                    ></i>
-                  </button>
-                  <button
-                    onClick={() => handleEdit(article)}
-                    className="btn-edit-news"
-                    title="Засах"
-                    style={{
-                      background: "none",
-                      border: "1px solid var(--border-color)",
-                      borderRadius: 6,
-                      padding: "4px 8px",
-                      cursor: "pointer",
-                      color: "var(--text-muted)",
-                      fontSize: 13,
-                    }}
-                  >
-                    <i className="fas fa-edit"></i>
-                  </button>
-                  <button
-                    onClick={() => handleDeleteNews(article.id)}
-                    className="btn-delete-news"
+                    className="cat-modal-chip-remove"
+                    onClick={() => handleRemoveCategory(key)}
                     title="Устгах"
                   >
-                    <i className="fas fa-trash"></i>
+                    ×
                   </button>
-                </div>
-              </div>
-            ))}
+                </span>
+              ))}
+              {Object.keys(modalCategories).length === 0 && (
+                <span style={{ color: "var(--text-muted)", fontSize: 13 }}>
+                  Ангилал байхгүй байна
+                </span>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="cat-modal-footer">
+              <button
+                className="btn btn-secondary"
+                style={{ padding: "10px 28px", fontSize: 14 }}
+                onClick={() => setShowCatModal(false)}
+              >
+                Цуцлах
+              </button>
+              <button
+                className="btn btn-primary"
+                style={{ padding: "10px 28px", fontSize: 14 }}
+                onClick={handleSaveCategories}
+                disabled={catSaving}
+              >
+                {catSaving ? (
+                  <i className="fas fa-spinner fa-spin"></i>
+                ) : (
+                  "Хадгалах"
+                )}
+              </button>
+            </div>
           </div>
-        </section>
+        </div>
       )}
     </div>
   );
