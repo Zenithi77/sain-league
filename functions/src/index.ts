@@ -23,9 +23,17 @@ import {
   integrityRecomputeSeason,
 } from "./integrityRecompute.js";
 import { requireAdmin } from "./adminSetup.js";
-import type { Response } from "express";
+import { app as onboardingApp } from "./onboardingApi.js";
 
 setGlobalOptions({ maxInstances: 10 });
+
+// ---------------------------------------------------------------------------
+// 0. Onboarding API (Express app with /saveOnboarding, /admin/onboarding/*)
+// ---------------------------------------------------------------------------
+export const api = onRequest(
+  { timeoutSeconds: 60, memory: "256MiB", cors: true },
+  onboardingApp,
+);
 
 // ---------------------------------------------------------------------------
 // 1. Upload CSV boxscore
@@ -57,7 +65,7 @@ export const uploadGameCsv = onRequest(
  */
 export const recomputeStandings = onRequest(
   { timeoutSeconds: 120, memory: "512MiB", cors: true },
-  async (req, res: Response) => {
+  async (req, res) => {
     try {
       await requireAdmin(req);
     } catch (err: unknown) {
@@ -85,7 +93,7 @@ export const recomputeStandings = onRequest(
  */
 export const recomputeLeaderboards = onRequest(
   { timeoutSeconds: 120, memory: "512MiB", cors: true },
-  async (req, res: Response) => {
+  async (req, res) => {
     try {
       await requireAdmin(req);
     } catch (err: unknown) {
@@ -141,7 +149,7 @@ export const integrityRecompute = onSchedule(
  */
 export const integrityRecomputeHttp = onRequest(
   { timeoutSeconds: 540, memory: "1GiB", cors: true },
-  async (req, res: Response) => {
+  async (req, res) => {
     try {
       await requireAdmin(req);
     } catch (err: unknown) {

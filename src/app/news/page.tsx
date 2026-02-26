@@ -1,29 +1,29 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import type { NewsArticleWithTeams } from '@/types';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import type { NewsArticleWithTeams } from "@/types";
 
 const CATEGORY_LABELS: Record<string, string> = {
-  highlight: 'Тоглолтын тойм',
-  recap: 'Тоглолтын дүн',
-  announcement: 'Мэдээлэл',
-  interview: 'Ярилцлага',
-  transfer: 'Шилжилт',
+  highlight: "Тоглолтын тойм",
+  recap: "Тоглолтын дүн",
+  announcement: "Мэдээлэл",
+  interview: "Ярилцлага",
+  transfer: "Шилжилт",
 };
 
 const CATEGORY_ICONS: Record<string, string> = {
-  highlight: 'fas fa-fire',
-  recap: 'fas fa-clipboard-list',
-  announcement: 'fas fa-bullhorn',
-  interview: 'fas fa-microphone',
-  transfer: 'fas fa-exchange-alt',
+  highlight: "fas fa-fire",
+  recap: "fas fa-clipboard-list",
+  announcement: "fas fa-bullhorn",
+  interview: "fas fa-microphone",
+  transfer: "fas fa-exchange-alt",
 };
 
 export default function NewsPage() {
   const [articles, setArticles] = useState<NewsArticleWithTeams[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [activeCategory, setActiveCategory] = useState<string>("all");
 
   useEffect(() => {
     fetchNews();
@@ -31,24 +31,27 @@ export default function NewsPage() {
 
   const fetchNews = async () => {
     try {
-      const res = await fetch('/api/news');
+      const res = await fetch("/api/news?status=published");
       if (res.ok) {
         const data = await res.json();
         setArticles(data);
       }
     } catch (err) {
-      console.error('Failed to fetch news:', err);
+      console.error("Failed to fetch news:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredArticles = activeCategory === 'all'
-    ? articles
-    : articles.filter(a => a.category === activeCategory);
+  const filteredArticles =
+    activeCategory === "all"
+      ? articles
+      : articles.filter((a) => a.category === activeCategory);
 
-  const featuredArticles = articles.filter(a => a.featured);
-  const regularArticles = filteredArticles.filter(a => !a.featured || activeCategory !== 'all');
+  const featuredArticles = articles.filter((a) => a.featured);
+  const regularArticles = filteredArticles.filter(
+    (a) => !a.featured || activeCategory !== "all",
+  );
 
   if (loading) {
     return (
@@ -64,22 +67,24 @@ export default function NewsPage() {
   return (
     <main className="main-content">
       <div className="page-header">
-        <h1><i className="fas fa-newspaper"></i> Мэдээ & Тойм</h1>
+        <h1>
+          <i className="fas fa-newspaper"></i> Мэдээ & Тойм
+        </h1>
         <p>Тоглолтын тойм, highlight, ярилцлага болон бусад мэдээллүүд</p>
       </div>
 
       {/* Category Filter */}
       <div className="news-categories">
         <button
-          className={`news-cat-btn ${activeCategory === 'all' ? 'active' : ''}`}
-          onClick={() => setActiveCategory('all')}
+          className={`news-cat-btn ${activeCategory === "all" ? "active" : ""}`}
+          onClick={() => setActiveCategory("all")}
         >
           <i className="fas fa-th-large"></i> Бүгд
         </button>
         {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
           <button
             key={key}
-            className={`news-cat-btn ${activeCategory === key ? 'active' : ''}`}
+            className={`news-cat-btn ${activeCategory === key ? "active" : ""}`}
             onClick={() => setActiveCategory(key)}
           >
             <i className={CATEGORY_ICONS[key]}></i> {label}
@@ -88,17 +93,25 @@ export default function NewsPage() {
       </div>
 
       {/* Featured Hero Section — only show on "all" tab */}
-      {activeCategory === 'all' && featuredArticles.length > 0 && (
+      {activeCategory === "all" && featuredArticles.length > 0 && (
         <section className="news-featured-section">
           <div className="news-featured-grid">
-            {featuredArticles.slice(0, 1).map(article => (
-              <Link href={`/news/${article.id}`} key={article.id} className="news-hero-card">
+            {featuredArticles.slice(0, 1).map((article) => (
+              <Link
+                href={`/news/${article.id}`}
+                key={article.id}
+                className="news-hero-card"
+              >
                 <div className="news-hero-image">
-                  {article.image ? (
-                    <img src={article.image} alt={article.title} />
+                  {article.coverImage ? (
+                    <img src={article.coverImage} alt={article.title} />
                   ) : (
                     <div className="news-hero-placeholder">
-                      <i className={CATEGORY_ICONS[article.category] || 'fas fa-newspaper'}></i>
+                      <i
+                        className={
+                          CATEGORY_ICONS[article.category] || "fas fa-newspaper"
+                        }
+                      ></i>
                     </div>
                   )}
                   <div className="news-hero-overlay">
@@ -109,11 +122,15 @@ export default function NewsPage() {
                     <h2>{article.title}</h2>
                     <p>{article.summary}</p>
                     <div className="news-hero-meta">
-                      <span><i className="fas fa-calendar"></i> {article.date}</span>
-                      <span><i className="fas fa-user"></i> {article.author}</span>
+                      <span>
+                        <i className="fas fa-calendar"></i> {article.date}
+                      </span>
+                      <span>
+                        <i className="fas fa-user"></i> {article.author}
+                      </span>
                       {article.teams?.length > 0 && (
                         <span className="news-hero-teams">
-                          {article.teams.map(t => t.shortName).join(' vs ')}
+                          {article.teams.map((t) => t.shortName).join(" vs ")}
                         </span>
                       )}
                     </div>
@@ -124,14 +141,23 @@ export default function NewsPage() {
 
             {featuredArticles.length > 1 && (
               <div className="news-featured-sidebar">
-                {featuredArticles.slice(1, 4).map(article => (
-                  <Link href={`/news/${article.id}`} key={article.id} className="news-sidebar-card">
+                {featuredArticles.slice(1, 4).map((article) => (
+                  <Link
+                    href={`/news/${article.id}`}
+                    key={article.id}
+                    className="news-sidebar-card"
+                  >
                     <div className="news-sidebar-image">
-                      {article.image ? (
-                        <img src={article.image} alt={article.title} />
+                      {article.coverImage ? (
+                        <img src={article.coverImage} alt={article.title} />
                       ) : (
                         <div className="news-sidebar-placeholder">
-                          <i className={CATEGORY_ICONS[article.category] || 'fas fa-newspaper'}></i>
+                          <i
+                            className={
+                              CATEGORY_ICONS[article.category] ||
+                              "fas fa-newspaper"
+                            }
+                          ></i>
                         </div>
                       )}
                     </div>
@@ -154,14 +180,22 @@ export default function NewsPage() {
       {regularArticles.length > 0 ? (
         <section className="news-grid-section">
           <div className="news-grid">
-            {regularArticles.map(article => (
-              <Link href={`/news/${article.id}`} key={article.id} className="news-card">
+            {regularArticles.map((article) => (
+              <Link
+                href={`/news/${article.id}`}
+                key={article.id}
+                className="news-card"
+              >
                 <div className="news-card-image">
-                  {article.image ? (
-                    <img src={article.image} alt={article.title} />
+                  {article.coverImage ? (
+                    <img src={article.coverImage} alt={article.title} />
                   ) : (
                     <div className="news-card-placeholder">
-                      <i className={CATEGORY_ICONS[article.category] || 'fas fa-newspaper'}></i>
+                      <i
+                        className={
+                          CATEGORY_ICONS[article.category] || "fas fa-newspaper"
+                        }
+                      ></i>
                     </div>
                   )}
                   <span className={`news-badge ${article.category}`}>
@@ -177,8 +211,12 @@ export default function NewsPage() {
                     </span>
                     {article.teams?.length > 0 && (
                       <div className="news-card-teams">
-                        {article.teams.map(t => (
-                          <span key={t.id} className="news-team-pill" style={{ borderColor: t.colors.primary }}>
+                        {article.teams.map((t) => (
+                          <span
+                            key={t.id}
+                            className="news-team-pill"
+                            style={{ borderColor: t.colors.primary }}
+                          >
                             {t.shortName}
                           </span>
                         ))}

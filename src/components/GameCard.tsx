@@ -5,6 +5,7 @@ import { GameWithTeams } from "@/types";
 
 interface GameCardProps {
   game: GameWithTeams;
+  basePath?: string;
 }
 
 const MN_MONTHS = [
@@ -30,9 +31,9 @@ function formatDate(dateString: string) {
   return `${year} оны ${month} ${day}`;
 }
 
-export default function GameCard({ game }: GameCardProps) {
+export default function GameCard({ game, basePath = "/game" }: GameCardProps) {
   return (
-    <Link href={`/game/${game.id}`} className="game-card">
+    <Link href={`${basePath}/${game.id}`} className="game-card">
       <div className="game-date">
         <i className="fas fa-calendar"></i>
         {formatDate(game.date)}

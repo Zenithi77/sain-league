@@ -1,68 +1,80 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function SignUpPage() {
-  const [displayName, setDisplayName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { signUp, signInWithGoogle } = useAuth();
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const {
+    signUp,
+    signInWithGoogle,
+    needsOnboarding,
+    loading: authLoading,
+  } = useAuth();
   const router = useRouter();
+
+  // After successful auth, redirect based on onboarding status
+  useEffect(() => {
+    if (!authLoading && needsOnboarding) {
+      router.push("/onboarding");
+    }
+  }, [needsOnboarding, authLoading, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (password !== confirmPassword) {
-      setError('Нууц үг таарахгүй байна');
+      setError("Нууц үг таарахгүй байна");
       return;
     }
 
     if (password.length < 6) {
-      setError('Нууц үг хамгийн багадаа 6 тэмдэгт байх ёстой');
+      setError("Нууц үг хамгийн багадаа 6 тэмдэгт байх ёстой");
       return;
     }
 
-    setLoading(true);
+    setSubmitting(true);
 
     try {
       await signUp(email, password, displayName);
-      router.push('/');
+      // Redirect handled in useEffect below after userData loads
     } catch (err: any) {
       console.error(err);
-      if (err.code === 'auth/email-already-in-use') {
-        setError('Энэ и-мэйл хаяг бүртгэлтэй байна');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('И-мэйл хаяг буруу байна');
-      } else if (err.code === 'auth/weak-password') {
-        setError('Нууц үг хэт богино байна');
+      if (err.code === "auth/email-already-in-use") {
+        setError("Энэ и-мэйл хаяг бүртгэлтэй байна");
+      } else if (err.code === "auth/invalid-email") {
+        setError("И-мэйл хаяг буруу байна");
+      } else if (err.code === "auth/weak-password") {
+        setError("Нууц үг хэт богино байна");
       } else {
-        setError('Бүртгүүлэхэд алдаа гарлаа');
+        setError("Бүртгүүлэхэд алдаа гарлаа");
       }
     }
 
-    setLoading(false);
+    setSubmitting(false);
   }
 
   async function handleGoogleSignIn() {
-    setError('');
-    setLoading(true);
+    setError("");
+    setSubmitting(true);
 
     try {
       await signInWithGoogle();
-      router.push('/');
+      // Redirect handled in useEffect below after userData loads
     } catch (err: any) {
       console.error(err);
-      setError('Google-ээр бүртгүүлэхэд алдаа гарлаа');
+      setError("Google-ээр бүртгүүлэхэд алдаа гарлаа");
     }
 
-    setLoading(false);
+    setSubmitting(false);
   }
 
   return (
@@ -81,7 +93,7 @@ export default function SignUpPage() {
           type="button"
           className="auth-btn google-main"
           onClick={handleGoogleSignIn}
-          disabled={loading}
+          disabled={submitting}
         >
           <svg viewBox="0 0 24 24" width="24" height="24">
             <path
@@ -157,8 +169,12 @@ export default function SignUpPage() {
             />
           </div>
 
-          <button type="submit" className="auth-btn primary" disabled={loading}>
-            {loading ? 'Бүртгүүлж байна...' : 'Бүртгүүлэх'}
+          <button
+            type="submit"
+            className="auth-btn primary"
+            disabled={submitting}
+          >
+            {submitting ? "Бүртгүүлж байна..." : "Бүртгүүлэх"}
           </button>
         </form>
 

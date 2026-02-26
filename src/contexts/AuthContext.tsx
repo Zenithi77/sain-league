@@ -1,6 +1,12 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import {
   User,
   createUserWithEmailAndPassword,
@@ -10,16 +16,16 @@ import {
   updateProfile,
   GoogleAuthProvider,
   signInWithPopup,
-} from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db } from '@/lib/firebase';
+} from "firebase/auth";
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
 
 interface UserData {
   uid: string;
   email: string | null;
   displayName: string | null;
   photoURL: string | null;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
   createdAt: Date;
 }
 
@@ -27,7 +33,13 @@ interface AuthContextType {
   user: User | null;
   userData: UserData | null;
   loading: boolean;
-  signUp: (email: string, password: string, displayName: string) => Promise<void>;
+  /** True when the user is authenticated but has not completed onboarding */
+  needsOnboarding: boolean;
+  signUp: (
+    email: string,
+    password: string,
+    displayName: string,
+  ) => Promise<void>;
   logIn: (email: string, password: string) => Promise<void>;
   logOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
@@ -39,7 +51,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
@@ -50,7 +62,7 @@ interface AuthProviderProps {
 
 // Admin emails list - эдгээр и-мэйл автоматаар admin болно
 const ADMIN_EMAILS = [
-  'admin@sainleague.mn',
+  "admin@sainleague.mn",
   // Та өөрийн и-мэйлийг энд нэмж болно
 ];
 
@@ -60,16 +72,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
 
   // Firestore-д хэрэглэгчийн мэдээлэл хадгалах
-  async function createUserDocument(user: User, additionalData?: { displayName?: string }) {
+  async function createUserDocument(
+    user: User,
+    additionalData?: { displayName?: string },
+  ) {
     if (!user) return;
 
-    const userRef = doc(db, 'users', user.uid);
+    const userRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
       const { email, photoURL } = user;
       const displayName = additionalData?.displayName || user.displayName;
-      
+
       // Check if email is in admin list
       const isAdmin = email && ADMIN_EMAILS.includes(email.toLowerCase());
 
@@ -79,18 +94,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
           email,
           displayName,
           photoURL,
-          role: isAdmin ? 'admin' : 'user',
+          role: isAdmin ? "admin" : "user",
           createdAt: serverTimestamp(),
         });
       } catch (error) {
-        console.error('Error creating user document:', error);
+        console.error("Error creating user document:", error);
       }
     }
   }
 
   // Хэрэглэгчийн мэдээлэл авах
   async function fetchUserData(uid: string) {
-    const userRef = doc(db, 'users', uid);
+    const userRef = doc(db, "users", uid);
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
@@ -100,7 +115,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Sign up
   async function signUp(email: string, password: string, displayName: string) {
-    const { user } = await createUserWithEmailAndPassword(auth, email, password);
+    const { user } = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
     await updateProfile(user, { displayName });
     await createUserDocument(user, { displayName });
     await fetchUserData(user.uid);
@@ -133,7 +152,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       return await user.getIdToken();
     } catch (error) {
-      console.error('Error getting ID token:', error);
+      console.error("Error getting ID token:", error);
       return null;
     }
   }
@@ -156,6 +175,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     userData,
     loading,
+    needsOnboarding:
+      !!user &&
+      !loading &&
+      (!userData?.role || userData.role === ("user" as string)),
     signUp,
     logIn,
     logOut,
@@ -163,9 +186,5 @@ export function AuthProvider({ children }: AuthProviderProps) {
     getIdToken,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

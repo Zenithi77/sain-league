@@ -20,13 +20,20 @@ export function readDatabase(): Database {
   try {
     let data = fs.readFileSync(DB_PATH, "utf8");
     // Strip BOM if present
-    if (data.charCodeAt(0) === 0xFEFF) {
+    if (data.charCodeAt(0) === 0xfeff) {
       data = data.slice(1);
     }
     return JSON.parse(data);
   } catch (error) {
     console.error("Error reading database:", error);
-    return { teams: [], players: [], games: [], news: [], season: {} as any };
+    return {
+      teams: [],
+      players: [],
+      games: [],
+      news: [],
+      sponsors: [],
+      season: {} as any,
+    };
   }
 }
 
@@ -183,9 +190,7 @@ export function getPlayerById(
 }
 
 // Get game by ID with team data and player details
-export function getGameById(
-  id: string,
-):
+export function getGameById(id: string):
   | (GameWithTeams & {
       homePlayers: PlayerWithAverages[];
       awayPlayers: PlayerWithAverages[];
@@ -235,9 +240,9 @@ export function getNewsArticles(): NewsArticleWithTeams[] {
   return articles
     .map((article) => ({
       ...article,
-      teams: (article.teamIds || []).map(
-        (tid) => db.teams.find((t) => t.id === tid)!
-      ).filter(Boolean),
+      teams: (article.teamIds || [])
+        .map((tid) => db.teams.find((t) => t.id === tid)!)
+        .filter(Boolean),
     }))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
@@ -248,9 +253,9 @@ export function getNewsById(id: string): NewsArticleWithTeams | null {
   if (!article) return null;
   return {
     ...article,
-    teams: (article.teamIds || []).map(
-      (tid) => db.teams.find((t) => t.id === tid)!
-    ).filter(Boolean),
+    teams: (article.teamIds || [])
+      .map((tid) => db.teams.find((t) => t.id === tid)!)
+      .filter(Boolean),
   };
 }
 

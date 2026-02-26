@@ -1,26 +1,30 @@
-import Link from 'next/link';
-import SeasonBanner from '@/components/SeasonBanner';
-import StandingsTable from '@/components/StandingsTable';
-import TopPlayersList from '@/components/TopPlayersList';
-import GameCard from '@/components/GameCard';
-import { 
-  getStandings, 
-  getPlayersWithAverages, 
-  getGamesWithTeams, 
-  getTopPlayersByCategory 
-} from '@/lib/database';
+import Link from "next/link";
+import SeasonBanner from "@/components/SeasonBanner";
+import StandingsTable from "@/components/StandingsTable";
+import TopPlayersList from "@/components/TopPlayersList";
+import GameCard from "@/components/GameCard";
+import SponsorLogos from "@/components/SponsorLogos";
+import PodcastPreview from "@/components/PodcastPreview";
+import {
+  getStandings,
+  getPlayersWithAverages,
+  getGamesWithTeams,
+  getTopPlayersByCategory,
+} from "@/lib/database";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const standings = getStandings();
   const players = getPlayersWithAverages();
   const games = getGamesWithTeams();
-  const topScorers = getTopPlayersByCategory('points', 5);
-  const topRebounders = getTopPlayersByCategory('rebounds', 5);
-  const topAssisters = getTopPlayersByCategory('assists', 5);
+  const topScorers = getTopPlayersByCategory("points", 5);
+  const topRebounders = getTopPlayersByCategory("rebounds", 5);
+  const topAssisters = getTopPlayersByCategory("assists", 5);
 
-  const upcomingGames = games.filter((g) => g.status === 'scheduled').slice(0, 6);
+  const upcomingGames = games
+    .filter((g) => g.status === "scheduled")
+    .slice(0, 6);
 
   return (
     <>
@@ -33,8 +37,8 @@ export default async function HomePage() {
               <span className="featured-tag">ОНЦЛОХ</span>
               <h1 className="hero-title">Sain Girls League 2026</h1>
               <p className="hero-description">
-                Монголын охидын сагсан бөмбөгийн лигт тавтай морилно уу. 16 баг, шилдэг тоглогчид,
-                хурц тоглолтууд таныг хүлээж байна.
+                Монголын охидын сагсан бөмбөгийн лигт тавтай морилно уу. 16 баг,
+                шилдэг тоглогчид, хурц тоглолтууд таныг хүлээж байна.
               </p>
               <Link href="/teams" className="hero-btn">
                 Бүх багуудыг харах <i className="fas fa-arrow-right"></i>
@@ -104,8 +108,8 @@ export default async function HomePage() {
                 <span className="news-tag">МЭДЭЭ</span>
                 <h3>2026 Улирал Нээлтээ Хийлээ</h3>
                 <p>
-                  Sain Girls League-ийн 2026 оны улирал албан ёсоор нээлтээ хийлээ. 16 баг шинэ
-                  улирлыг угтаж байна.
+                  Sain Girls League-ийн 2026 оны улирал албан ёсоор нээлтээ
+                  хийлээ. 16 баг шинэ улирлыг угтаж байна.
                 </p>
               </div>
             </div>
@@ -163,19 +167,31 @@ export default async function HomePage() {
               <h3>
                 <i className="fas fa-basketball-ball"></i> Оноо
               </h3>
-              <TopPlayersList players={topScorers} statKey="pointsPerGame" statLabel="PTS" />
+              <TopPlayersList
+                players={topScorers}
+                statKey="pointsPerGame"
+                statLabel="PTS"
+              />
             </div>
             <div className="category-card">
               <h3>
                 <i className="fas fa-hand-rock"></i> Самбар
               </h3>
-              <TopPlayersList players={topRebounders} statKey="reboundsPerGame" statLabel="REB" />
+              <TopPlayersList
+                players={topRebounders}
+                statKey="reboundsPerGame"
+                statLabel="REB"
+              />
             </div>
             <div className="category-card">
               <h3>
                 <i className="fas fa-hands-helping"></i> Дамжуулалт
               </h3>
-              <TopPlayersList players={topAssisters} statKey="assistsPerGame" statLabel="AST" />
+              <TopPlayersList
+                players={topAssisters}
+                statKey="assistsPerGame"
+                statLabel="AST"
+              />
             </div>
           </div>
         </section>
@@ -192,14 +208,22 @@ export default async function HomePage() {
           </div>
           <div className="games-grid">
             {upcomingGames.length > 0 ? (
-              upcomingGames.map((game) => <GameCard key={game.id} game={game} />)
+              upcomingGames.map((game) => (
+                <GameCard key={game.id} game={game} />
+              ))
             ) : (
-              <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+              <p style={{ textAlign: "center", color: "var(--text-muted)" }}>
                 Удахгүй болох тоглолт байхгүй байна
               </p>
             )}
           </div>
         </section>
+
+        {/* Podcast Preview */}
+        <PodcastPreview />
+
+        {/* Sponsors / Partners */}
+        <SponsorLogos />
       </main>
     </>
   );

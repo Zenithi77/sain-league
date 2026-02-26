@@ -1,55 +1,67 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { logIn, signInWithGoogle } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const {
+    logIn,
+    signInWithGoogle,
+    needsOnboarding,
+    loading: authLoading,
+  } = useAuth();
   const router = useRouter();
+
+  // After successful auth, redirect based on onboarding status
+  useEffect(() => {
+    if (!authLoading && needsOnboarding) {
+      router.push("/onboarding");
+    }
+  }, [needsOnboarding, authLoading, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
-    setLoading(true);
+    setError("");
+    setSubmitting(true);
 
     try {
       await logIn(email, password);
-      router.push('/');
+      // Redirect handled in useEffect below after userData loads
     } catch (err: any) {
       console.error(err);
-      if (err.code === 'auth/user-not-found') {
-        setError('Хэрэглэгч олдсонгүй');
-      } else if (err.code === 'auth/wrong-password') {
-        setError('Нууц үг буруу байна');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('И-мэйл хаяг буруу байна');
+      if (err.code === "auth/user-not-found") {
+        setError("Хэрэглэгч олдсонгүй");
+      } else if (err.code === "auth/wrong-password") {
+        setError("Нууц үг буруу байна");
+      } else if (err.code === "auth/invalid-email") {
+        setError("И-мэйл хаяг буруу байна");
       } else {
-        setError('Нэвтрэхэд алдаа гарлаа');
+        setError("Нэвтрэхэд алдаа гарлаа");
       }
     }
 
-    setLoading(false);
+    setSubmitting(false);
   }
 
   async function handleGoogleSignIn() {
-    setError('');
-    setLoading(true);
+    setError("");
+    setSubmitting(true);
 
     try {
       await signInWithGoogle();
-      router.push('/');
+      // Redirect handled in useEffect below after userData loads
     } catch (err: any) {
       console.error(err);
-      setError('Google-ээр нэвтрэхэд алдаа гарлаа');
+      setError("Google-ээр нэвтрэхэд алдаа гарлаа");
     }
 
-    setLoading(false);
+    setSubmitting(false);
   }
 
   return (
@@ -68,7 +80,7 @@ export default function LoginPage() {
           type="button"
           className="auth-btn google-main"
           onClick={handleGoogleSignIn}
-          disabled={loading}
+          disabled={submitting}
         >
           <svg viewBox="0 0 24 24" width="24" height="24">
             <path
@@ -120,8 +132,12 @@ export default function LoginPage() {
             />
           </div>
 
-          <button type="submit" className="auth-btn primary" disabled={loading}>
-            {loading ? 'Нэвтэрч байна...' : 'Нэвтрэх'}
+          <button
+            type="submit"
+            className="auth-btn primary"
+            disabled={submitting}
+          >
+            {submitting ? "Нэвтэрч байна..." : "Нэвтрэх"}
           </button>
         </form>
 

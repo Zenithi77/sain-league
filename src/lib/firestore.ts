@@ -11,8 +11,8 @@ import {
   orderBy,
   writeBatch,
   serverTimestamp,
-} from 'firebase/firestore';
-import { db } from './firebase';
+} from "firebase/firestore";
+import { db } from "./firebase";
 import {
   Team,
   TeamWithAverages,
@@ -21,13 +21,15 @@ import {
   Game,
   GameWithTeams,
   Season,
-} from '@/types';
+  Sponsor,
+} from "@/types";
 
 // Collections
-const TEAMS_COLLECTION = 'teams';
-const PLAYERS_COLLECTION = 'players';
-const GAMES_COLLECTION = 'games';
-const SEASON_COLLECTION = 'season';
+const TEAMS_COLLECTION = "teams";
+const PLAYERS_COLLECTION = "players";
+const GAMES_COLLECTION = "games";
+const SEASON_COLLECTION = "season";
+const SPONSORS_COLLECTION = "sponsors";
 
 // ============================================
 // TEAMS
@@ -36,7 +38,7 @@ const SEASON_COLLECTION = 'season';
 export async function getTeams(): Promise<Team[]> {
   const teamsRef = collection(db, TEAMS_COLLECTION);
   const snapshot = await getDocs(teamsRef);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Team));
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Team);
 }
 
 export async function getTeam(id: string): Promise<Team | null> {
@@ -48,7 +50,7 @@ export async function getTeam(id: string): Promise<Team | null> {
   return null;
 }
 
-export async function createTeam(team: Omit<Team, 'id'>): Promise<string> {
+export async function createTeam(team: Omit<Team, "id">): Promise<string> {
   const teamsRef = collection(db, TEAMS_COLLECTION);
   const newDocRef = doc(teamsRef);
   await setDoc(newDocRef, {
@@ -58,7 +60,10 @@ export async function createTeam(team: Omit<Team, 'id'>): Promise<string> {
   return newDocRef.id;
 }
 
-export async function updateTeam(id: string, data: Partial<Team>): Promise<void> {
+export async function updateTeam(
+  id: string,
+  data: Partial<Team>,
+): Promise<void> {
   const teamRef = doc(db, TEAMS_COLLECTION, id);
   await updateDoc(teamRef, {
     ...data,
@@ -78,7 +83,7 @@ export async function deleteTeam(id: string): Promise<void> {
 export async function getPlayers(): Promise<Player[]> {
   const playersRef = collection(db, PLAYERS_COLLECTION);
   const snapshot = await getDocs(playersRef);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Player));
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Player);
 }
 
 export async function getPlayer(id: string): Promise<Player | null> {
@@ -92,12 +97,14 @@ export async function getPlayer(id: string): Promise<Player | null> {
 
 export async function getPlayersByTeam(teamId: string): Promise<Player[]> {
   const playersRef = collection(db, PLAYERS_COLLECTION);
-  const q = query(playersRef, where('teamId', '==', teamId));
+  const q = query(playersRef, where("teamId", "==", teamId));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Player));
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Player);
 }
 
-export async function createPlayer(player: Omit<Player, 'id'>): Promise<string> {
+export async function createPlayer(
+  player: Omit<Player, "id">,
+): Promise<string> {
   const playersRef = collection(db, PLAYERS_COLLECTION);
   const newDocRef = doc(playersRef);
   await setDoc(newDocRef, {
@@ -107,7 +114,10 @@ export async function createPlayer(player: Omit<Player, 'id'>): Promise<string> 
   return newDocRef.id;
 }
 
-export async function updatePlayer(id: string, data: Partial<Player>): Promise<void> {
+export async function updatePlayer(
+  id: string,
+  data: Partial<Player>,
+): Promise<void> {
   const playerRef = doc(db, PLAYERS_COLLECTION, id);
   await updateDoc(playerRef, {
     ...data,
@@ -126,9 +136,9 @@ export async function deletePlayer(id: string): Promise<void> {
 
 export async function getGames(): Promise<Game[]> {
   const gamesRef = collection(db, GAMES_COLLECTION);
-  const q = query(gamesRef, orderBy('date', 'desc'));
+  const q = query(gamesRef, orderBy("date", "desc"));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Game));
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Game);
 }
 
 export async function getGame(id: string): Promise<Game | null> {
@@ -140,7 +150,7 @@ export async function getGame(id: string): Promise<Game | null> {
   return null;
 }
 
-export async function createGame(game: Omit<Game, 'id'>): Promise<string> {
+export async function createGame(game: Omit<Game, "id">): Promise<string> {
   const gamesRef = collection(db, GAMES_COLLECTION);
   const newDocRef = doc(gamesRef);
   await setDoc(newDocRef, {
@@ -150,7 +160,10 @@ export async function createGame(game: Omit<Game, 'id'>): Promise<string> {
   return newDocRef.id;
 }
 
-export async function updateGame(id: string, data: Partial<Game>): Promise<void> {
+export async function updateGame(
+  id: string,
+  data: Partial<Game>,
+): Promise<void> {
   const gameRef = doc(db, GAMES_COLLECTION, id);
   await updateDoc(gameRef, {
     ...data,
@@ -168,7 +181,7 @@ export async function deleteGame(id: string): Promise<void> {
 // ============================================
 
 export async function getSeason(): Promise<Season | null> {
-  const seasonRef = doc(db, SEASON_COLLECTION, 'current');
+  const seasonRef = doc(db, SEASON_COLLECTION, "current");
   const snapshot = await getDoc(seasonRef);
   if (snapshot.exists()) {
     return snapshot.data() as Season;
@@ -177,11 +190,15 @@ export async function getSeason(): Promise<Season | null> {
 }
 
 export async function updateSeason(data: Partial<Season>): Promise<void> {
-  const seasonRef = doc(db, SEASON_COLLECTION, 'current');
-  await setDoc(seasonRef, {
-    ...data,
-    updatedAt: serverTimestamp(),
-  }, { merge: true });
+  const seasonRef = doc(db, SEASON_COLLECTION, "current");
+  await setDoc(
+    seasonRef,
+    {
+      ...data,
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true },
+  );
 }
 
 // ============================================
@@ -190,29 +207,37 @@ export async function updateSeason(data: Partial<Season>): Promise<void> {
 
 export async function batchUpdatePlayers(players: Player[]): Promise<void> {
   const batch = writeBatch(db);
-  
-  players.forEach(player => {
+
+  players.forEach((player) => {
     const playerRef = doc(db, PLAYERS_COLLECTION, player.id);
-    batch.set(playerRef, {
-      ...player,
-      updatedAt: serverTimestamp(),
-    }, { merge: true });
+    batch.set(
+      playerRef,
+      {
+        ...player,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
   });
-  
+
   await batch.commit();
 }
 
 export async function batchUpdateTeams(teams: Team[]): Promise<void> {
   const batch = writeBatch(db);
-  
-  teams.forEach(team => {
+
+  teams.forEach((team) => {
     const teamRef = doc(db, TEAMS_COLLECTION, team.id);
-    batch.set(teamRef, {
-      ...team,
-      updatedAt: serverTimestamp(),
-    }, { merge: true });
+    batch.set(
+      teamRef,
+      {
+        ...team,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
   });
-  
+
   await batch.commit();
 }
 
@@ -237,21 +262,31 @@ export function calculatePlayerAverages(player: Player): PlayerWithAverages {
       minutesPerGame: (stats.minutesPlayed / gp).toFixed(1),
       fieldGoalPercentage:
         stats.fieldGoalsAttempted > 0
-          ? ((stats.fieldGoalsMade / stats.fieldGoalsAttempted) * 100).toFixed(1)
-          : '0.0',
+          ? ((stats.fieldGoalsMade / stats.fieldGoalsAttempted) * 100).toFixed(
+              1,
+            )
+          : "0.0",
       threePointPercentage:
         stats.threePointersAttempted > 0
-          ? ((stats.threePointersMade / stats.threePointersAttempted) * 100).toFixed(1)
-          : '0.0',
+          ? (
+              (stats.threePointersMade / stats.threePointersAttempted) *
+              100
+            ).toFixed(1)
+          : "0.0",
       freeThrowPercentage:
         stats.freeThrowsAttempted > 0
-          ? ((stats.freeThrowsMade / stats.freeThrowsAttempted) * 100).toFixed(1)
-          : '0.0',
+          ? ((stats.freeThrowsMade / stats.freeThrowsAttempted) * 100).toFixed(
+              1,
+            )
+          : "0.0",
     },
   };
 }
 
-export function calculateTeamAverages(team: Team, players: Player[]): TeamWithAverages {
+export function calculateTeamAverages(
+  team: Team,
+  players: Player[],
+): TeamWithAverages {
   const teamPlayers = players.filter((p) => p.teamId === team.id);
   const gp = team.stats.gamesPlayed || 1;
 
@@ -274,7 +309,8 @@ export function calculateTeamAverages(team: Team, players: Player[]): TeamWithAv
   const wins = team.stats.wins || 0;
   const losses = team.stats.losses || 0;
   const totalGames = wins + losses;
-  const winPct = totalGames > 0 ? ((wins / totalGames) * 100).toFixed(1) : '0.0';
+  const winPct =
+    totalGames > 0 ? ((wins / totalGames) * 100).toFixed(1) : "0.0";
 
   return {
     ...team,
@@ -290,11 +326,74 @@ export function calculateTeamAverages(team: Team, players: Player[]): TeamWithAv
   };
 }
 
+// ============================================
+// SPONSORS
+// ============================================
+
+export async function getSponsors(): Promise<Sponsor[]> {
+  const sponsorsRef = collection(db, SPONSORS_COLLECTION);
+  const q = query(sponsorsRef, orderBy("order", "asc"));
+  try {
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Sponsor);
+  } catch {
+    // If 'order' field index not ready, fall back to unordered
+    const snapshot = await getDocs(sponsorsRef);
+    return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Sponsor);
+  }
+}
+
+export async function getSponsor(id: string): Promise<Sponsor | null> {
+  const docRef = doc(db, SPONSORS_COLLECTION, id);
+  const snapshot = await getDoc(docRef);
+  if (snapshot.exists()) {
+    return { id: snapshot.id, ...snapshot.data() } as Sponsor;
+  }
+  return null;
+}
+
+export async function createSponsor(
+  data: Omit<Sponsor, "id">,
+): Promise<Sponsor> {
+  const sponsorsRef = collection(db, SPONSORS_COLLECTION);
+  const newDocRef = doc(sponsorsRef);
+  const sponsorData = {
+    name: data.name,
+    logo: data.logo || "",
+    website: data.website || "",
+    order: data.order ?? 0,
+    createdAt: serverTimestamp(),
+  };
+  await setDoc(newDocRef, sponsorData);
+  return { id: newDocRef.id, ...sponsorData } as unknown as Sponsor;
+}
+
+export async function updateSponsor(
+  id: string,
+  data: Partial<Sponsor>,
+): Promise<Sponsor | null> {
+  const docRef = doc(db, SPONSORS_COLLECTION, id);
+  const snapshot = await getDoc(docRef);
+  if (!snapshot.exists()) return null;
+  const { id: _id, ...updateData } = data;
+  await updateDoc(docRef, { ...updateData, updatedAt: serverTimestamp() });
+  const updated = await getDoc(docRef);
+  return { id: updated.id, ...updated.data() } as Sponsor;
+}
+
+export async function deleteSponsor(id: string): Promise<boolean> {
+  const docRef = doc(db, SPONSORS_COLLECTION, id);
+  const snapshot = await getDoc(docRef);
+  if (!snapshot.exists()) return false;
+  await deleteDoc(docRef);
+  return true;
+}
+
 // Generate unique ID
 export function generatePlayerId(): string {
-  return 'player_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  return "player_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
 }
 
 export function generateGameId(): string {
-  return 'game_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  return "game_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
 }

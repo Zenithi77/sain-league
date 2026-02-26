@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^44.3.0",
+    "@ckeditor/ckeditor5-react": "^11.0.1",
     "firebase": "^12.9.0",
     "firebase-admin": "^13.6.1",
     "graceful-fs": "^4.2.11",
@@ -16,7 +18,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "uuid": "^9.0.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@types/node": "20.11.0",

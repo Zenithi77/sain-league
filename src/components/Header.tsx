@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Header() {
   const pathname = usePathname();
@@ -20,23 +20,22 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { href: '/', label: 'Нүүр' },
-    { href: '/schedule', label: 'Хуваарь' },
-    { href: '/standings', label: 'Байр' },
-    { href: '/stats', label: 'Статистик' },
-    { href: '/teams', label: 'Багууд' },
-    { href: '/players', label: 'Тоглогчид' },
-    { href: '/news', label: 'Мэдээ' },
-    { href: '/admin', label: 'Админ' },
+    { href: "/", label: "Нүүр" },
+    { href: "/schedule", label: "Хуваарь" },
+    { href: "/standings", label: "Байр" },
+    { href: "/stats", label: "Статистик" },
+    { href: "/teams", label: "Багууд" },
+    { href: "/players", label: "Тоглогчид" },
+    { href: "/news", label: "Мэдээ" },
   ];
 
   async function handleLogout() {
     try {
       await logOut();
       setUserMenuOpen(false);
-      router.push('/');
+      router.push("/");
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     }
   }
 
@@ -65,7 +64,7 @@ export default function Header() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className={pathname === link.href ? 'active' : ''}
+                    className={pathname === link.href ? "active" : ""}
                   >
                     {link.label}
                   </Link>
@@ -84,23 +83,49 @@ export default function Header() {
                     >
                       <div className="user-avatar">
                         {user.photoURL ? (
-                          <img src={user.photoURL} alt={user.displayName || 'User'} />
+                          <img
+                            src={user.photoURL}
+                            alt={user.displayName || "User"}
+                          />
                         ) : (
-                          <span>{(user.displayName || user.email || 'U')[0].toUpperCase()}</span>
+                          <span>
+                            {(user.displayName ||
+                              user.email ||
+                              "U")[0].toUpperCase()}
+                          </span>
                         )}
                       </div>
-                      <span className="user-name">{user.displayName || 'Хэрэглэгч'}</span>
-                      <i className={`fas fa-chevron-${userMenuOpen ? 'up' : 'down'}`}></i>
+                      <span className="user-name">
+                        {user.displayName || "Хэрэглэгч"}
+                      </span>
+                      <i
+                        className={`fas fa-chevron-${userMenuOpen ? "up" : "down"}`}
+                      ></i>
                     </button>
                     {userMenuOpen && (
                       <div className="user-dropdown">
                         <div className="user-dropdown-header">
-                          <span>{user.email}</span>
-                          {userData?.role === 'admin' && (
-                            <span className="user-role-badge">Админ</span>
-                          )}
+                          <span className="user-dropdown-name">
+                            {user.displayName || "Хэрэглэгч"}
+                          </span>
+                          <span className="user-dropdown-email">
+                            {user.email}
+                          </span>
                         </div>
-                        <button onClick={handleLogout} className="user-dropdown-item logout">
+                        {userData?.role === "admin" && (
+                          <Link
+                            href="/admin"
+                            className="user-dropdown-item"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            <i className="fas fa-cog"></i>
+                            Админ хэсэг
+                          </Link>
+                        )}
+                        <button
+                          onClick={handleLogout}
+                          className="user-dropdown-item logout"
+                        >
                           <i className="fas fa-sign-out-alt"></i>
                           Гарах
                         </button>
@@ -130,7 +155,7 @@ export default function Header() {
       </header>
 
       {/* Mobile Menu */}
-      <div className={`mobile-menu ${mobileMenuOpen ? 'active' : ''}`}>
+      <div className={`mobile-menu ${mobileMenuOpen ? "active" : ""}`}>
         <div className="mobile-menu-header">
           <Image
             src="/images/logo.png"
@@ -139,7 +164,10 @@ export default function Header() {
             height={42}
             className="mobile-logo-image"
           />
-          <button className="close-menu" onClick={() => setMobileMenuOpen(false)}>
+          <button
+            className="close-menu"
+            onClick={() => setMobileMenuOpen(false)}
+          >
             <i className="fas fa-times"></i>
           </button>
         </div>
@@ -160,16 +188,35 @@ export default function Header() {
                   <div className="mobile-user-info">
                     <div className="user-avatar">
                       {user.photoURL ? (
-                        <img src={user.photoURL} alt={user.displayName || 'User'} />
+                        <img
+                          src={user.photoURL}
+                          alt={user.displayName || "User"}
+                        />
                       ) : (
-                        <span>{(user.displayName || user.email || 'U')[0].toUpperCase()}</span>
+                        <span>
+                          {(user.displayName ||
+                            user.email ||
+                            "U")[0].toUpperCase()}
+                        </span>
                       )}
                     </div>
                     <div>
-                      <span className="mobile-user-name">{user.displayName || 'Хэрэглэгч'}</span>
+                      <span className="mobile-user-name">
+                        {user.displayName || "Хэрэглэгч"}
+                      </span>
                       <span className="mobile-user-email">{user.email}</span>
                     </div>
                   </div>
+                  {userData?.role === "admin" && (
+                    <Link
+                      href="/admin"
+                      className="mobile-admin-btn"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <i className="fas fa-cog"></i>
+                      Админ хэсэг
+                    </Link>
+                  )}
                   <button onClick={handleLogout} className="mobile-logout-btn">
                     <i className="fas fa-sign-out-alt"></i>
                     Гарах
@@ -177,10 +224,18 @@ export default function Header() {
                 </>
               ) : (
                 <>
-                  <Link href="/login" className="mobile-auth-btn login" onClick={() => setMobileMenuOpen(false)}>
+                  <Link
+                    href="/login"
+                    className="mobile-auth-btn login"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     Нэвтрэх
                   </Link>
-                  <Link href="/signup" className="mobile-auth-btn signup" onClick={() => setMobileMenuOpen(false)}>
+                  <Link
+                    href="/signup"
+                    className="mobile-auth-btn signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     Бүртгүүлэх
                   </Link>
                 </>

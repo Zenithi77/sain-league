@@ -3,7 +3,6 @@
 import { useState, useMemo, useEffect } from "react";
 import DateSlider from "./DateSlider";
 import GameCard from "./GameCard";
-import AdminCreateGame from "./AdminCreateGame";
 import { GameWithTeams, Team } from "@/types";
 import {
   useActiveSeason,
@@ -153,9 +152,6 @@ export default function ScheduleClient() {
 
   return (
     <div className="schedule-wrapper">
-      {/* Admin: Create Game (only visible for admin users) */}
-      <AdminCreateGame />
-
       {/* Date Slider */}
       <DateSlider
         selectedDate={selectedDate}

@@ -145,14 +145,22 @@ export interface Season {
   isActive: boolean;
 }
 
-export type NewsCategory = "highlight" | "recap" | "announcement" | "interview" | "transfer";
+export type NewsCategory =
+  | "highlight"
+  | "recap"
+  | "announcement"
+  | "interview"
+  | "transfer";
+
+export type NewsStatus = "draft" | "published";
 
 export interface NewsArticle {
   id: string;
+  status: NewsStatus;
   title: string;
   summary: string;
-  content: string;
-  image: string;
+  contentHtml: string;
+  coverImage: string;
   category: NewsCategory;
   teamIds: string[];
   author: string;
@@ -164,10 +172,27 @@ export interface NewsArticleWithTeams extends NewsArticle {
   teams: Team[];
 }
 
+export interface Sponsor {
+  id: string;
+  name: string;
+  logo: string;
+  website: string;
+  order?: number;
+}
+
+export interface Podcast {
+  id: string;
+  title: string;
+  youtubeUrl: string;
+  description: string;
+  date: string;
+}
+
 export interface Database {
   season: Season;
   teams: Team[];
   players: Player[];
   games: Game[];
   news: NewsArticle[];
+  sponsors: Sponsor[];
 }

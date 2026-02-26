@@ -8,6 +8,12 @@ let adminApp: App;
 function getAdminApp(): App {
   if (getApps().length === 0) {
     // Production: Use service account from environment variable
+    const storageBucket =
+      process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ||
+      (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+        ? `${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}.firebasestorage.app`
+        : undefined);
+
     if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
       const serviceAccount = JSON.parse(
         process.env.FIREBASE_SERVICE_ACCOUNT_KEY,
@@ -15,16 +21,18 @@ function getAdminApp(): App {
       adminApp = initializeApp({
         credential: cert(serviceAccount),
         projectId: serviceAccount.project_id,
+        storageBucket,
       });
     }
     // Development: Use service account file
     else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-      adminApp = initializeApp();
+      adminApp = initializeApp({ storageBucket });
     }
     // Fallback: Use project ID only (limited functionality)
     else if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
       adminApp = initializeApp({
         projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        storageBucket,
       });
     } else {
       throw new Error(

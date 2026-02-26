@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import AdminGameStatsInput from "./AdminGameStatsInput";
 import {
   useTeams,
   useBoxscores,
@@ -652,13 +651,6 @@ export default function GameDetailClient({ gameId }: GameDetailProps) {
           </div>
         )}
       </div>
-
-      {/* Admin: Game Stats Input (only visible for admin users) */}
-      <AdminGameStatsInput
-        gameId={gameId}
-        homeTeamId={game.homeTeamId}
-        awayTeamId={game.awayTeamId}
-      />
     </div>
   );
 }

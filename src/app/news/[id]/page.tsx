@@ -1,30 +1,32 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import type { NewsArticleWithTeams } from '@/types';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import type { NewsArticleWithTeams } from "@/types";
 
 const CATEGORY_LABELS: Record<string, string> = {
-  highlight: 'Тоглолтын тойм',
-  recap: 'Тоглолтын дүн',
-  announcement: 'Мэдээлэл',
-  interview: 'Ярилцлага',
-  transfer: 'Шилжилт',
+  highlight: "Тоглолтын тойм",
+  recap: "Тоглолтын дүн",
+  announcement: "Мэдээлэл",
+  interview: "Ярилцлага",
+  transfer: "Шилжилт",
 };
 
 const CATEGORY_ICONS: Record<string, string> = {
-  highlight: 'fas fa-fire',
-  recap: 'fas fa-clipboard-list',
-  announcement: 'fas fa-bullhorn',
-  interview: 'fas fa-microphone',
-  transfer: 'fas fa-exchange-alt',
+  highlight: "fas fa-fire",
+  recap: "fas fa-clipboard-list",
+  announcement: "fas fa-bullhorn",
+  interview: "fas fa-microphone",
+  transfer: "fas fa-exchange-alt",
 };
 
 export default function NewsDetailPage() {
   const params = useParams();
   const [article, setArticle] = useState<NewsArticleWithTeams | null>(null);
-  const [relatedArticles, setRelatedArticles] = useState<NewsArticleWithTeams[]>([]);
+  const [relatedArticles, setRelatedArticles] = useState<
+    NewsArticleWithTeams[]
+  >([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export default function NewsDetailPage() {
         setArticle(data);
       }
     } catch (err) {
-      console.error('Failed to fetch article:', err);
+      console.error("Failed to fetch article:", err);
     } finally {
       setLoading(false);
     }
@@ -50,13 +52,17 @@ export default function NewsDetailPage() {
 
   const fetchRelated = async () => {
     try {
-      const res = await fetch('/api/news?limit=4');
+      const res = await fetch("/api/news?limit=4");
       if (res.ok) {
         const data = await res.json();
-        setRelatedArticles(data.filter((a: NewsArticleWithTeams) => a.id !== params.id).slice(0, 3));
+        setRelatedArticles(
+          data
+            .filter((a: NewsArticleWithTeams) => a.id !== params.id)
+            .slice(0, 3),
+        );
       }
     } catch (err) {
-      console.error('Failed to fetch related:', err);
+      console.error("Failed to fetch related:", err);
     }
   };
 
@@ -77,7 +83,11 @@ export default function NewsDetailPage() {
         <div className="news-empty">
           <i className="fas fa-exclamation-circle"></i>
           <h3>Мэдээ олдсонгүй</h3>
-          <Link href="/news" className="btn btn-primary" style={{ marginTop: 16 }}>
+          <Link
+            href="/news"
+            className="btn btn-primary"
+            style={{ marginTop: 16 }}
+          >
             <i className="fas fa-arrow-left"></i> Мэдээ рүү буцах
           </Link>
         </div>
@@ -89,7 +99,9 @@ export default function NewsDetailPage() {
     <main className="main-content">
       {/* Breadcrumb */}
       <div className="news-breadcrumb">
-        <Link href="/news"><i className="fas fa-arrow-left"></i> Мэдээ</Link>
+        <Link href="/news">
+          <i className="fas fa-arrow-left"></i> Мэдээ
+        </Link>
         <span>/</span>
         <span>{CATEGORY_LABELS[article.category]}</span>
       </div>
@@ -103,13 +115,25 @@ export default function NewsDetailPage() {
           </span>
           <h1>{article.title}</h1>
           <div className="news-article-meta">
-            <span><i className="fas fa-calendar"></i> {article.date}</span>
-            <span><i className="fas fa-user"></i> {article.author}</span>
+            <span>
+              <i className="fas fa-calendar"></i> {article.date}
+            </span>
+            <span>
+              <i className="fas fa-user"></i> {article.author}
+            </span>
           </div>
           {article.teams?.length > 0 && (
             <div className="news-article-teams">
-              {article.teams.map(t => (
-                <Link href={`/teams/${t.id}`} key={t.id} className="news-team-tag" style={{ borderColor: t.colors.primary, color: t.colors.primary }}>
+              {article.teams.map((t) => (
+                <Link
+                  href={`/teams/${t.id}`}
+                  key={t.id}
+                  className="news-team-tag"
+                  style={{
+                    borderColor: t.colors.primary,
+                    color: t.colors.primary,
+                  }}
+                >
                   {t.name}
                 </Link>
               ))}
@@ -118,9 +142,9 @@ export default function NewsDetailPage() {
         </div>
 
         {/* Hero Image */}
-        {article.image && (
+        {article.coverImage && (
           <div className="news-article-hero">
-            <img src={article.image} alt={article.title} />
+            <img src={article.coverImage} alt={article.title} />
           </div>
         )}
 
@@ -130,26 +154,31 @@ export default function NewsDetailPage() {
         </div>
 
         {/* Content */}
-        <div className="news-article-content">
-          {article.content.split('\n').map((para, i) => (
-            para.trim() ? <p key={i}>{para}</p> : null
-          ))}
-        </div>
+        <div
+          className="news-article-content"
+          dangerouslySetInnerHTML={{ __html: article.contentHtml || "" }}
+        />
       </article>
 
       {/* Related Articles */}
       {relatedArticles.length > 0 && (
         <section className="news-related">
-          <h2><i className="fas fa-newspaper"></i> Бусад мэдээ</h2>
+          <h2>
+            <i className="fas fa-newspaper"></i> Бусад мэдээ
+          </h2>
           <div className="news-related-grid">
-            {relatedArticles.map(ra => (
+            {relatedArticles.map((ra) => (
               <Link href={`/news/${ra.id}`} key={ra.id} className="news-card">
                 <div className="news-card-image">
-                  {ra.image ? (
-                    <img src={ra.image} alt={ra.title} />
+                  {ra.coverImage ? (
+                    <img src={ra.coverImage} alt={ra.title} />
                   ) : (
                     <div className="news-card-placeholder">
-                      <i className={CATEGORY_ICONS[ra.category] || 'fas fa-newspaper'}></i>
+                      <i
+                        className={
+                          CATEGORY_ICONS[ra.category] || "fas fa-newspaper"
+                        }
+                      ></i>
                     </div>
                   )}
                   <span className={`news-badge ${ra.category}`}>

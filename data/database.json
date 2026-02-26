@@ -1,896 +1,918 @@
 {
-    "season": {
-        "id": "2026",
-        "name": "Sain Girls League 2026",
-        "year": 2026,
-        "startDate": "2026-01-15",
-        "endDate": "2026-06-30",
-        "isActive": true
+  "season": {
+    "id": "2026",
+    "name": "Sain Girls League 2026",
+    "year": 2026,
+    "startDate": "2026-01-15",
+    "endDate": "2026-06-30",
+    "isActive": true
+  },
+  "teams": [
+    {
+      "id": "team-001",
+      "name": "33 Sparks",
+      "shortName": "SPK",
+      "logo": "/assets/logos/sparks.png",
+      "city": "Улаанбаатар",
+      "conference": "west",
+      "school": "33-р сургууль",
+      "coach": {
+        "id": "coach-001",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#F15F22",
+        "secondary": "#1A1A2E"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
     },
-    "teams": [
-        {
-            "id": "team-001",
-            "name": "33 Sparks",
-            "shortName": "SPK",
-            "logo": "/assets/logos/sparks.png",
-            "city": "Улаанбаатар",
-            "conference": "west",
-            "school": "33-р сургууль",
-            "coach": {
-                "id": "coach-001",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#F15F22",
-                "secondary": "#1A1A2E"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-002",
-            "name": "Emura Team",
-            "shortName": "EMR",
-            "logo": "/assets/logos/emura.png",
-            "city": "Улаанбаатар",
-            "conference": "west",
-            "school": "Эрхэт Эрдэм сургууль",
-            "coach": {
-                "id": "coach-002",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#2E86AB",
-                "secondary": "#FFFFFF"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-003",
-            "name": "Storm Team",
-            "shortName": "STM",
-            "logo": "/assets/logos/storm.png",
-            "city": "Улаанбаатар",
-            "conference": "west",
-            "school": "16-р сургууль",
-            "coach": {
-                "id": "coach-003",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#457B9D",
-                "secondary": "#A8DADC"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-004",
-            "name": "Hawks",
-            "shortName": "HWK",
-            "logo": "/assets/logos/hawks.png",
-            "city": "Улаанбаатар",
-            "conference": "west",
-            "school": "52-р сургууль",
-            "coach": {
-                "id": "coach-004",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#9B2335",
-                "secondary": "#D4AF37"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-005",
-            "name": "Bunny",
-            "shortName": "BNY",
-            "logo": "/assets/logos/bunny.png",
-            "city": "Улаанбаатар",
-            "conference": "west",
-            "school": "141-р сургууль",
-            "coach": {
-                "id": "coach-005",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#FF69B4",
-                "secondary": "#FFFFFF"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-006",
-            "name": "Shine Mongol Atlanta",
-            "shortName": "SMA",
-            "logo": "/assets/logos/atlanta.png",
-            "city": "Улаанбаатар",
-            "conference": "west",
-            "school": "Шинэ Монгол сургууль",
-            "coach": {
-                "id": "coach-006",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#E63946",
-                "secondary": "#F1FAEE"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-007",
-            "name": "Shooting Stars",
-            "shortName": "STS",
-            "logo": "/assets/logos/shootingstars.png",
-            "city": "Улаанбаатар",
-            "conference": "west",
-            "school": "84-р сургууль",
-            "coach": {
-                "id": "coach-007",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#FFD700",
-                "secondary": "#00008B"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-008",
-            "name": "Altan Od",
-            "shortName": "AOD",
-            "logo": "/assets/logos/altanod.png",
-            "city": "Улаанбаатар",
-            "conference": "west",
-            "school": "3-р сургууль",
-            "coach": {
-                "id": "coach-008",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#CD853F",
-                "secondary": "#4169E1"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-009",
-            "name": "School's Devils",
-            "shortName": "DVL",
-            "logo": "/assets/logos/devils.png",
-            "city": "Улаанбаатар",
-            "conference": "east",
-            "school": "31-р сургууль",
-            "coach": {
-                "id": "coach-009",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#DC143C",
-                "secondary": "#000000"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-010",
-            "name": "TST Unur",
-            "shortName": "TST",
-            "logo": "/assets/logos/unur.png",
-            "city": "Улаанбаатар",
-            "conference": "east",
-            "school": "Үнүр сургууль",
-            "coach": {
-                "id": "coach-010",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#008080",
-                "secondary": "#FFE4B5"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-011",
-            "name": "Tugs Shonhoruud",
-            "shortName": "TSH",
-            "logo": "/assets/logos/shonhoruud.png",
-            "city": "Улаанбаатар",
-            "conference": "east",
-            "school": "1-р сургууль",
-            "coach": {
-                "id": "coach-011",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#4682B4",
-                "secondary": "#F0E68C"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-012",
-            "name": "Phoenix Amgalan",
-            "shortName": "PHX",
-            "logo": "/assets/logos/phoenix.png",
-            "city": "Улаанбаатар",
-            "conference": "east",
-            "school": "Амгалан сургууль",
-            "coach": {
-                "id": "coach-012",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#FF9F1C",
-                "secondary": "#2C3E50"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-013",
-            "name": "21 Wolves",
-            "shortName": "WLV",
-            "logo": "/assets/logos/wolves.png",
-            "city": "Улаанбаатар",
-            "conference": "east",
-            "school": "21-р сургууль",
-            "coach": {
-                "id": "coach-013",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#6C5B7B",
-                "secondary": "#C06C84"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-014",
-            "name": "Thunder",
-            "shortName": "THD",
-            "logo": "/assets/logos/thunder.png",
-            "city": "Улаанбаатар",
-            "conference": "east",
-            "school": "117-р сургууль",
-            "coach": {
-                "id": "coach-014",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#355E3B",
-                "secondary": "#C19A6B"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-015",
-            "name": "Royal Dunk",
-            "shortName": "RDK",
-            "logo": "/assets/logos/royaldunk.png",
-            "city": "Улаанбаатар",
-            "conference": "east",
-            "school": "151-р сургууль",
-            "coach": {
-                "id": "coach-015",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#2F4F4F",
-                "secondary": "#FF69B4"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        },
-        {
-            "id": "team-016",
-            "name": "Irvesuud",
-            "shortName": "IRV",
-            "logo": "/assets/logos/irvesuud.png",
-            "city": "Улаанбаатар",
-            "conference": "east",
-            "school": "93-р сургууль",
-            "coach": {
-                "id": "coach-016",
-                "name": "",
-                "image": "/assets/coaches/default.png"
-            },
-            "colors": {
-                "primary": "#8B4513",
-                "secondary": "#228B22"
-            },
-            "stats": {
-                "wins": 0,
-                "losses": 0,
-                "pointsFor": 0,
-                "pointsAgainst": 0,
-                "gamesPlayed": 0
-            }
-        }
-    ],
-    "players": [
-        {
-            "id": "p-001",
-            "teamId": "team-001",
-            "name": "Анужин Бат-Эрдэнэ",
-            "number": 7,
-            "position": "PG",
-            "height": "165 см",
-            "weight": "55 кг",
-            "age": 16,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-002",
-            "teamId": "team-002",
-            "name": "Сарангоо Мөнхбат",
-            "number": 11,
-            "position": "SG",
-            "height": "168 см",
-            "weight": "57 кг",
-            "age": 17,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-003",
-            "teamId": "team-003",
-            "name": "Номин-Эрдэнэ Ганбаатар",
-            "number": 5,
-            "position": "SF",
-            "height": "172 см",
-            "weight": "60 кг",
-            "age": 16,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-004",
-            "teamId": "team-004",
-            "name": "Оюунтуяа Батсүх",
-            "number": 10,
-            "position": "PF",
-            "height": "175 см",
-            "weight": "62 кг",
-            "age": 17,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-005",
-            "teamId": "team-005",
-            "name": "Энхжин Дорж",
-            "number": 3,
-            "position": "PG",
-            "height": "163 см",
-            "weight": "52 кг",
-            "age": 15,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-006",
-            "teamId": "team-006",
-            "name": "Солонго Нямдорж",
-            "number": 14,
-            "position": "C",
-            "height": "178 см",
-            "weight": "65 кг",
-            "age": 17,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-007",
-            "teamId": "team-007",
-            "name": "Мөнхзул Эрдэнэбат",
-            "number": 8,
-            "position": "SG",
-            "height": "167 см",
-            "weight": "56 кг",
-            "age": 16,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-008",
-            "teamId": "team-008",
-            "name": "Нарангоо Баярсайхан",
-            "number": 22,
-            "position": "SF",
-            "height": "170 см",
-            "weight": "58 кг",
-            "age": 16,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-009",
-            "teamId": "team-009",
-            "name": "Цэнгэл Ганзориг",
-            "number": 4,
-            "position": "PG",
-            "height": "164 см",
-            "weight": "53 кг",
-            "age": 15,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-010",
-            "teamId": "team-010",
-            "name": "Болормаа Энхтүвшин",
-            "number": 15,
-            "position": "PF",
-            "height": "174 см",
-            "weight": "61 кг",
-            "age": 17,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-011",
-            "teamId": "team-011",
-            "name": "Хулан Батболд",
-            "number": 9,
-            "position": "SG",
-            "height": "166 см",
-            "weight": "55 кг",
-            "age": 16,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-012",
-            "teamId": "team-012",
-            "name": "Одгэрэл Мягмарсүрэн",
-            "number": 12,
-            "position": "C",
-            "height": "177 см",
-            "weight": "64 кг",
-            "age": 17,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-013",
-            "teamId": "team-013",
-            "name": "Ану Ганбат",
-            "number": 6,
-            "position": "SF",
-            "height": "169 см",
-            "weight": "57 кг",
-            "age": 16,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-014",
-            "teamId": "team-014",
-            "name": "Сувд Батчулуун",
-            "number": 20,
-            "position": "PG",
-            "height": "162 см",
-            "weight": "51 кг",
-            "age": 15,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-015",
-            "teamId": "team-015",
-            "name": "Оюунбилэг Эрдэнэ",
-            "number": 13,
-            "position": "PF",
-            "height": "173 см",
-            "weight": "60 кг",
-            "age": 16,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        },
-        {
-            "id": "p-016",
-            "teamId": "team-016",
-            "name": "Ариунзаяа Түмэнбаяр",
-            "number": 2,
-            "position": "SG",
-            "height": "165 см",
-            "weight": "54 кг",
-            "age": 16,
-            "image": "",
-            "country": "Монгол",
-            "college": "-",
-            "stats": {
-                "gamesPlayed": 0,
-                "minutesPlayed": 0,
-                "totalPoints": 0,
-                "totalRebounds": 0,
-                "totalAssists": 0,
-                "totalSteals": 0,
-                "totalBlocks": 0,
-                "totalTurnovers": 0,
-                "totalFouls": 0,
-                "fieldGoalsMade": 0,
-                "fieldGoalsAttempted": 0,
-                "threePointersMade": 0,
-                "threePointersAttempted": 0,
-                "freeThrowsMade": 0,
-                "freeThrowsAttempted": 0
-            }
-        }
-    ],
-    "games": [],
-    "news": []
+    {
+      "id": "team-002",
+      "name": "Emura Team",
+      "shortName": "EMR",
+      "logo": "/assets/logos/emura.png",
+      "city": "Улаанбаатар",
+      "conference": "west",
+      "school": "Эрхэт Эрдэм сургууль",
+      "coach": {
+        "id": "coach-002",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#2E86AB",
+        "secondary": "#FFFFFF"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-003",
+      "name": "Storm Team",
+      "shortName": "STM",
+      "logo": "/assets/logos/storm.png",
+      "city": "Улаанбаатар",
+      "conference": "west",
+      "school": "16-р сургууль",
+      "coach": {
+        "id": "coach-003",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#457B9D",
+        "secondary": "#A8DADC"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-004",
+      "name": "Hawks",
+      "shortName": "HWK",
+      "logo": "/assets/logos/hawks.png",
+      "city": "Улаанбаатар",
+      "conference": "west",
+      "school": "52-р сургууль",
+      "coach": {
+        "id": "coach-004",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#9B2335",
+        "secondary": "#D4AF37"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-005",
+      "name": "Bunny",
+      "shortName": "BNY",
+      "logo": "/assets/logos/bunny.png",
+      "city": "Улаанбаатар",
+      "conference": "west",
+      "school": "141-р сургууль",
+      "coach": {
+        "id": "coach-005",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#FF69B4",
+        "secondary": "#FFFFFF"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-006",
+      "name": "Shine Mongol Atlanta",
+      "shortName": "SMA",
+      "logo": "/assets/logos/atlanta.png",
+      "city": "Улаанбаатар",
+      "conference": "west",
+      "school": "Шинэ Монгол сургууль",
+      "coach": {
+        "id": "coach-006",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#E63946",
+        "secondary": "#F1FAEE"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-007",
+      "name": "Shooting Stars",
+      "shortName": "STS",
+      "logo": "/assets/logos/shootingstars.png",
+      "city": "Улаанбаатар",
+      "conference": "west",
+      "school": "84-р сургууль",
+      "coach": {
+        "id": "coach-007",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#FFD700",
+        "secondary": "#00008B"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-008",
+      "name": "Altan Od",
+      "shortName": "AOD",
+      "logo": "/assets/logos/altanod.png",
+      "city": "Улаанбаатар",
+      "conference": "west",
+      "school": "3-р сургууль",
+      "coach": {
+        "id": "coach-008",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#CD853F",
+        "secondary": "#4169E1"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-009",
+      "name": "School's Devils",
+      "shortName": "DVL",
+      "logo": "/assets/logos/devils.png",
+      "city": "Улаанбаатар",
+      "conference": "east",
+      "school": "31-р сургууль",
+      "coach": {
+        "id": "coach-009",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#DC143C",
+        "secondary": "#000000"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-010",
+      "name": "TST Unur",
+      "shortName": "TST",
+      "logo": "/assets/logos/unur.png",
+      "city": "Улаанбаатар",
+      "conference": "east",
+      "school": "Үнүр сургууль",
+      "coach": {
+        "id": "coach-010",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#008080",
+        "secondary": "#FFE4B5"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-011",
+      "name": "Tugs Shonhoruud",
+      "shortName": "TSH",
+      "logo": "/assets/logos/shonhoruud.png",
+      "city": "Улаанбаатар",
+      "conference": "east",
+      "school": "1-р сургууль",
+      "coach": {
+        "id": "coach-011",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#4682B4",
+        "secondary": "#F0E68C"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-012",
+      "name": "Phoenix Amgalan",
+      "shortName": "PHX",
+      "logo": "/assets/logos/phoenix.png",
+      "city": "Улаанбаатар",
+      "conference": "east",
+      "school": "Амгалан сургууль",
+      "coach": {
+        "id": "coach-012",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#FF9F1C",
+        "secondary": "#2C3E50"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-013",
+      "name": "21 Wolves",
+      "shortName": "WLV",
+      "logo": "/assets/logos/wolves.png",
+      "city": "Улаанбаатар",
+      "conference": "east",
+      "school": "21-р сургууль",
+      "coach": {
+        "id": "coach-013",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#6C5B7B",
+        "secondary": "#C06C84"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-014",
+      "name": "Thunder",
+      "shortName": "THD",
+      "logo": "/assets/logos/thunder.png",
+      "city": "Улаанбаатар",
+      "conference": "east",
+      "school": "117-р сургууль",
+      "coach": {
+        "id": "coach-014",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#355E3B",
+        "secondary": "#C19A6B"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-015",
+      "name": "Royal Dunk",
+      "shortName": "RDK",
+      "logo": "/assets/logos/royaldunk.png",
+      "city": "Улаанбаатар",
+      "conference": "east",
+      "school": "151-р сургууль",
+      "coach": {
+        "id": "coach-015",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#2F4F4F",
+        "secondary": "#FF69B4"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    },
+    {
+      "id": "team-016",
+      "name": "Irvesuud",
+      "shortName": "IRV",
+      "logo": "/assets/logos/irvesuud.png",
+      "city": "Улаанбаатар",
+      "conference": "east",
+      "school": "93-р сургууль",
+      "coach": {
+        "id": "coach-016",
+        "name": "",
+        "image": "/assets/coaches/default.png"
+      },
+      "colors": {
+        "primary": "#8B4513",
+        "secondary": "#228B22"
+      },
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "pointsFor": 0,
+        "pointsAgainst": 0,
+        "gamesPlayed": 0
+      }
+    }
+  ],
+  "players": [
+    {
+      "id": "p-001",
+      "teamId": "team-001",
+      "name": "Анужин Бат-Эрдэнэ",
+      "number": 7,
+      "position": "PG",
+      "height": "165 см",
+      "weight": "55 кг",
+      "age": 16,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-002",
+      "teamId": "team-002",
+      "name": "Сарангоо Мөнхбат",
+      "number": 11,
+      "position": "SG",
+      "height": "168 см",
+      "weight": "57 кг",
+      "age": 17,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-003",
+      "teamId": "team-003",
+      "name": "Номин-Эрдэнэ Ганбаатар",
+      "number": 5,
+      "position": "SF",
+      "height": "172 см",
+      "weight": "60 кг",
+      "age": 16,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-004",
+      "teamId": "team-004",
+      "name": "Оюунтуяа Батсүх",
+      "number": 10,
+      "position": "PF",
+      "height": "175 см",
+      "weight": "62 кг",
+      "age": 17,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-005",
+      "teamId": "team-005",
+      "name": "Энхжин Дорж",
+      "number": 3,
+      "position": "PG",
+      "height": "163 см",
+      "weight": "52 кг",
+      "age": 15,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-006",
+      "teamId": "team-006",
+      "name": "Солонго Нямдорж",
+      "number": 14,
+      "position": "C",
+      "height": "178 см",
+      "weight": "65 кг",
+      "age": 17,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-007",
+      "teamId": "team-007",
+      "name": "Мөнхзул Эрдэнэбат",
+      "number": 8,
+      "position": "SG",
+      "height": "167 см",
+      "weight": "56 кг",
+      "age": 16,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-008",
+      "teamId": "team-008",
+      "name": "Нарангоо Баярсайхан",
+      "number": 22,
+      "position": "SF",
+      "height": "170 см",
+      "weight": "58 кг",
+      "age": 16,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-009",
+      "teamId": "team-009",
+      "name": "Цэнгэл Ганзориг",
+      "number": 4,
+      "position": "PG",
+      "height": "164 см",
+      "weight": "53 кг",
+      "age": 15,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-010",
+      "teamId": "team-010",
+      "name": "Болормаа Энхтүвшин",
+      "number": 15,
+      "position": "PF",
+      "height": "174 см",
+      "weight": "61 кг",
+      "age": 17,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-011",
+      "teamId": "team-011",
+      "name": "Хулан Батболд",
+      "number": 9,
+      "position": "SG",
+      "height": "166 см",
+      "weight": "55 кг",
+      "age": 16,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-012",
+      "teamId": "team-012",
+      "name": "Одгэрэл Мягмарсүрэн",
+      "number": 12,
+      "position": "C",
+      "height": "177 см",
+      "weight": "64 кг",
+      "age": 17,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-013",
+      "teamId": "team-013",
+      "name": "Ану Ганбат",
+      "number": 6,
+      "position": "SF",
+      "height": "169 см",
+      "weight": "57 кг",
+      "age": 16,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-014",
+      "teamId": "team-014",
+      "name": "Сувд Батчулуун",
+      "number": 20,
+      "position": "PG",
+      "height": "162 см",
+      "weight": "51 кг",
+      "age": 15,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-015",
+      "teamId": "team-015",
+      "name": "Оюунбилэг Эрдэнэ",
+      "number": 13,
+      "position": "PF",
+      "height": "173 см",
+      "weight": "60 кг",
+      "age": 16,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    },
+    {
+      "id": "p-016",
+      "teamId": "team-016",
+      "name": "Ариунзаяа Түмэнбаяр",
+      "number": 2,
+      "position": "SG",
+      "height": "165 см",
+      "weight": "54 кг",
+      "age": 16,
+      "image": "",
+      "country": "Монгол",
+      "college": "-",
+      "stats": {
+        "gamesPlayed": 0,
+        "minutesPlayed": 0,
+        "totalPoints": 0,
+        "totalRebounds": 0,
+        "totalAssists": 0,
+        "totalSteals": 0,
+        "totalBlocks": 0,
+        "totalTurnovers": 0,
+        "totalFouls": 0,
+        "fieldGoalsMade": 0,
+        "fieldGoalsAttempted": 0,
+        "threePointersMade": 0,
+        "threePointersAttempted": 0,
+        "freeThrowsMade": 0,
+        "freeThrowsAttempted": 0
+      }
+    }
+  ],
+  "games": [],
+  "news": [
+    {
+      "id": "news-34fbefc6",
+      "title": "Test",
+      "summary": "Test",
+      "content": "test",
+      "image": "https://cdn.wnba.com/sites/4/2026/02/GettyImages-483251785-3-2048x1639.jpg",
+      "category": "recap",
+      "teamIds": ["yuRU8djVzsGmjO844Evp"],
+      "author": "SGL Admin",
+      "date": "2026-02-25",
+      "featured": true
+    }
+  ],
+  "sponsors": [
+    {
+      "id": "sponsor-91e25595",
+      "name": "Sain League",
+      "logo": "https://firebasestorage.googleapis.com/v0/b/sain-league.firebasestorage.app/o/sponsors%2F1772020261284_sdlhts.png?alt=media&token=3a3c31e7-90d6-40d4-97f6-c5de8a8eb5e2",
+      "website": "https://sainleague.org",
+      "order": 0
+    }
+  ]
 }
