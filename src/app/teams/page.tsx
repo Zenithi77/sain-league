@@ -4,92 +4,73 @@ import { TeamWithAverages } from '@/types';
 
 export const dynamic = 'force-dynamic';
 
-function DivisionTable({ teams, conference }: { teams: TeamWithAverages[]; conference: 'west' | 'east' }) {
+function ConferenceTable({ teams, conference }: { teams: TeamWithAverages[]; conference: 'west' | 'east' }) {
   const isWest = conference === 'west';
-  const accentColor = isWest ? '#F15F22' : '#0072bc';
+  const accent = isWest ? '#F15F22' : '#0072bc';
 
   return (
-    <div className={`div2-block div2-${conference}`}>
-      {/* Division Header */}
-      <div className={`div2-header div2-header-${conference}`}>
-        <div className="div2-header-icon">
-          <i className="fas fa-shield-alt"></i>
+    <div className="odoo-conf-card">
+      {/* Conference header bar */}
+      <div className="odoo-conf-header" style={{ borderLeftColor: accent }}>
+        <div className="odoo-conf-badge" style={{ background: accent }}>
+          <i className="fas fa-basketball-ball"></i>
         </div>
-        <div className="div2-header-info">
-          <h2>{isWest ? 'Баруун бүс' : 'Зүүн бүс'}</h2>
-          <span className="div2-team-count">{teams.length} баг</span>
+        <div className="odoo-conf-title-group">
+          <h2 className="odoo-conf-title">{isWest ? 'Western Conference' : 'Eastern Conference'}</h2>
+          <span className="odoo-conf-count">{teams.length} баг</span>
         </div>
       </div>
 
-      {/* Teams List */}
-      <div className="div2-teams-list">
+      {/* Table header */}
+      <div className="odoo-table-head">
+        <span className="odoo-th odoo-th-rank">#</span>
+        <span className="odoo-th odoo-th-team">Баг</span>
+        <span className="odoo-th odoo-th-stat">W</span>
+        <span className="odoo-th odoo-th-stat">L</span>
+        <span className="odoo-th odoo-th-stat hide-mobile">GP</span>
+        <span className="odoo-th odoo-th-stat">WIN%</span>
+        <span className="odoo-th odoo-th-stat">PPG</span>
+        <span className="odoo-th odoo-th-stat hide-mobile">RPG</span>
+        <span className="odoo-th odoo-th-stat hide-mobile">APG</span>
+        <span className="odoo-th odoo-th-arrow"></span>
+      </div>
+
+      {/* Team rows */}
+      <div className="odoo-table-body">
         {teams.map((team, i) => {
-          const totalGames = team.stats.wins + team.stats.losses;
-          const winPct = totalGames > 0 ? (team.stats.wins / totalGames) * 100 : 0;
+          const total = team.stats.wins + team.stats.losses;
+          const winPct = total > 0 ? ((team.stats.wins / total) * 100).toFixed(1) : '0.0';
 
           return (
-            <Link href={`/teams/${team.id}`} key={team.id} className={`div2-team-row ${i < 3 ? 'div2-top-team' : ''}`}>
+            <Link href={`/teams/${team.id}`} key={team.id} className="odoo-team-row">
               {/* Rank */}
-              <div className={`div2-rank ${i === 0 ? 'rank-gold' : i === 1 ? 'rank-silver' : i === 2 ? 'rank-bronze' : ''}`}>
-                {i < 3 ? (
-                  <i className="fas fa-trophy"></i>
-                ) : (
-                  <span>{i + 1}</span>
-                )}
-              </div>
+              <span className={`odoo-rank ${i === 0 ? 'odoo-rank-1' : i === 1 ? 'odoo-rank-2' : i === 2 ? 'odoo-rank-3' : ''}`}>
+                {i + 1}
+              </span>
 
-              {/* Team Identity */}
-              <div className="div2-team-identity">
-                <span
-                  className="div2-team-badge"
-                  style={{ backgroundColor: team.colors?.primary || accentColor }}
-                >
+              {/* Team info */}
+              <div className="odoo-team-cell">
+                <span className="odoo-team-logo" style={{ background: team.colors?.primary || accent }}>
                   {team.shortName}
                 </span>
-                <div className="div2-team-meta">
-                  <span className="div2-team-name">{team.name}</span>
-                  <span className="div2-team-school">{team.school}</span>
+                <div className="odoo-team-info">
+                  <span className="odoo-team-name">{team.name}</span>
+                  <span className="odoo-team-school">{team.school}</span>
                 </div>
-              </div>
-
-              {/* Win Rate Bar */}
-              <div className="div2-winrate hide-mobile-sm">
-                <div className="div2-winrate-bar">
-                  <div
-                    className="div2-winrate-fill"
-                    style={{
-                      width: `${winPct}%`,
-                      background: `linear-gradient(90deg, ${accentColor}, ${accentColor}88)`,
-                    }}
-                  />
-                </div>
-                <span className="div2-winrate-text">{winPct.toFixed(0)}%</span>
               </div>
 
               {/* Stats */}
-              <div className="div2-stats-group">
-                <div className="div2-stat">
-                  <span className="div2-stat-value wins-col">{team.stats.wins}</span>
-                  <span className="div2-stat-label">W</span>
-                </div>
-                <div className="div2-stat">
-                  <span className="div2-stat-value losses-col">{team.stats.losses}</span>
-                  <span className="div2-stat-label">L</span>
-                </div>
-                <div className="div2-stat hide-mobile">
-                  <span className="div2-stat-value">{team.stats.gamesPlayed}</span>
-                  <span className="div2-stat-label">GP</span>
-                </div>
-                <div className="div2-stat">
-                  <span className="div2-stat-value div2-ppg">{team.averages.pointsPerGame}</span>
-                  <span className="div2-stat-label">PPG</span>
-                </div>
-              </div>
+              <span className="odoo-td odoo-td-wins">{team.stats.wins}</span>
+              <span className="odoo-td odoo-td-losses">{team.stats.losses}</span>
+              <span className="odoo-td hide-mobile">{team.stats.gamesPlayed}</span>
+              <span className="odoo-td odoo-td-winpct">{winPct}%</span>
+              <span className="odoo-td odoo-td-ppg">{team.averages.pointsPerGame}</span>
+              <span className="odoo-td hide-mobile">{team.averages.reboundsPerGame}</span>
+              <span className="odoo-td hide-mobile">{team.averages.assistsPerGame}</span>
 
-              {/* Arrow */}
-              <div className="div2-arrow">
+              <span className="odoo-row-arrow">
                 <i className="fas fa-chevron-right"></i>
-              </div>
+              </span>
             </Link>
           );
         })}
@@ -107,24 +88,46 @@ export default async function TeamsPage() {
     .filter((t) => t.conference === 'east')
     .sort((a, b) => b.stats.wins - a.stats.wins || a.stats.losses - b.stats.losses);
 
+  const totalW = teams.reduce((s, t) => s + t.stats.wins, 0);
+  const totalL = teams.reduce((s, t) => s + t.stats.losses, 0);
+
   return (
     <main className="main-content">
-      {/* Page Header */}
-      <div className="teams2-page-header">
-        <div className="teams2-header-glow"></div>
-        <div className="teams2-header-content">
-          <h1>
-            <span className="teams2-icon-wrap"><i className="fas fa-basketball-ball"></i></span>
-            Багууд
-          </h1>
-          <p className="teams2-subtitle">Sain Girls League 2026 — {teams.length} баг</p>
+      {/* Page breadcrumb + header */}
+      <div className="odoo-teams-header">
+        <div className="odoo-breadcrumb">
+          <Link href="/">Нүүр</Link>
+          <i className="fas fa-angle-right"></i>
+          <span>Багууд</span>
+        </div>
+        <div className="odoo-teams-title-row">
+          <div className="odoo-teams-title-left">
+            <h1>Багууд</h1>
+            <span className="odoo-teams-badge">SGL 2026</span>
+          </div>
+          <div className="odoo-teams-summary">
+            <div className="odoo-summary-item">
+              <span className="odoo-summary-num">{teams.length}</span>
+              <span className="odoo-summary-label">Нийт баг</span>
+            </div>
+            <div className="odoo-summary-divider"></div>
+            <div className="odoo-summary-item">
+              <span className="odoo-summary-num">{totalW + totalL}</span>
+              <span className="odoo-summary-label">Тоглолт</span>
+            </div>
+            <div className="odoo-summary-divider"></div>
+            <div className="odoo-summary-item">
+              <span className="odoo-summary-num">{teams.length > 0 ? (teams.reduce((s, t) => s + t.averages.pointsPerGame, 0) / teams.length).toFixed(1) : '0'}</span>
+              <span className="odoo-summary-label">Дундаж оноо</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Two division layout */}
-      <div className="div2-container">
-        <DivisionTable teams={westTeams} conference="west" />
-        <DivisionTable teams={eastTeams} conference="east" />
+      {/* Conference tables */}
+      <div className="odoo-conferences">
+        <ConferenceTable teams={westTeams} conference="west" />
+        <ConferenceTable teams={eastTeams} conference="east" />
       </div>
     </main>
   );
