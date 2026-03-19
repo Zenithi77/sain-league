@@ -1699,6 +1699,284 @@ ul {
   }
 }
 
+/* ============================================
+   TEAMS PAGE - Division Tables
+   ============================================ */
+
+.teams-page-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 32px 24px;
+  background: linear-gradient(135deg, rgba(241, 95, 34, 0.12) 0%, rgba(0, 114, 188, 0.12) 100%);
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.teams-page-header::before {
+  content: "\f434";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  right: 30px;
+  bottom: -10px;
+  font-size: 100px;
+  opacity: 0.04;
+  color: var(--text-light);
+}
+
+.teams-page-header h1 {
+  font-family: "Oswald", sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.teams-page-header h1 i {
+  color: var(--primary-color);
+  margin-right: 10px;
+}
+
+.teams-page-subtitle {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.divisions-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 1200px) {
+  .divisions-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+}
+
+.division-block {
+  background: var(--bg-card);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.division-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 24px;
+  font-family: "Oswald", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  position: relative;
+}
+
+.division-title-bar.west {
+  background: linear-gradient(135deg, rgba(241, 95, 34, 0.2) 0%, rgba(241, 95, 34, 0.05) 100%);
+  border-bottom: 2px solid rgba(241, 95, 34, 0.4);
+}
+
+.division-title-bar.east {
+  background: linear-gradient(135deg, rgba(0, 114, 188, 0.2) 0%, rgba(0, 114, 188, 0.05) 100%);
+  border-bottom: 2px solid rgba(0, 114, 188, 0.4);
+}
+
+.division-title-bar i {
+  font-size: 18px;
+}
+
+.division-title-bar.west i {
+  color: var(--primary-color);
+}
+
+.division-title-bar.east i {
+  color: var(--secondary-color);
+}
+
+.division-title-bar h2 {
+  font-size: 18px;
+  flex: 1;
+  margin: 0;
+}
+
+.division-count {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4px 14px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: none;
+}
+
+.division-table-wrapper {
+  overflow-x: auto;
+}
+
+.division-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.division-table thead {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.division-table th {
+  font-family: "Oswald", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  padding: 12px 14px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.division-table th.th-rank {
+  width: 40px;
+  text-align: center;
+}
+
+.division-table th.th-team {
+  min-width: 180px;
+}
+
+.division-table th.th-school {
+  min-width: 120px;
+}
+
+.division-table th.th-stat {
+  width: 55px;
+  text-align: center;
+}
+
+.division-row {
+  transition: background 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.division-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.division-row:last-child {
+  border-bottom: none;
+}
+
+.td-rank {
+  text-align: center;
+  font-family: "Oswald", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 14px;
+}
+
+.td-team {
+  padding: 10px 14px;
+}
+
+.team-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-light);
+  transition: color 0.2s ease;
+}
+
+.team-link:hover {
+  color: var(--accent-color);
+}
+
+.team-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-family: "Oswald", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.team-name-text {
+  font-family: "Oswald", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.td-school {
+  padding: 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.td-stat {
+  text-align: center;
+  padding: 14px 8px;
+  font-family: "Oswald", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.wins-col {
+  color: var(--success-color);
+}
+
+.losses-col {
+  color: var(--error-color);
+}
+
+@media (max-width: 600px) {
+  .hide-mobile {
+    display: none;
+  }
+
+  .division-table th,
+  .division-table td {
+    padding: 10px 8px;
+  }
+
+  .team-badge {
+    width: 34px;
+    height: 34px;
+    font-size: 10px;
+  }
+
+  .team-name-text {
+    font-size: 13px;
+  }
+
+  .td-school {
+    font-size: 11px;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .teams-page-header h1 {
+    font-size: 24px;
+  }
+}
+
 /* Conference Sections */
 .conference-section {
   margin-bottom: 48px;

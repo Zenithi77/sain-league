@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminFirestore } from "@/lib/firebase-admin";
-import { requireAdmin } from "@/lib/firebase-admin";
+import { requireAdmin, getAdminFirestore } from "@/lib/firebase-admin";
+import { readDatabase } from "@/lib/database";
 import { v4 as uuidv4 } from "uuid";
 
-const NEWS_COLLECTION = "news";
-
-// GET /api/news — get all news articles
+// GET /api/news — get all news articles (from local database.json)
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -14,17 +12,13 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status");
     const limit = parseInt(searchParams.get("limit") || "50");
 
-    const db = getAdminFirestore();
-    const ref = db.collection(NEWS_COLLECTION).orderBy("date", "desc");
-
-    const snapshot = await ref.limit(limit).get();
+    const db = readDatabase();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let articles: any[] = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    let articles: any[] = (db.news || [])
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, limit);
 
-    // Filter by status (only show published by default on public requests)
+    // Filter by status
     if (status) {
       articles = articles.filter((a) => a.status === status);
     }
@@ -35,13 +29,8 @@ export async function GET(request: NextRequest) {
       articles = articles.filter((a) => a.featured);
     }
 
-    // Resolve team data
-    const teamsSnapshot = await db.collection("teams").get();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const teamsMap = new Map<string, any>();
-    teamsSnapshot.docs.forEach((doc) => {
-      teamsMap.set(doc.id, { id: doc.id, ...doc.data() });
-    });
+    // Resolve team data from local DB
+    const teamsMap = new Map(db.teams.map((t) => [t.id, t]));
 
     const articlesWithTeams = articles.map((article) => ({
       ...article,
@@ -53,10 +42,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(articlesWithTeams);
   } catch (error) {
     console.error("Error fetching news:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch news" },
-      { status: 500 },
-    );
+    return NextResponse.json([], { status: 200 });
   }
 }
 
@@ -115,7 +101,7 @@ export async function POST(request: NextRequest) {
     };
 
     const db = getAdminFirestore();
-    await db.collection(NEWS_COLLECTION).doc(id).set(newArticle);
+    await db.collection("news").doc(id).set(newArticle);
 
     return NextResponse.json(newArticle, { status: 201 });
   } catch (error) {

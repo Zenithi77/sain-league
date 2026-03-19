@@ -1,30 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminFirestore } from "@/lib/firebase-admin";
+import { readDatabase, writeDatabase } from "@/lib/database";
+import { v4 as uuidv4 } from "uuid";
 
-const COLLECTION = "sponsors";
-
-// GET /api/sponsors — get all sponsors
+// GET /api/sponsors — get all sponsors (from local database.json)
 export async function GET() {
   try {
-    const db = getAdminFirestore();
-    let sponsors;
-    try {
-      const snapshot = await db
-        .collection(COLLECTION)
-        .orderBy("order", "asc")
-        .get();
-      sponsors = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    } catch {
-      const snapshot = await db.collection(COLLECTION).get();
-      sponsors = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    }
+    const db = readDatabase();
+    const sponsors = (db.sponsors || []).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     return NextResponse.json(sponsors);
   } catch (error) {
     console.error("Error fetching sponsors:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch sponsors" },
-      { status: 500 },
-    );
+    return NextResponse.json([], { status: 200 });
   }
 }
 
@@ -41,20 +27,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const db = getAdminFirestore();
-    const docRef = db.collection(COLLECTION).doc();
-
+    const db = readDatabase();
     const newSponsor = {
+      id: `sponsor-${uuidv4().slice(0, 8)}`,
       name,
       logo: logo || "",
       website: website || "",
       order: order ?? 0,
-      createdAt: new Date().toISOString(),
     };
 
-    await docRef.set(newSponsor);
+    db.sponsors = [...(db.sponsors || []), newSponsor];
+    writeDatabase(db);
 
-    return NextResponse.json({ id: docRef.id, ...newSponsor }, { status: 201 });
+    return NextResponse.json(newSponsor, { status: 201 });
   } catch (error) {
     console.error("Error creating sponsor:", error);
     return NextResponse.json(
