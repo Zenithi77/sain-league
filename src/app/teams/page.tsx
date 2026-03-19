@@ -117,7 +117,7 @@ export default async function TeamsPage() {
             </div>
             <div className="odoo-summary-divider"></div>
             <div className="odoo-summary-item">
-              <span className="odoo-summary-num">{teams.length > 0 ? (teams.reduce((s, t) => s + t.averages.pointsPerGame, 0) / teams.length).toFixed(1) : '0'}</span>
+              <span className="odoo-summary-num">{teams.length > 0 ? (teams.reduce((s, t) => s + parseFloat(t.averages.pointsPerGame || '0'), 0) / teams.length).toFixed(1) : '0'}</span>
               <span className="odoo-summary-label">Дундаж оноо</span>
             </div>
           </div>
