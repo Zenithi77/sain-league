@@ -7422,7 +7422,12 @@ ul {
 
 /* Hero Section */
 .pp-hero {
-  background: linear-gradient(135deg, #1a1a3e 0%, #2d1b4e 40%, #3a1f5e 100%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--team-color-secondary, #1a1a2e) 90%, black) 0%,
+    color-mix(in srgb, var(--team-color-secondary, #1a1a2e) 75%, var(--team-color, #f15f22)) 40%,
+    color-mix(in srgb, var(--team-color-secondary, #1a1a2e) 55%, var(--team-color, #f15f22)) 100%
+  );
   padding: 0;
   position: relative;
   overflow: hidden;
@@ -7478,7 +7483,11 @@ ul {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #2a2a4a 0%, #3a3a6a 100%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--team-color-secondary, #1a1a2e) 80%, black) 0%,
+    color-mix(in srgb, var(--team-color-secondary, #1a1a2e) 60%, var(--team-color, #f15f22)) 100%
+  );
 }
 
 .pp-photo-placeholder span {
@@ -7689,7 +7698,7 @@ ul {
 }
 
 .pp-section-header h2 i {
-  color: var(--primary-color);
+  color: var(--team-color, #f15f22);
 }
 
 /* Shooting circles */
@@ -7710,7 +7719,7 @@ ul {
   height: 100px;
   border-radius: 50%;
   background: var(--bg-card);
-  border: 3px solid var(--primary-color);
+  border: 3px solid var(--team-color, #f15f22);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -7720,7 +7729,7 @@ ul {
   font-family: "Oswald", sans-serif;
   font-size: 22px;
   font-weight: 700;
-  color: var(--primary-color);
+  color: var(--team-color, #f15f22);
 }
 
 .pp-shoot-label {
@@ -7779,7 +7788,7 @@ ul {
 }
 
 .pp-season-tab-active {
-  background: var(--primary-color);
+  background: var(--team-color, #f15f22);
   color: #fff;
 }
 
@@ -7810,13 +7819,13 @@ ul {
 .pp-season-table thead tr {
   background: linear-gradient(
     90deg,
-    rgba(241, 95, 34, 0.12) 0%,
-    rgba(0, 114, 188, 0.08) 100%
+    color-mix(in srgb, var(--team-color, #f15f22) 12%, transparent) 0%,
+    color-mix(in srgb, var(--team-color-secondary, #0072bc) 8%, transparent) 100%
   );
 }
 
 .pp-season-table thead th {
-  border-bottom: 2px solid rgba(241, 95, 34, 0.3);
+  border-bottom: 2px solid color-mix(in srgb, var(--team-color, #f15f22) 30%, transparent);
 }
 
 .pp-season-table th {
@@ -7847,11 +7856,11 @@ ul {
 }
 
 .pp-season-row-current {
-  background: rgba(241, 95, 34, 0.06);
+  background: color-mix(in srgb, var(--team-color, #f15f22) 6%, transparent);
 }
 
 .pp-season-row-current td:first-child {
-  border-left: 3px solid var(--primary-color);
+  border-left: 3px solid var(--team-color, #f15f22);
 }
 
 .pp-season-year {
@@ -7889,7 +7898,7 @@ ul {
 }
 
 .pp-stat-highlight {
-  color: var(--primary-color) !important;
+  color: var(--team-color, #f15f22) !important;
   font-weight: 700 !important;
   font-size: 17px !important;
 }
@@ -7898,14 +7907,14 @@ ul {
 .pp-season-row-career {
   background: linear-gradient(
     90deg,
-    rgba(241, 95, 34, 0.15) 0%,
-    rgba(0, 114, 188, 0.1) 50%,
-    rgba(241, 95, 34, 0.08) 100%
+    color-mix(in srgb, var(--team-color, #f15f22) 15%, transparent) 0%,
+    color-mix(in srgb, var(--team-color-secondary, #0072bc) 10%, transparent) 50%,
+    color-mix(in srgb, var(--team-color, #f15f22) 8%, transparent) 100%
   );
 }
 
 .pp-season-row-career td {
-  border-top: 2px solid rgba(241, 95, 34, 0.3);
+  border-top: 2px solid color-mix(in srgb, var(--team-color, #f15f22) 30%, transparent);
   border-bottom: none;
 }
 
@@ -7913,7 +7922,7 @@ ul {
   font-family: "Oswald", sans-serif;
   font-size: 14px;
   font-weight: 800;
-  color: var(--primary-color);
+  color: var(--team-color, #f15f22);
   text-transform: uppercase;
   letter-spacing: 2px;
 }
@@ -7928,7 +7937,7 @@ ul {
 }
 
 .pp-career-highlight {
-  color: var(--primary-color) !important;
+  color: var(--team-color, #f15f22) !important;
   font-size: 17px !important;
 }
 

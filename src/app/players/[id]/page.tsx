@@ -20,11 +20,12 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
   }
 
   const teamColor = player.team?.colors?.primary || '#F15F22';
+  const teamColorSecondary = player.team?.colors?.secondary || '#1A1A2E';
 
   return (
     <main className="main-content" style={{ padding: 0 }}>
       {/* ===== HERO SECTION (like WNBA) ===== */}
-      <div className="pp-hero" style={{ '--team-color': teamColor } as React.CSSProperties}>
+      <div className="pp-hero" style={{ '--team-color': teamColor, '--team-color-secondary': teamColorSecondary } as React.CSSProperties}>
         <div className="pp-hero-inner">
           {/* Player Photo */}
           <div className="pp-hero-photo">
