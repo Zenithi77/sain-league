@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import DateSlider from "./DateSlider";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import GameCard from "./GameCard";
 import { GameWithTeams, Team } from "@/types";
 import {
@@ -24,18 +23,45 @@ function getTodayString(): string {
   return formatDateShort(today);
 }
 
+const MN_WEEKDAYS = ["Ням", "Дав", "Мяг", "Лха", "Пүр", "Баа", "Бям"];
+const MN_MONTHS_SHORT = [
+  "1 сар",
+  "2 сар",
+  "3 сар",
+  "4 сар",
+  "5 сар",
+  "6 сар",
+  "7 сар",
+  "8 сар",
+  "9 сар",
+  "10 сар",
+  "11 сар",
+  "12 сар",
+];
+
+// Generate dates: 7 days before and 7 days after today
+function generateDates(): Date[] {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const arr: Date[] = [];
+  for (let i = -7; i <= 7; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    arr.push(d);
+  }
+  return arr;
+}
+
 export default function ScheduleClient() {
   const { season, loading: seasonLoading } = useActiveSeason();
   const seasonId = season?.id ?? null;
   const { games: firestoreGames, loading: gamesLoading } = useGames(seasonId);
   const { teams: firestoreTeams, loading: teamsLoading } = useTeams(seasonId);
 
-  // Build a team map and convert Firestore games to GameWithTeams
   const games: GameWithTeams[] = useMemo(() => {
     if (!firestoreGames.length) return [];
     const teamMap = new Map<string, FirestoreTeam>();
     firestoreTeams.forEach((t) => teamMap.set(t.id, t));
-
     return firestoreGames.map((g) => {
       const home = teamMap.get(g.homeTeamId) ?? null;
       const away = teamMap.get(g.awayTeamId) ?? null;
@@ -54,18 +80,21 @@ export default function ScheduleClient() {
     });
   }, [firestoreGames, firestoreTeams]);
 
-  // Use empty string initially to avoid hydration mismatch
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [todayStr, setTodayStr] = useState<string>("");
   const [mounted, setMounted] = useState(false);
+  const [dates, setDates] = useState<Date[]>([]);
+
+  const tickerRef = useRef<HTMLDivElement>(null);
+  const dateBarRef = useRef<HTMLDivElement>(null);
 
   const dataLoading = seasonLoading || gamesLoading || teamsLoading;
 
-  // Set today's date on client only
   useEffect(() => {
     const today = getTodayString();
     setTodayStr(today);
     setSelectedDate(today);
+    setDates(generateDates());
     setMounted(true);
   }, []);
 
@@ -73,76 +102,62 @@ export default function ScheduleClient() {
   const gamesCountByDate = useMemo(() => {
     const counts: Record<string, number> = {};
     games.forEach((game) => {
-      const dateStr = game.date;
-      counts[dateStr] = (counts[dateStr] || 0) + 1;
+      counts[game.date] = (counts[game.date] || 0) + 1;
     });
     return counts;
   }, [games]);
 
-  // Filter games by selected date
+  // Filter games for selected date
   const filteredGames = useMemo(() => {
     if (!selectedDate) return [];
     return games.filter((game) => game.date === selectedDate);
   }, [games, selectedDate]);
 
-  // Separate finished and scheduled games
-  const finishedGames = filteredGames.filter((g) => g.status === "finished");
-  const scheduledGames = filteredGames.filter(
-    (g) => g.status === "scheduled" || g.status === "live",
-  );
-  const liveGames = filteredGames.filter((g) => g.status === "live");
+  // All games sorted by date for the ticker
+  const allGamesSorted = useMemo(() => {
+    return [...games].sort((a, b) => a.date.localeCompare(b.date));
+  }, [games]);
 
-  // Consistent date formatting to avoid hydration mismatch
-  const formatDisplayDate = (dateStr: string) => {
-    if (!dateStr) return "";
+  // Scroll the ticker
+  const scrollTicker = useCallback((direction: "left" | "right") => {
+    if (!tickerRef.current) return;
+    const scrollAmount = 300;
+    tickerRef.current.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  }, []);
 
-    const months = [
-      "1-р сарын",
-      "2-р сарын",
-      "3-р сарын",
-      "4-р сарын",
-      "5-р сарын",
-      "6-р сарын",
-      "7-р сарын",
-      "8-р сарын",
-      "9-р сарын",
-      "10-р сарын",
-      "11-р сарын",
-      "12-р сарын",
-    ];
-    const weekdays = [
-      "Ням",
-      "Даваа",
-      "Мягмар",
-      "Лхагва",
-      "Пүрэв",
-      "Баасан",
-      "Бямба",
-    ];
+  // Scroll date bar
+  const scrollDateBar = useCallback((direction: "left" | "right") => {
+    if (!dateBarRef.current) return;
+    dateBarRef.current.scrollBy({
+      left: direction === "left" ? -200 : 200,
+      behavior: "smooth",
+    });
+  }, []);
 
-    const date = new Date(dateStr + "T00:00:00");
-    const year = date.getFullYear();
-    const month = months[date.getMonth()];
-    const day = date.getDate();
-    const weekday = weekdays[date.getDay()];
+  // Scroll to selected date in date bar
+  useEffect(() => {
+    if (!mounted || !dateBarRef.current) return;
+    const el = dateBarRef.current.querySelector(
+      `[data-date="${selectedDate}"]`
+    ) as HTMLElement;
+    if (el) {
+      const container = dateBarRef.current;
+      const scrollPos =
+        el.offsetLeft - container.offsetWidth / 2 + el.offsetWidth / 2;
+      container.scrollTo({
+        left: Math.max(0, scrollPos),
+        behavior: "smooth",
+      });
+    }
+  }, [selectedDate, mounted]);
 
-    return `${year} оны ${month} ${day}, ${weekday} гараг`;
-  };
-
-  const isToday = (dateStr: string) => {
-    return dateStr === todayStr;
-  };
-
-  const isPast = (dateStr: string) => {
-    if (!todayStr || !dateStr) return false;
-    return dateStr < todayStr;
-  };
-
-  // Show loading state during SSR or while fetching data
   if (!mounted || dataLoading) {
     return (
-      <div className="schedule-wrapper">
-        <div className="schedule-loading">
+      <div className="nba-schedule-wrapper">
+        <div className="nba-ticker-loading">
           <div className="loading-spinner"></div>
           <p>Ачаалж байна...</p>
         </div>
@@ -151,130 +166,119 @@ export default function ScheduleClient() {
   }
 
   return (
-    <div className="schedule-wrapper">
-      {/* Date Slider */}
-      <DateSlider
-        selectedDate={selectedDate}
-        onDateSelect={setSelectedDate}
-        gamesCountByDate={gamesCountByDate}
-      />
+    <div className="nba-schedule-wrapper">
+      {/* ========== NBA-STYLE GAME TICKER ========== */}
+      <div className="nba-ticker-section">
+        <button
+          className="nba-ticker-arrow left"
+          onClick={() => scrollTicker("left")}
+          aria-label="Өмнөх"
+        >
+          <i className="fas fa-chevron-left"></i>
+        </button>
 
-      {/* Selected Date Display */}
-      <div
-        className={`selected-date-header ${isToday(selectedDate) ? "is-today" : ""}`}
-      >
-        <div className="date-info">
-          <h2>
-            {isToday(selectedDate) ? (
-              <>
-                <span className="today-badge">
-                  <i className="fas fa-star"></i> ӨНӨӨДӨР
-                </span>
-                <span className="date-text">
-                  {formatDisplayDate(selectedDate)}
-                </span>
-              </>
-            ) : (
-              <>
-                <i
-                  className={`fas ${isPast(selectedDate) ? "fa-history" : "fa-calendar-day"}`}
-                ></i>
-                <span className="date-text">
-                  {formatDisplayDate(selectedDate)}
-                </span>
-              </>
-            )}
-          </h2>
-        </div>
-        <div className="games-summary">
-          {filteredGames.length > 0 ? (
-            <>
-              <span className="games-total">
-                {filteredGames.length} тоглолт
-              </span>
-              {liveGames.length > 0 && (
-                <span className="live-badge">
-                  <span className="live-dot"></span>
-                  {liveGames.length} LIVE
-                </span>
-              )}
-            </>
+        <div className="nba-ticker-track" ref={tickerRef}>
+          {allGamesSorted.length > 0 ? (
+            allGamesSorted.map((game) => (
+              <GameCard key={game.id} game={game} variant="ticker" />
+            ))
           ) : (
-            <span className="games-total empty">Тоглолт байхгүй</span>
+            <div className="nba-ticker-empty">
+              <i className="fas fa-basketball-ball"></i>
+              <span>Тоглолт байхгүй байна</span>
+            </div>
           )}
         </div>
+
+        <button
+          className="nba-ticker-arrow right"
+          onClick={() => scrollTicker("right")}
+          aria-label="Дараах"
+        >
+          <i className="fas fa-chevron-right"></i>
+        </button>
       </div>
 
-      {/* No Games Message */}
-      {filteredGames.length === 0 && (
-        <div className="no-games-message">
-          <div className="no-games-icon">
-            <i className="fas fa-basketball-ball"></i>
-          </div>
-          <p>
-            Энэ өдөр тоглолт{" "}
-            {isPast(selectedDate) ? "болоогүй" : "товлогдоогүй"} байна
-          </p>
-          <span>Өөр өдөр сонгоно уу</span>
+      {/* ========== DATE BAR (NBA Secondary Nav) ========== */}
+      <div className="nba-date-bar">
+        <button
+          className="nba-date-arrow"
+          onClick={() => scrollDateBar("left")}
+        >
+          <i className="fas fa-chevron-left"></i>
+        </button>
+
+        <div className="nba-date-track" ref={dateBarRef}>
+          {dates.map((date) => {
+            const dateStr = formatDateShort(date);
+            const gamesCount = gamesCountByDate[dateStr] || 0;
+            const isSelected = dateStr === selectedDate;
+            const isToday = dateStr === todayStr;
+
+            return (
+              <button
+                key={dateStr}
+                data-date={dateStr}
+                className={`nba-date-item ${isSelected ? "selected" : ""} ${isToday ? "today" : ""}`}
+                onClick={() => setSelectedDate(dateStr)}
+              >
+                <span className="nba-date-day">
+                  {MN_WEEKDAYS[date.getDay()]}
+                </span>
+                <span className="nba-date-num">
+                  {MN_MONTHS_SHORT[date.getMonth()]} {date.getDate()}
+                </span>
+                {gamesCount > 0 && (
+                  <span className="nba-date-games">{gamesCount}</span>
+                )}
+                {isToday && <span className="nba-today-dot"></span>}
+              </button>
+            );
+          })}
         </div>
-      )}
 
-      {/* Live Games - Show First */}
-      {liveGames.length > 0 && (
-        <section className="schedule-section live-section">
-          <div className="section-header">
-            <h3>
-              <span className="live-indicator"></span>
-              ШУУД ДАМЖУУЛЖ БАЙНА
-            </h3>
+        <button
+          className="nba-date-arrow"
+          onClick={() => scrollDateBar("right")}
+        >
+          <i className="fas fa-chevron-right"></i>
+        </button>
+      </div>
+
+      {/* ========== SELECTED DATE GAMES ========== */}
+      <div className="nba-games-section">
+        <div className="nba-games-header">
+          <h2>
+            {selectedDate === todayStr ? (
+              <span className="nba-today-label">ӨНӨӨДРИЙН ТОГЛОЛТУУД</span>
+            ) : (
+              <span>
+                {(() => {
+                  const d = new Date(selectedDate + "T00:00:00");
+                  return `${MN_MONTHS_SHORT[d.getMonth()]} ${d.getDate()} - Тоглолтууд`;
+                })()}
+              </span>
+            )}
+          </h2>
+          <span className="nba-games-count">{filteredGames.length} тоглолт</span>
+        </div>
+
+        {filteredGames.length === 0 ? (
+          <div className="nba-no-games">
+            <div className="nba-no-games-icon">
+              <i className="fas fa-basketball-ball"></i>
+            </div>
+            <h3>Тоглолт байхгүй</h3>
+            <p>Энэ өдөр тоглолт товлогдоогүй байна</p>
           </div>
-          <div className="games-grid">
-            {liveGames.map((game) => (
-              <GameCard key={game.id} game={game} />
+        ) : (
+          <div className="nba-games-grid">
+            {filteredGames.map((game) => (
+              <GameCard key={game.id} game={game} variant="grid" />
             ))}
           </div>
-        </section>
-      )}
-
-      {/* Finished Games - Show Results */}
-      {finishedGames.length > 0 && (
-        <section className="schedule-section finished-section">
-          <div className="section-header">
-            <h3>
-              <i className="fas fa-check-circle"></i> Тоглолтын үр дүн
-            </h3>
-            <span className="section-count">
-              {finishedGames.length} тоглолт
-            </span>
-          </div>
-          <div className="games-grid">
-            {finishedGames.map((game) => (
-              <GameCard key={game.id} game={game} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Scheduled Games - Show Schedule */}
-      {scheduledGames.filter((g) => g.status !== "live").length > 0 && (
-        <section className="schedule-section upcoming-section">
-          <div className="section-header">
-            <h3>
-              <i className="fas fa-clock"></i> Удахгүй болох тоглолтууд
-            </h3>
-            <span className="section-count">
-              {scheduledGames.filter((g) => g.status !== "live").length} тоглолт
-            </span>
-          </div>
-          <div className="games-grid">
-            {scheduledGames
-              .filter((g) => g.status !== "live")
-              .map((game) => (
-                <GameCard key={game.id} game={game} />
-              ))}
-          </div>
-        </section>
-      )}
+        )}
+      </div>
     </div>
   );
 }
