@@ -10417,3 +10417,588 @@ ul {
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   NBA-STYLE SCHEDULE PAGE
+   ============================================ */
+
+.nba-schedule-page {
+  padding-top: 0 !important;
+}
+
+.nba-schedule-page .main-content {
+  padding-top: 0;
+}
+
+.nba-schedule-wrapper {
+  width: 100%;
+}
+
+/* ---- Ticker Loading ---- */
+.nba-ticker-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+  color: var(--text-muted);
+}
+
+/* ---- NBA GAME TICKER ---- */
+.nba-ticker-section {
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(180deg, #1a1a2e 0%, var(--bg-dark) 100%);
+  border-bottom: 3px solid var(--primary-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.nba-ticker-section::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-brand-horizontal);
+}
+
+.nba-ticker-arrow {
+  flex-shrink: 0;
+  width: 48px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.nba-ticker-arrow:hover {
+  background: rgba(241, 95, 34, 0.3);
+  color: var(--primary-color);
+}
+
+.nba-ticker-arrow.left {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nba-ticker-arrow.right {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nba-ticker-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex: 1;
+}
+
+.nba-ticker-track::-webkit-scrollbar {
+  display: none;
+}
+
+.nba-ticker-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px;
+  width: 100%;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.nba-ticker-empty i {
+  font-size: 24px;
+  opacity: 0.4;
+}
+
+/* ---- TICKER CARD (individual game in ticker) ---- */
+.ticker-card {
+  flex-shrink: 0;
+  width: 260px;
+  padding: 14px 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: background 0.2s ease;
+  cursor: default;
+}
+
+.ticker-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ticker-card:last-child {
+  border-right: none;
+}
+
+.ticker-card-date {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+/* Ticker matchup area */
+.ticker-card-matchup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.ticker-team {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.ticker-team.winner .ticker-team-score {
+  color: var(--text-light);
+  font-weight: 800;
+}
+
+.ticker-team.loser .ticker-team-score {
+  color: var(--text-muted);
+}
+
+.ticker-team-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Oswald", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+}
+
+.ticker-team-score {
+  font-family: "Oswald", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  min-width: 40px;
+  text-align: center;
+}
+
+.ticker-team-score.away-score {
+  /* second score */
+}
+
+.ticker-vs-label {
+  font-size: 10px;
+  color: var(--success-color);
+  text-transform: uppercase;
+  font-weight: 700;
+  min-width: 36px;
+  text-align: center;
+}
+
+.ticker-live-badge {
+  font-size: 10px;
+  font-weight: 800;
+  color: #fff;
+  background: #e74c3c;
+  padding: 2px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+  animation: livePulse 1.5s infinite;
+}
+
+.ticker-vs {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-family: "Oswald", sans-serif;
+}
+
+.ticker-team-abbr {
+  font-family: "Oswald", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.scheduled-matchup .ticker-team-abbr {
+  min-width: 50px;
+  text-align: center;
+}
+
+.ticker-records {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.ticker-record {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.ticker-record-stats {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Ticker action buttons */
+.ticker-card-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.ticker-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ticker-btn-primary {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.ticker-btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.ticker-btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-light);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ticker-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.ticker-btn-live {
+  background: #e74c3c;
+  color: #fff;
+  animation: liveGlow 2s infinite;
+}
+
+.ticker-btn-live:hover {
+  background: #c0392b;
+}
+
+.ticker-btn i {
+  font-size: 10px;
+}
+
+/* ---- NBA DATE BAR ---- */
+.nba-date-bar {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0;
+}
+
+.nba-date-arrow {
+  flex-shrink: 0;
+  width: 40px;
+  height: 56px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.nba-date-arrow:hover {
+  color: var(--primary-color);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nba-date-track {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex: 1;
+  scroll-behavior: smooth;
+}
+
+.nba-date-track::-webkit-scrollbar {
+  display: none;
+}
+
+.nba-date-item {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 16px;
+  min-width: 72px;
+  height: 56px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  font-family: inherit;
+}
+
+.nba-date-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-light);
+}
+
+.nba-date-item.selected {
+  border-bottom-color: var(--primary-color);
+  color: var(--text-light);
+  background: rgba(241, 95, 34, 0.08);
+}
+
+.nba-date-item.today {
+  position: relative;
+}
+
+.nba-today-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  background: var(--success-color);
+  border-radius: 50%;
+}
+
+.nba-date-day {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nba-date-num {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.nba-date-games {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px;
+  font-weight: 700;
+  background: var(--primary-color);
+  color: #fff;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- GAMES SECTION BELOW TICKER ---- */
+.nba-games-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.nba-games-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.06);
+}
+
+.nba-games-header h2 {
+  font-family: "Oswald", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.nba-today-label {
+  background: var(--gradient-brand-horizontal);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nba-games-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.nba-games-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .nba-games-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .nba-games-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* No games NBA style */
+.nba-no-games {
+  text-align: center;
+  padding: 80px 20px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.nba-no-games-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nba-no-games-icon i {
+  font-size: 32px;
+  color: var(--text-muted);
+  opacity: 0.4;
+}
+
+.nba-no-games h3 {
+  font-family: "Oswald", sans-serif;
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.nba-no-games p {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ---- MOBILE RESPONSIVE ---- */
+@media (max-width: 768px) {
+  .nba-ticker-arrow {
+    width: 36px;
+    font-size: 14px;
+  }
+
+  .ticker-card {
+    width: 220px;
+    padding: 12px 14px;
+  }
+
+  .ticker-team-logo {
+    width: 30px;
+    height: 30px;
+    font-size: 11px;
+  }
+
+  .ticker-team-score {
+    font-size: 22px;
+    min-width: 30px;
+  }
+
+  .ticker-team-abbr {
+    font-size: 16px;
+  }
+
+  .ticker-btn {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .nba-date-item {
+    min-width: 60px;
+    padding: 8px 10px;
+  }
+
+  .nba-games-section {
+    padding: 20px 16px;
+  }
+
+  .nba-games-header h2 {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ticker-card {
+    width: 200px;
+    padding: 10px 12px;
+  }
+
+  .ticker-card-actions {
+    flex-direction: column;
+  }
+
+  .ticker-btn {
+    justify-content: center;
+  }
+
+  .nba-ticker-arrow {
+    width: 30px;
+    font-size: 12px;
+  }
+}
