@@ -24,35 +24,45 @@ const navItems: NavItem[] = [
     icon: "fas fa-calendar-alt",
   },
   {
-    label: "Багууд",
-    href: "/admin/teams",
-    icon: "fas fa-users",
-  },
-  { label: "Тоглогчид", href: "/admin/kids", icon: "fas fa-child" },
-  {
-    label: "Дасгалжуулагчид",
-    href: "/admin/coaches",
-    icon: "fas fa-clipboard",
-  },
-  {
-    label: "Тоглолтууд",
-    href: "/admin/games",
-    icon: "fas fa-basketball-ball",
+    label: "Үндсэн",
+    href: "",
+    icon: "fas fa-layer-group",
+    children: [
+      { label: "Тоглогчид", href: "/admin/players", icon: "fas fa-running" },
+      { label: "Багууд", href: "/admin/teams", icon: "fas fa-users" },
+      {
+        label: "Тоглолтууд",
+        href: "/admin/games",
+        icon: "fas fa-basketball-ball",
+      },
+    ],
   },
   {
-    label: "Мэдээ",
-    href: "/admin/news",
-    icon: "fas fa-newspaper",
+    label: "Контент",
+    href: "",
+    icon: "fas fa-photo-video",
+    children: [
+      { label: "Мэдээ", href: "/admin/news", icon: "fas fa-newspaper" },
+      {
+        label: "Хамтрагчид",
+        href: "/admin/sponsors",
+        icon: "fas fa-handshake",
+      },
+      { label: "Подкаст", href: "/admin/podcasts", icon: "fas fa-podcast" },
+    ],
   },
   {
-    label: "Хамтрагчид",
-    href: "/admin/sponsors",
-    icon: "fas fa-handshake",
-  },
-  {
-    label: "Подкаст",
-    href: "/admin/podcasts",
-    icon: "fas fa-podcast",
+    label: "Бүртгэл",
+    href: "",
+    icon: "fas fa-user-plus",
+    children: [
+      { label: "Хүүхдүүд", href: "/admin/kids", icon: "fas fa-child" },
+      {
+        label: "Дасгалжуулагчид",
+        href: "/admin/coaches",
+        icon: "fas fa-clipboard",
+      },
+    ],
   },
 ];
 
@@ -60,7 +70,8 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const { userData } = useAuth();
   const [expandedSections, setExpandedSections] = useState<string[]>([
-    "Тоглогчид",
+    "Үндсэн",
+    "Контент",
     "Бүртгэл",
   ]);
   const [collapsed, setCollapsed] = useState(false);

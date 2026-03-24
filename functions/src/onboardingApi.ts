@@ -32,9 +32,15 @@ import { admin, db, FieldValue } from "./adminSetup.js";
 
 type OnboardingRole = "kid" | "coach";
 
-// Kid answer fields:   name, school, grade, whyPlay (all required strings), phone (optional)
-// Coach answer fields: name, school, hasGym (bool), hasBalls (bool),
-//                      hasScoreboard (bool, optional), programAvailable (string, optional), notes (optional)
+// Kid answer fields:
+//   General: aimag, sumDuureg, khorooBag, lastName, firstName, birthYear, phone
+//   School:  school, grade
+//   Survey:  hasGym, hasBasketballProgram, hasBalls, hasScoreClock, hasCoach
+//
+// Coach answer fields:
+//   General: aimag, sumDuureg, khorooBag, lastName, firstName, birthYear, phone
+//   School:  school
+//   Survey:  hasGym, hasBasketballProgram, hasScoreClock, isProfessionalCoach
 
 /** Decoded user attached to request by auth middleware */
 interface DecodedUser {
@@ -155,14 +161,48 @@ function requireAdminMiddleware(
 // ═══════════════════════════════════════════════════════════════════════════
 
 function validateKidAnswers(answers: Record<string, unknown>): string | null {
-  const required = ["name", "school", "grade", "whyPlay"] as const;
-  for (const field of required) {
+  // Required string fields
+  const requiredStrings = [
+    "aimag",
+    "sumDuureg",
+    "khorooBag",
+    "lastName",
+    "firstName",
+    "phone",
+    "school",
+  ] as const;
+  for (const field of requiredStrings) {
     if (
       !answers[field] ||
       typeof answers[field] !== "string" ||
       !(answers[field] as string).trim()
     ) {
       return `Missing or empty required field: ${field}`;
+    }
+  }
+  // birthYear — required number
+  if (typeof answers.birthYear !== "number" || answers.birthYear < 1990) {
+    return "Missing or invalid required field: birthYear";
+  }
+  // grade — required number 1-12
+  if (
+    typeof answers.grade !== "number" ||
+    answers.grade < 1 ||
+    answers.grade > 12
+  ) {
+    return "Missing or invalid required field: grade (must be 1-12)";
+  }
+  // Required boolean survey fields
+  const requiredBools = [
+    "hasGym",
+    "hasBasketballProgram",
+    "hasBalls",
+    "hasScoreClock",
+    "hasCoach",
+  ] as const;
+  for (const field of requiredBools) {
+    if (typeof answers[field] !== "boolean") {
+      return `Missing or invalid required field (must be boolean): ${field}`;
     }
   }
   return null;
@@ -170,7 +210,16 @@ function validateKidAnswers(answers: Record<string, unknown>): string | null {
 
 function validateCoachAnswers(answers: Record<string, unknown>): string | null {
   // Required string fields
-  for (const field of ["name", "school"] as const) {
+  const requiredStrings = [
+    "aimag",
+    "sumDuureg",
+    "khorooBag",
+    "lastName",
+    "firstName",
+    "phone",
+    "school",
+  ] as const;
+  for (const field of requiredStrings) {
     if (
       !answers[field] ||
       typeof answers[field] !== "string" ||
@@ -179,8 +228,18 @@ function validateCoachAnswers(answers: Record<string, unknown>): string | null {
       return `Missing or empty required field: ${field}`;
     }
   }
-  // Required boolean fields
-  for (const field of ["hasGym", "hasBalls"] as const) {
+  // birthYear — required number
+  if (typeof answers.birthYear !== "number" || answers.birthYear < 1950) {
+    return "Missing or invalid required field: birthYear";
+  }
+  // Required boolean survey fields
+  const requiredBools = [
+    "hasGym",
+    "hasBasketballProgram",
+    "hasScoreClock",
+    "isProfessionalCoach",
+  ] as const;
+  for (const field of requiredBools) {
     if (typeof answers[field] !== "boolean") {
       return `Missing or invalid required field (must be boolean): ${field}`;
     }
@@ -232,11 +291,9 @@ app.post(
 
       // Validate role
       if (role !== "kid" && role !== "coach") {
-        res
-          .status(400)
-          .json({
-            error: 'Invalid or missing role. Must be "kid" or "coach".',
-          });
+        res.status(400).json({
+          error: 'Invalid or missing role. Must be "kid" or "coach".',
+        });
         return;
       }
 
@@ -276,7 +333,9 @@ app.post(
           tx.set(userRef, {
             uid,
             email: req.user!.email || null,
-            displayName: (answers.name as string) || null,
+            displayName:
+              `${(answers.lastName as string) || ""} ${(answers.firstName as string) || ""}`.trim() ||
+              null,
             photoURL: null,
             role,
             createdAt: now,
@@ -357,13 +416,18 @@ app.get(
       // Server-side filtering by name or school (case-insensitive substring)
       if (q) {
         docs = docs.filter((doc) => {
-          const name = (
-            ((doc as Record<string, unknown>).name as string) || ""
+          const lastName = (
+            ((doc as Record<string, unknown>).lastName as string) || ""
+          ).toLowerCase();
+          const firstName = (
+            ((doc as Record<string, unknown>).firstName as string) || ""
           ).toLowerCase();
           const school = (
             ((doc as Record<string, unknown>).school as string) || ""
           ).toLowerCase();
-          return name.includes(q) || school.includes(q);
+          return (
+            lastName.includes(q) || firstName.includes(q) || school.includes(q)
+          );
         });
       }
 
@@ -425,9 +489,12 @@ app.get(
       // Optional name/school filter
       if (q) {
         rows = rows.filter((row: Record<string, unknown>) => {
-          const name = ((row.name as string) || "").toLowerCase();
+          const lastName = ((row.lastName as string) || "").toLowerCase();
+          const firstName = ((row.firstName as string) || "").toLowerCase();
           const school = ((row.school as string) || "").toLowerCase();
-          return name.includes(q) || school.includes(q);
+          return (
+            lastName.includes(q) || firstName.includes(q) || school.includes(q)
+          );
         });
       }
 
@@ -436,23 +503,37 @@ app.get(
         role === "kid"
           ? [
               "uid",
-              "name",
+              "aimag",
+              "sumDuureg",
+              "khorooBag",
+              "lastName",
+              "firstName",
+              "birthYear",
+              "phone",
               "school",
               "grade",
-              "whyPlay",
-              "phone",
+              "hasGym",
+              "hasBasketballProgram",
+              "hasBalls",
+              "hasScoreClock",
+              "hasCoach",
               "createdAt",
               "updatedAt",
             ]
           : [
               "uid",
-              "name",
+              "aimag",
+              "sumDuureg",
+              "khorooBag",
+              "lastName",
+              "firstName",
+              "birthYear",
+              "phone",
               "school",
               "hasGym",
-              "hasBalls",
-              "hasScoreboard",
-              "programAvailable",
-              "notes",
+              "hasBasketballProgram",
+              "hasScoreClock",
+              "isProfessionalCoach",
               "createdAt",
               "updatedAt",
             ];

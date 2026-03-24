@@ -11,6 +11,14 @@ import { useRouter } from "next/navigation";
 import { useOnboardingStore } from "@/stores/onboardingStore";
 import { saveOnboarding } from "@/utils/api";
 
+const currentYear = new Date().getFullYear();
+
+function yn(val: boolean | null | undefined): string {
+  if (val === true) return "Тийм";
+  if (val === false) return "Үгүй";
+  return "—";
+}
+
 export default function ReviewAndSubmit() {
   const { role, kid, coach, setStep, clear } = useOnboardingStore();
   const router = useRouter();
@@ -29,7 +37,7 @@ export default function ReviewAndSubmit() {
       // Strip empty optional fields to keep the payload clean
       const cleaned: Record<string, unknown> = {};
       for (const [k, v] of Object.entries(answers)) {
-        if (v !== "" && v !== undefined) cleaned[k] = v;
+        if (v !== "" && v !== undefined && v !== null) cleaned[k] = v;
       }
 
       await saveOnboarding({ role, answers: cleaned });
@@ -54,28 +62,72 @@ export default function ReviewAndSubmit() {
     if (!kid) return null;
     return (
       <dl className="review-list">
+        <div className="review-section-title">Ерөнхий мэдээлэл</div>
+        <div className="review-item">
+          <dt>Аймаг / Хот</dt>
+          <dd>{kid.aimag}</dd>
+        </div>
+        <div className="review-item">
+          <dt>Сум / Дүүрэг</dt>
+          <dd>{kid.sumDuureg}</dd>
+        </div>
+        <div className="review-item">
+          <dt>Хороо / Баг</dt>
+          <dd>{kid.khorooBag}</dd>
+        </div>
+        <div className="review-item">
+          <dt>Овог</dt>
+          <dd>{kid.lastName}</dd>
+        </div>
         <div className="review-item">
           <dt>Нэр</dt>
-          <dd>{kid.name}</dd>
+          <dd>{kid.firstName}</dd>
         </div>
+        <div className="review-item">
+          <dt>Төрсөн он</dt>
+          <dd>
+            {kid.birthYear}{" "}
+            {kid.birthYear
+              ? `(${currentYear - Number(kid.birthYear)} нас)`
+              : ""}
+          </dd>
+        </div>
+        <div className="review-item">
+          <dt>Утас</dt>
+          <dd>{kid.phone}</dd>
+        </div>
+
+        <div className="review-section-title">Сургууль, Анги</div>
         <div className="review-item">
           <dt>Сургууль</dt>
           <dd>{kid.school}</dd>
         </div>
         <div className="review-item">
           <dt>Анги</dt>
-          <dd>{kid.grade}</dd>
+          <dd>{kid.grade}-р анги</dd>
+        </div>
+
+        <div className="review-section-title">Судалгааны асуулт</div>
+        <div className="review-item">
+          <dt>Спорт заалтай юу?</dt>
+          <dd>{yn(kid.hasGym)}</dd>
         </div>
         <div className="review-item">
-          <dt>Яагаад тоглохыг хүсч байна вэ?</dt>
-          <dd>{kid.whyPlay}</dd>
+          <dt>Сагсан бөмбөгийн хөтөлбөртэй юу?</dt>
+          <dd>{yn(kid.hasBasketballProgram)}</dd>
         </div>
-        {kid.phone && (
-          <div className="review-item">
-            <dt>Утас</dt>
-            <dd>{kid.phone}</dd>
-          </div>
-        )}
+        <div className="review-item">
+          <dt>Бөмбөгтэй юу?</dt>
+          <dd>{yn(kid.hasBalls)}</dd>
+        </div>
+        <div className="review-item">
+          <dt>Онооны цагтай юу?</dt>
+          <dd>{yn(kid.hasScoreClock)}</dd>
+        </div>
+        <div className="review-item">
+          <dt>Дасгалжуулагчтай юу?</dt>
+          <dd>{yn(kid.hasCoach)}</dd>
+        </div>
       </dl>
     );
   }
@@ -84,44 +136,62 @@ export default function ReviewAndSubmit() {
     if (!coach) return null;
     return (
       <dl className="review-list">
+        <div className="review-section-title">Ерөнхий мэдээлэл</div>
+        <div className="review-item">
+          <dt>Аймаг / Хот</dt>
+          <dd>{coach.aimag}</dd>
+        </div>
+        <div className="review-item">
+          <dt>Сум / Дүүрэг</dt>
+          <dd>{coach.sumDuureg}</dd>
+        </div>
+        <div className="review-item">
+          <dt>Хороо / Баг</dt>
+          <dd>{coach.khorooBag}</dd>
+        </div>
+        <div className="review-item">
+          <dt>Овог</dt>
+          <dd>{coach.lastName}</dd>
+        </div>
         <div className="review-item">
           <dt>Нэр</dt>
-          <dd>{coach.name}</dd>
+          <dd>{coach.firstName}</dd>
         </div>
+        <div className="review-item">
+          <dt>Төрсөн он</dt>
+          <dd>
+            {coach.birthYear}{" "}
+            {coach.birthYear
+              ? `(${currentYear - Number(coach.birthYear)} нас)`
+              : ""}
+          </dd>
+        </div>
+        <div className="review-item">
+          <dt>Утас</dt>
+          <dd>{coach.phone}</dd>
+        </div>
+
+        <div className="review-section-title">Сургууль, Судалгаа</div>
         <div className="review-item">
           <dt>Сургууль</dt>
           <dd>{coach.school}</dd>
         </div>
         <div className="review-item">
-          <dt>Заалтай юу?</dt>
-          <dd>{coach.hasGym ? "Тийм" : "Үгүй"}</dd>
+          <dt>Спорт заалтай юу?</dt>
+          <dd>{yn(coach.hasGym)}</dd>
         </div>
         <div className="review-item">
-          <dt>Бөмбөгтэй юу?</dt>
-          <dd>{coach.hasBalls ? "Тийм" : "Үгүй"}</dd>
+          <dt>Сагсан бөмбөгийн хөтөлбөртэй юу?</dt>
+          <dd>{yn(coach.hasBasketballProgram)}</dd>
         </div>
         <div className="review-item">
-          <dt>Оноо самбартай юу?</dt>
-          <dd>{coach.hasScoreboard ? "Тийм" : "Үгүй"}</dd>
+          <dt>Онооны цагтай юу?</dt>
+          <dd>{yn(coach.hasScoreClock)}</dd>
         </div>
-        {coach.programAvailable && (
-          <div className="review-item">
-            <dt>Хөтөлбөр</dt>
-            <dd>{coach.programAvailable}</dd>
-          </div>
-        )}
-        {coach.scorePointerClock !== undefined && (
-          <div className="review-item">
-            <dt>Score pointer / clock</dt>
-            <dd>{coach.scorePointerClock ? "Тийм" : "Үгүй"}</dd>
-          </div>
-        )}
-        {coach.notes && (
-          <div className="review-item">
-            <dt>Тэмдэглэл</dt>
-            <dd>{coach.notes}</dd>
-          </div>
-        )}
+        <div className="review-item">
+          <dt>Мэргэжлийн дасгалжуулагч уу?</dt>
+          <dd>{yn(coach.isProfessionalCoach)}</dd>
+        </div>
       </dl>
     );
   }

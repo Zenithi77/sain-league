@@ -11,75 +11,92 @@ import {
   FirestoreTeam,
 } from "@/lib/firestore-hooks";
 
-type TabType = "players" | "teams";
+type MainTab = "players" | "teams";
 
 const TOP_N = 5;
 
-/** Player stat categories with how to extract the value from aggregate data */
+function ordinalRank(i: number): string {
+  if (i === 0) return "1ST";
+  if (i === 1) return "2ND";
+  if (i === 2) return "3RD";
+  return `${i + 1}TH`;
+}
+
 const playerCategories: {
   key: string;
   label: string;
+  fullLabel: string;
   getValue: (p: PlayerAggregateDoc) => number;
   format: (v: number) => string;
 }[] = [
   {
-    key: "ppg",
-    label: "ОНОО",
+    key: "pts",
+    label: "PTS",
+    fullLabel: "ОНОО",
     getValue: (p) => p.points / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: "rpg",
-    label: "САМБАР",
+    key: "reb",
+    label: "REB",
+    fullLabel: "САМБАР",
     getValue: (p) => p.totalRebounds / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: "apg",
-    label: "ДАМЖУУЛАЛТ",
+    key: "ast",
+    label: "AST",
+    fullLabel: "ДАМЖУУЛАЛТ",
     getValue: (p) => p.assists / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: "spg",
-    label: "STEAL",
+    key: "stl",
+    label: "STL",
+    fullLabel: "STEAL",
     getValue: (p) => p.steals / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: "bpg",
-    label: "BLOCK",
+    key: "blk",
+    label: "BLK",
+    fullLabel: "BLOCK",
     getValue: (p) => p.blocks / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: "topg",
-    label: "АЛДАА",
-    getValue: (p) => p.turnovers / (p.gamesPlayed || 1),
+    key: "foul",
+    label: "FOUL",
+    fullLabel: "ФОУЛ",
+    getValue: (p) => p.personalFoulsCommitted / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: "threepm",
-    label: "3 ОНОО (3PM)",
+    key: "3pm",
+    label: "3PM",
+    fullLabel: "3 ОНОО",
     getValue: (p) => p.threePointFieldGoalsMade / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
     key: "ftm",
-    label: "ТОРГУУЛЬ (FTM)",
+    label: "FTM",
+    fullLabel: "ТОРГУУЛЬ",
     getValue: (p) => p.freeThrowsMade / (p.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: "fgPct",
-    label: "ШИДЭЛТ (FG%)",
+    key: "fgpct",
+    label: "FG%",
+    fullLabel: "ШИДЭЛТ %",
     getValue: (p) =>
       p.fieldGoalsAttempted > 0 ? p.fieldGoalsMade / p.fieldGoalsAttempted : 0,
     format: (v) => (v * 100).toFixed(1) + "%",
   },
   {
-    key: "threePct",
-    label: "3 ОНОО (3PT%)",
+    key: "3pct",
+    label: "3PT%",
+    fullLabel: "3 ОНОО %",
     getValue: (p) =>
       p.threePointFieldGoalsAttempted > 0
         ? p.threePointFieldGoalsMade / p.threePointFieldGoalsAttempted
@@ -87,55 +104,64 @@ const playerCategories: {
     format: (v) => (v * 100).toFixed(1) + "%",
   },
   {
-    key: "ftPct",
-    label: "ТОРГУУЛЬ (FT%)",
+    key: "ftpct",
+    label: "FT%",
+    fullLabel: "ТОРГУУЛЬ %",
     getValue: (p) =>
       p.freeThrowsAttempted > 0 ? p.freeThrowsMade / p.freeThrowsAttempted : 0,
     format: (v) => (v * 100).toFixed(1) + "%",
   },
 ];
 
-/** Team stat categories */
 const teamCategories: {
   key: string;
   label: string;
+  fullLabel: string;
   getValue: (t: TeamAggregateDoc) => number;
   format: (v: number) => string;
 }[] = [
   {
-    key: "ppg",
-    label: "ОНОО",
+    key: "pts",
+    label: "PTS",
+    fullLabel: "ОНОО",
     getValue: (t) => t.points / (t.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: "rpg",
-    label: "САМБАР",
+    key: "reb",
+    label: "REB",
+    fullLabel: "САМБАР",
     getValue: (t) => t.totalRebounds / (t.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: "apg",
-    label: "ДАМЖУУЛАЛТ",
+    key: "ast",
+    label: "AST",
+    fullLabel: "ДАМЖУУЛАЛТ",
     getValue: (t) => t.assists / (t.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: "spg",
-    label: "STEAL",
+    key: "stl",
+    label: "STL",
+    fullLabel: "STEAL",
     getValue: (t) => t.steals / (t.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
   {
-    key: "bpg",
-    label: "BLOCK",
+    key: "blk",
+    label: "BLK",
+    fullLabel: "BLOCK",
     getValue: (t) => t.blocks / (t.gamesPlayed || 1),
     format: (v) => v.toFixed(1),
   },
 ];
 
 export default function StatsPage() {
-  const [activeTab, setActiveTab] = useState<TabType>("players");
+  const [mainTab, setMainTab] = useState<MainTab>("players");
+  const [playerCatKey, setPlayerCatKey] = useState(playerCategories[0].key);
+  const [teamCatKey, setTeamCatKey] = useState(teamCategories[0].key);
+
   const { season, loading: seasonLoading } = useActiveSeason();
   const { aggregates: playerAggs, loading: playerLoading } =
     usePlayerAggregates(season?.id ?? null);
@@ -152,157 +178,125 @@ export default function StatsPage() {
     return map;
   }, [teams]);
 
-  // Compute player leaders per category
-  const playerLeaders = useMemo(() => {
-    if (!playerAggs.length) return {};
-    const result: Record<
-      string,
-      {
-        playerId: string;
-        playerName: string;
-        teamId: string;
-        value: number;
-        gamesPlayed: number;
-      }[]
-    > = {};
+  const categories = mainTab === "players" ? playerCategories : teamCategories;
+  const catKey = mainTab === "players" ? playerCatKey : teamCatKey;
+  const setCatKey = (key: string) =>
+    mainTab === "players" ? setPlayerCatKey(key) : setTeamCatKey(key);
+  const activeCat = categories.find((c) => c.key === catKey) ?? categories[0];
 
-    for (const cat of playerCategories) {
-      const sorted = [...playerAggs].sort(
-        (a, b) => cat.getValue(b) - cat.getValue(a),
-      );
-      result[cat.key] = sorted.slice(0, TOP_N).map((p, idx) => ({
-        rank: idx + 1,
-        playerId: p.playerId,
-        playerName: p.playerName,
-        teamId: p.teamId,
-        value: cat.getValue(p),
-        gamesPlayed: p.gamesPlayed,
-      }));
+  const leaders = useMemo(() => {
+    if (mainTab === "players") {
+      if (!playerAggs.length) return [];
+      const cat =
+        playerCategories.find((c) => c.key === playerCatKey) ??
+        playerCategories[0];
+      return [...playerAggs]
+        .sort((a, b) => cat.getValue(b) - cat.getValue(a))
+        .slice(0, TOP_N)
+        .map((p) => ({
+          id: p.playerId,
+          name: p.playerName,
+          sub: teamMap.get(p.teamId)?.shortName ?? "",
+          value: cat.getValue(p),
+        }));
+    } else {
+      if (!teamAggs.length) return [];
+      const cat =
+        teamCategories.find((c) => c.key === teamCatKey) ?? teamCategories[0];
+      return [...teamAggs]
+        .sort((a, b) => cat.getValue(b) - cat.getValue(a))
+        .slice(0, TOP_N)
+        .map((t) => {
+          const team = teamMap.get(t.teamId);
+          return {
+            id: t.teamId,
+            name: team?.name ?? t.teamId,
+            sub: team?.shortName ?? "",
+            value: cat.getValue(t),
+          };
+        });
     }
-    return result;
-  }, [playerAggs]);
-
-  // Compute team leaders per category
-  const teamLeaders = useMemo(() => {
-    if (!teamAggs.length) return {};
-    const result: Record<
-      string,
-      { teamId: string; value: number; gamesPlayed: number }[]
-    > = {};
-
-    for (const cat of teamCategories) {
-      const sorted = [...teamAggs].sort(
-        (a, b) => cat.getValue(b) - cat.getValue(a),
-      );
-      result[cat.key] = sorted.slice(0, TOP_N).map((t, idx) => ({
-        rank: idx + 1,
-        teamId: t.teamId,
-        value: cat.getValue(t),
-        gamesPlayed: t.gamesPlayed,
-      }));
-    }
-    return result;
-  }, [teamAggs]);
+  }, [mainTab, playerCatKey, teamCatKey, playerAggs, teamAggs, teamMap]);
 
   return (
-    <main className="main-content">
-      <div className="page-header">
-        <h1>
-          <i className="fas fa-chart-bar"></i> Статистик
-        </h1>
-        <p>Тоглогчид болон багийн эрэмбэ</p>
-      </div>
-
-      {/* Player / Team Tabs */}
+    <main className="main-content stats-page">
+      {/* ── Main Tabs: Players / Teams ── */}
       <div className="stats-main-tabs">
         <button
-          className={`stats-main-tab ${activeTab === "players" ? "active" : ""}`}
-          onClick={() => setActiveTab("players")}
+          className={`stats-main-tab${mainTab === "players" ? " active" : ""}`}
+          onClick={() => setMainTab("players")}
         >
           ТОГЛОГЧИД
         </button>
         <button
-          className={`stats-main-tab ${activeTab === "teams" ? "active" : ""}`}
-          onClick={() => setActiveTab("teams")}
+          className={`stats-main-tab${mainTab === "teams" ? " active" : ""}`}
+          onClick={() => setMainTab("teams")}
         >
           БАГУУД
         </button>
       </div>
 
-      {loading ? (
-        <p style={{ textAlign: "center", padding: "40px" }}>Уншиж байна...</p>
-      ) : activeTab === "players" ? (
-        <div className="leaders-grid">
-          {playerCategories.map((cat) => {
-            const entries = playerLeaders[cat.key] ?? [];
-            if (entries.length === 0) return null;
-            return (
-              <div className="leaders-card" key={cat.key}>
-                <div className="leaders-card-header">
-                  <span className="leaders-card-title">{cat.label}</span>
-                </div>
-                <ul className="leaders-list">
-                  {entries.map((entry, idx) => (
-                    <li
-                      key={entry.playerId}
-                      className="leaders-list-item"
-                      onClick={() =>
-                        (window.location.href = `/players/${entry.playerId}`)
-                      }
-                    >
-                      <span className="leaders-rank">{idx + 1}.</span>
-                      <span className="leaders-name">{entry.playerName}</span>
-                      <span className="leaders-team">
-                        {teamMap.get(entry.teamId)?.shortName ?? ""}
-                      </span>
-                      <span className="leaders-stat">
-                        {cat.format(entry.value)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+      {/* ── Category Tabs ── */}
+      <div className="stats-cat-tabs-wrap">
+        <div className="stats-cat-tabs">
+          {categories.map((cat) => (
+            <button
+              key={cat.key}
+              className={`stats-cat-tab${catKey === cat.key ? " active" : ""}`}
+              onClick={() => setCatKey(cat.key)}
+            >
+              {cat.label}
+            </button>
+          ))}
         </div>
+      </div>
+
+      {/* ── Leaders Panel ── */}
+      {loading ? (
+        <p className="stats-loading">Уншиж байна...</p>
       ) : (
-        <div className="leaders-grid">
-          {teamCategories.map((cat) => {
-            const entries = teamLeaders[cat.key] ?? [];
-            if (entries.length === 0) return null;
-            return (
-              <div className="leaders-card" key={cat.key}>
-                <div className="leaders-card-header">
-                  <span className="leaders-card-title">{cat.label}</span>
+        <div className="stats-leaders-panel">
+          <div className="stats-leaders-header">
+            <span className="stats-leaders-title">{activeCat.fullLabel}</span>
+            <span className="stats-leaders-subtitle">
+              TOP {TOP_N} &bull; PER GAME
+            </span>
+          </div>
+
+          <div className="stats-leaders-list">
+            {leaders.length === 0 ? (
+              <p className="stats-empty">Мэдээлэл байхгүй байна</p>
+            ) : (
+              leaders.map((entry, idx) => (
+                <div
+                  key={entry.id}
+                  className={`stats-leader-row${idx === 0 ? " rank-1" : ""}`}
+                  onClick={() =>
+                    (window.location.href = `/${mainTab === "players" ? "players" : "teams"}/${entry.id}`)
+                  }
+                >
+                  <span className="stats-leader-rank">{ordinalRank(idx)}</span>
+
+                  <div className="stats-leader-info">
+                    <span className="stats-leader-name">{entry.name}</span>
+                    {entry.sub && (
+                      <span className="stats-leader-sub">{entry.sub}</span>
+                    )}
+                  </div>
+
+                  <div className="stats-leader-scoreboard">
+                    <span className="scoreboard-shadow" aria-hidden="true">
+                      {activeCat.format(entry.value).replace(/[0-9]/g, "8")}
+                    </span>
+                    <span className="scoreboard-value">
+                      {activeCat.format(entry.value)}
+                    </span>
+                    <span className="scoreboard-label">{activeCat.label}</span>
+                  </div>
                 </div>
-                <ul className="leaders-list">
-                  {entries.map((entry, idx) => {
-                    const team = teamMap.get(entry.teamId);
-                    return (
-                      <li
-                        key={entry.teamId}
-                        className="leaders-list-item"
-                        onClick={() =>
-                          (window.location.href = `/teams/${entry.teamId}`)
-                        }
-                      >
-                        <span className="leaders-rank">{idx + 1}.</span>
-                        <span className="leaders-name">
-                          {team?.name ?? entry.teamId}
-                        </span>
-                        <span className="leaders-team">
-                          {team?.shortName ?? ""}
-                        </span>
-                        <span className="leaders-stat">
-                          {cat.format(entry.value)}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            );
-          })}
+              ))
+            )}
+          </div>
         </div>
       )}
     </main>

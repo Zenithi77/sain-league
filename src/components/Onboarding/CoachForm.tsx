@@ -2,12 +2,22 @@
 
 /**
  * CoachForm.tsx — Step 1 for coach onboarding.
- * Collects: name, school, hasGym, hasBalls, hasScoreboard,
- *           programAvailable, scorePointerClock, notes, seasonId.
+ *
+ * Sections:
+ *   A] General info: location (cascading), lastName, firstName, birthYear, phone
+ *   B] School + Yes/No research questions (4 questions)
  */
 
 import { useState } from "react";
 import { useOnboardingStore } from "@/stores/onboardingStore";
+import {
+  aimagList,
+  getSumDuureg,
+  getKhorooBag,
+} from "@/data/mongoliaLocations";
+import { schoolList } from "@/data/schools";
+
+const currentYear = new Date().getFullYear();
 
 export default function CoachForm() {
   const coach = useOnboardingStore((s) => s.coach);
@@ -16,26 +26,69 @@ export default function CoachForm() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // ── Derived location lists ─────────────────────────────────────────────
+  const sumList = coach?.aimag ? getSumDuureg(coach.aimag) : [];
+  const khorooList =
+    coach?.aimag && coach?.sumDuureg
+      ? getKhorooBag(coach.aimag, coach.sumDuureg)
+      : [];
+
+  // ── Validation ─────────────────────────────────────────────────────────
   function validate(): boolean {
     const e: Record<string, string> = {};
-    if (!coach?.name?.trim()) e.name = "Нэрээ оруулна уу";
-    if (!coach?.school?.trim()) e.school = "Сургуулиа оруулна уу";
-    if (typeof coach?.hasGym !== "boolean")
-      e.hasGym = "Заал байгаа эсэхийг сонгоно уу";
-    if (typeof coach?.hasBalls !== "boolean")
-      e.hasBalls = "Бөмбөг байгаа эсэхийг сонгоно уу";
+    if (!coach?.aimag) e.aimag = "Аймаг/хот сонгоно уу";
+    if (!coach?.sumDuureg) e.sumDuureg = "Сум/дүүрэг сонгоно уу";
+    if (!coach?.khorooBag) e.khorooBag = "Хороо/баг сонгоно уу";
+    if (!coach?.lastName?.trim()) e.lastName = "Овгоо оруулна уу";
+    if (!coach?.firstName?.trim()) e.firstName = "Нэрээ оруулна уу";
+    if (!coach?.birthYear) {
+      e.birthYear = "Төрсөн оноо оруулна уу";
+    } else if (
+      Number(coach.birthYear) < 1950 ||
+      Number(coach.birthYear) > currentYear - 16
+    ) {
+      e.birthYear = "Зөв төрсөн он оруулна уу";
+    }
+    if (!coach?.phone?.trim()) e.phone = "Утасны дугаар оруулна уу";
+    if (!coach?.school) e.school = "Сургуулиа сонгоно уу";
+    if (coach?.hasGym === null) e.hasGym = "Сонгоно уу";
+    if (coach?.hasBasketballProgram === null)
+      e.hasBasketballProgram = "Сонгоно уу";
+    if (coach?.hasScoreClock === null) e.hasScoreClock = "Сонгоно уу";
+    if (coach?.isProfessionalCoach === null)
+      e.isProfessionalCoach = "Сонгоно уу";
     setErrors(e);
     return Object.keys(e).length === 0;
   }
 
   function handleNext() {
-    if (validate()) {
-      setStep(2);
-    }
+    if (validate()) setStep(2);
   }
 
   function handleBack() {
     setStep(0);
+  }
+
+  // ── Yes/No toggle helper ───────────────────────────────────────────────
+  function YesNo({ field, value }: { field: string; value: boolean | null }) {
+    return (
+      <div className="yes-no-group">
+        <button
+          type="button"
+          className={`yes-no-btn ${value === true ? "active yes" : ""}`}
+          onClick={() => setCoach({ [field]: true })}
+        >
+          Тийм
+        </button>
+        <button
+          type="button"
+          className={`yes-no-btn ${value === false ? "active no" : ""}`}
+          onClick={() => setCoach({ [field]: false })}
+        >
+          Үгүй
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -51,119 +104,236 @@ export default function CoachForm() {
         }}
         noValidate
       >
-        {/* Name */}
-        <div className="form-group">
-          <label htmlFor="coach-name">Нэр *</label>
-          <input
-            id="coach-name"
-            type="text"
-            value={coach?.name ?? ""}
-            onChange={(e) => setCoach({ name: e.target.value })}
-            placeholder="Таны нэр"
-            aria-required="true"
-            aria-invalid={!!errors.name}
-          />
-          {errors.name && <span className="field-error">{errors.name}</span>}
-        </div>
+        {/* ══════════════════════════════════════════════════════════════ */}
+        {/* A] General Information                                        */}
+        {/* ══════════════════════════════════════════════════════════════ */}
+        <fieldset className="onboarding-fieldset">
+          <legend>Ерөнхий мэдээлэл</legend>
 
-        {/* School */}
-        <div className="form-group">
-          <label htmlFor="coach-school">Сургууль *</label>
-          <input
-            id="coach-school"
-            type="text"
-            value={coach?.school ?? ""}
-            onChange={(e) => setCoach({ school: e.target.value })}
-            placeholder="Жнь: 10-р сургууль"
-            aria-required="true"
-            aria-invalid={!!errors.school}
-          />
-          {errors.school && (
-            <span className="field-error">{errors.school}</span>
-          )}
-        </div>
-
-        {/* Has gym */}
-        <div className="form-group checkbox-group">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={coach?.hasGym ?? false}
-              onChange={(e) => setCoach({ hasGym: e.target.checked })}
-              aria-required="true"
-            />
-            <span>Заалтай юу? *</span>
-          </label>
-          {errors.hasGym && (
-            <span className="field-error">{errors.hasGym}</span>
-          )}
-        </div>
-
-        {/* Has balls */}
-        <div className="form-group checkbox-group">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={coach?.hasBalls ?? false}
-              onChange={(e) => setCoach({ hasBalls: e.target.checked })}
-              aria-required="true"
-            />
-            <span>Бөмбөгтэй юу? *</span>
-          </label>
-          {errors.hasBalls && (
-            <span className="field-error">{errors.hasBalls}</span>
-          )}
-        </div>
-
-        {/* Has scoreboard */}
-        <div className="form-group checkbox-group">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={coach?.hasScoreboard ?? false}
-              onChange={(e) => setCoach({ hasScoreboard: e.target.checked })}
-            />
-            <span>Оноо самбартай юу?</span>
-          </label>
-        </div>
-
-        {/* Program available */}
-        <div className="form-group">
-          <label htmlFor="coach-program">Хөтөлбөр / curriculum</label>
-          <input
-            id="coach-program"
-            type="text"
-            value={coach?.programAvailable ?? ""}
-            onChange={(e) => setCoach({ programAvailable: e.target.value })}
-            placeholder="Жнь: Тийм — анхан шатны хөтөлбөр"
-          />
-        </div>
-
-        {/* Score / pointer / clock */}
-        <div className="form-group checkbox-group">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={coach?.scorePointerClock ?? false}
+          {/* Аймаг / Хот */}
+          <div className="form-group">
+            <label htmlFor="coach-aimag">Аймаг / Хот *</label>
+            <select
+              id="coach-aimag"
+              value={coach?.aimag ?? ""}
               onChange={(e) =>
-                setCoach({ scorePointerClock: e.target.checked })
+                setCoach({
+                  aimag: e.target.value,
+                  sumDuureg: "",
+                  khorooBag: "",
+                })
               }
-            />
-            <span>Score pointer / clock байгаа юу?</span>
-          </label>
-        </div>
+              aria-required="true"
+              aria-invalid={!!errors.aimag}
+            >
+              <option value="">-- Сонгоно уу --</option>
+              {aimagList.map((a) => (
+                <option key={a} value={a}>
+                  {a}
+                </option>
+              ))}
+            </select>
+            {errors.aimag && (
+              <span className="field-error">{errors.aimag}</span>
+            )}
+          </div>
 
-        {/* Notes */}
-        <div className="form-group">
-          <label htmlFor="coach-notes">Нэмэлт тэмдэглэл</label>
-          <textarea
-            id="coach-notes"
-            value={coach?.notes ?? ""}
-            onChange={(e) => setCoach({ notes: e.target.value })}
-            placeholder="Жнь: Сургалтын төлөвлөгөөнд тусламж хэрэгтэй"
-            rows={3}
-          />
-        </div>
+          {/* Сум / Дүүрэг */}
+          <div className="form-group">
+            <label htmlFor="coach-sum">Сум / Дүүрэг *</label>
+            <select
+              id="coach-sum"
+              value={coach?.sumDuureg ?? ""}
+              onChange={(e) =>
+                setCoach({ sumDuureg: e.target.value, khorooBag: "" })
+              }
+              disabled={!coach?.aimag}
+              aria-required="true"
+              aria-invalid={!!errors.sumDuureg}
+            >
+              <option value="">-- Сонгоно уу --</option>
+              {sumList.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+            {errors.sumDuureg && (
+              <span className="field-error">{errors.sumDuureg}</span>
+            )}
+          </div>
+
+          {/* Хороо / Баг */}
+          <div className="form-group">
+            <label htmlFor="coach-khoroo">Хороо / Баг *</label>
+            <select
+              id="coach-khoroo"
+              value={coach?.khorooBag ?? ""}
+              onChange={(e) => setCoach({ khorooBag: e.target.value })}
+              disabled={!coach?.sumDuureg}
+              aria-required="true"
+              aria-invalid={!!errors.khorooBag}
+            >
+              <option value="">-- Сонгоно уу --</option>
+              {khorooList.map((k) => (
+                <option key={k} value={k}>
+                  {k}
+                </option>
+              ))}
+            </select>
+            {errors.khorooBag && (
+              <span className="field-error">{errors.khorooBag}</span>
+            )}
+          </div>
+
+          {/* Овог */}
+          <div className="form-group">
+            <label htmlFor="coach-lastName">Овог *</label>
+            <input
+              id="coach-lastName"
+              type="text"
+              value={coach?.lastName ?? ""}
+              onChange={(e) => setCoach({ lastName: e.target.value })}
+              placeholder="Овог"
+              aria-required="true"
+              aria-invalid={!!errors.lastName}
+            />
+            {errors.lastName && (
+              <span className="field-error">{errors.lastName}</span>
+            )}
+          </div>
+
+          {/* Нэр */}
+          <div className="form-group">
+            <label htmlFor="coach-firstName">Нэр *</label>
+            <input
+              id="coach-firstName"
+              type="text"
+              value={coach?.firstName ?? ""}
+              onChange={(e) => setCoach({ firstName: e.target.value })}
+              placeholder="Нэр"
+              aria-required="true"
+              aria-invalid={!!errors.firstName}
+            />
+            {errors.firstName && (
+              <span className="field-error">{errors.firstName}</span>
+            )}
+          </div>
+
+          {/* Төрсөн он */}
+          <div className="form-group">
+            <label htmlFor="coach-birthYear">Төрсөн он *</label>
+            <input
+              id="coach-birthYear"
+              type="number"
+              min={1950}
+              max={currentYear - 16}
+              value={coach?.birthYear ?? ""}
+              onChange={(e) =>
+                setCoach({
+                  birthYear: e.target.value ? Number(e.target.value) : "",
+                })
+              }
+              placeholder="Жнь: 1990"
+              aria-required="true"
+              aria-invalid={!!errors.birthYear}
+            />
+            {coach?.birthYear && (
+              <span className="field-hint">
+                Нас: {currentYear - Number(coach.birthYear)}
+              </span>
+            )}
+            {errors.birthYear && (
+              <span className="field-error">{errors.birthYear}</span>
+            )}
+          </div>
+
+          {/* Утас */}
+          <div className="form-group">
+            <label htmlFor="coach-phone">Холбогдох утасны дугаар *</label>
+            <input
+              id="coach-phone"
+              type="tel"
+              value={coach?.phone ?? ""}
+              onChange={(e) => setCoach({ phone: e.target.value })}
+              placeholder="Жнь: 99001122"
+              aria-required="true"
+              aria-invalid={!!errors.phone}
+            />
+            {errors.phone && (
+              <span className="field-error">{errors.phone}</span>
+            )}
+          </div>
+        </fieldset>
+
+        {/* ══════════════════════════════════════════════════════════════ */}
+        {/* B] School + Yes/No Research Questions                          */}
+        {/* ══════════════════════════════════════════════════════════════ */}
+        <fieldset className="onboarding-fieldset">
+          <legend>Сургууль, Судалгаа</legend>
+
+          {/* Сургууль */}
+          <div className="form-group">
+            <label htmlFor="coach-school">Ямар сургуульд багшилдаг вэ? *</label>
+            <select
+              id="coach-school"
+              value={coach?.school ?? ""}
+              onChange={(e) => setCoach({ school: e.target.value })}
+              aria-required="true"
+              aria-invalid={!!errors.school}
+            >
+              <option value="">-- Сонгоно уу --</option>
+              {schoolList.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+            {errors.school && (
+              <span className="field-error">{errors.school}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label>Танай сургууль зориулалтын спорт заалтай юу? *</label>
+            <YesNo field="hasGym" value={coach?.hasGym ?? null} />
+            {errors.hasGym && (
+              <span className="field-error">{errors.hasGym}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label>
+              Танай сургууль сагсан бөмбөгийн сургалтын хөтөлбөртэй юу? *
+            </label>
+            <YesNo
+              field="hasBasketballProgram"
+              value={coach?.hasBasketballProgram ?? null}
+            />
+            {errors.hasBasketballProgram && (
+              <span className="field-error">{errors.hasBasketballProgram}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label>Сагсан бөмбөгийн тэмцээний онооны цагтай юу? *</label>
+            <YesNo field="hasScoreClock" value={coach?.hasScoreClock ?? null} />
+            {errors.hasScoreClock && (
+              <span className="field-error">{errors.hasScoreClock}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label>Та мэргэжлийн сагсан бөмбөгийн дасгалжуулагч уу? *</label>
+            <YesNo
+              field="isProfessionalCoach"
+              value={coach?.isProfessionalCoach ?? null}
+            />
+            {errors.isProfessionalCoach && (
+              <span className="field-error">{errors.isProfessionalCoach}</span>
+            )}
+          </div>
+        </fieldset>
 
         {/* Buttons */}
         <div className="onboarding-actions">

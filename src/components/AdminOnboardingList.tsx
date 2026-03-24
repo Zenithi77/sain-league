@@ -30,17 +30,25 @@ const FUNCTIONS_BASE_URL =
 interface OnboardingDoc {
   id: string;
   uid?: string;
-  name?: string;
+  // General
+  aimag?: string;
+  sumDuureg?: string;
+  khorooBag?: string;
+  lastName?: string;
+  firstName?: string;
+  birthYear?: number;
+  phone?: string;
+  // School
   school?: string;
-  grade?: string; // kid
-  whyPlay?: string; // kid
-  phone?: string; // kid
-  hasGym?: boolean; // coach
-  hasBalls?: boolean; // coach
-  hasScoreboard?: boolean; // coach
-  programAvailable?: string; // coach
-  scorePointerClock?: boolean; // coach
-  notes?: string; // coach
+  grade?: number; // kid
+  // Survey — kid
+  hasGym?: boolean;
+  hasBasketballProgram?: boolean;
+  hasBalls?: boolean; // kid
+  hasScoreClock?: boolean;
+  hasCoach?: boolean; // kid
+  // Survey — coach
+  isProfessionalCoach?: boolean; // coach
   createdAt?: string | { _seconds: number };
   updatedAt?: string | { _seconds: number };
   [key: string]: unknown;
@@ -293,10 +301,10 @@ export default function AdminOnboardingList({
               <tr>
                 <th>#</th>
                 <th>Нэр</th>
+                <th>Аймаг</th>
                 <th>Сургууль</th>
                 {role === "kid" && <th>Анги</th>}
-                {role === "coach" && <th>Заал</th>}
-                {role === "coach" && <th>Бөмбөг</th>}
+                {role === "coach" && <th>Мэргэжлийн</th>}
                 <th>Огноо</th>
                 <th></th>
               </tr>
@@ -309,24 +317,20 @@ export default function AdminOnboardingList({
                     className={expandedId === doc.id ? "expanded-row" : ""}
                   >
                     <td>{currentPageIndex * PAGE_SIZE + idx + 1}</td>
-                    <td className="aol-name-cell">{doc.name ?? "—"}</td>
+                    <td className="aol-name-cell">
+                      {doc.lastName ?? ""} {doc.firstName ?? "—"}
+                    </td>
+                    <td>{doc.aimag ?? "—"}</td>
                     <td>{doc.school ?? "—"}</td>
-                    {role === "kid" && <td>{doc.grade ?? "—"}</td>}
-                    {role === "coach" && (
-                      <td>
-                        <span
-                          className={`aol-badge ${doc.hasGym ? "yes" : "no"}`}
-                        >
-                          {doc.hasGym ? "Тийм" : "Үгүй"}
-                        </span>
-                      </td>
+                    {role === "kid" && (
+                      <td>{doc.grade ? `${doc.grade}-р` : "—"}</td>
                     )}
                     {role === "coach" && (
                       <td>
                         <span
-                          className={`aol-badge ${doc.hasBalls ? "yes" : "no"}`}
+                          className={`aol-badge ${doc.isProfessionalCoach ? "yes" : "no"}`}
                         >
-                          {doc.hasBalls ? "Тийм" : "Үгүй"}
+                          {doc.isProfessionalCoach ? "Тийм" : "Үгүй"}
                         </span>
                       </td>
                     )}
@@ -349,54 +353,110 @@ export default function AdminOnboardingList({
                   </tr>
                   {expandedId === doc.id && (
                     <tr key={`${doc.id}-detail`} className="aol-detail-row">
-                      <td colSpan={role === "kid" ? 6 : 7}>
+                      <td colSpan={role === "kid" ? 7 : 7}>
                         <div className="aol-detail">
+                          {/* Location */}
+                          <div className="aol-detail-item">
+                            <span className="aol-detail-label">Байршил:</span>
+                            <span>
+                              {doc.aimag}, {doc.sumDuureg}, {doc.khorooBag}
+                            </span>
+                          </div>
+                          <div className="aol-detail-item">
+                            <span className="aol-detail-label">Төрсөн он:</span>
+                            <span>
+                              {doc.birthYear ?? "—"}
+                              {doc.birthYear
+                                ? ` (${new Date().getFullYear() - doc.birthYear} нас)`
+                                : ""}
+                            </span>
+                          </div>
+                          <div className="aol-detail-item">
+                            <span className="aol-detail-label">Утас:</span>
+                            <span>{doc.phone ?? "—"}</span>
+                          </div>
+
+                          {/* Survey results */}
+                          <div className="aol-detail-item">
+                            <span className="aol-detail-label">
+                              Спорт заалтай:
+                            </span>
+                            <span
+                              className={`aol-badge ${doc.hasGym ? "yes" : "no"}`}
+                            >
+                              {doc.hasGym ? "Тийм" : "Үгүй"}
+                            </span>
+                          </div>
+                          <div className="aol-detail-item">
+                            <span className="aol-detail-label">
+                              Сагсан бөмбөгийн хөтөлбөр:
+                            </span>
+                            <span
+                              className={`aol-badge ${doc.hasBasketballProgram ? "yes" : "no"}`}
+                            >
+                              {doc.hasBasketballProgram ? "Тийм" : "Үгүй"}
+                            </span>
+                          </div>
+
                           {role === "kid" && (
                             <>
                               <div className="aol-detail-item">
                                 <span className="aol-detail-label">
-                                  Яагаад тоглохыг хүсч байна:
+                                  Бөмбөгтэй:
                                 </span>
-                                <span>{doc.whyPlay ?? "—"}</span>
+                                <span
+                                  className={`aol-badge ${doc.hasBalls ? "yes" : "no"}`}
+                                >
+                                  {doc.hasBalls ? "Тийм" : "Үгүй"}
+                                </span>
                               </div>
-                              {doc.phone && (
-                                <div className="aol-detail-item">
-                                  <span className="aol-detail-label">
-                                    Утас:
-                                  </span>
-                                  <span>{doc.phone}</span>
-                                </div>
-                              )}
+                              <div className="aol-detail-item">
+                                <span className="aol-detail-label">
+                                  Онооны цаг:
+                                </span>
+                                <span
+                                  className={`aol-badge ${doc.hasScoreClock ? "yes" : "no"}`}
+                                >
+                                  {doc.hasScoreClock ? "Тийм" : "Үгүй"}
+                                </span>
+                              </div>
+                              <div className="aol-detail-item">
+                                <span className="aol-detail-label">
+                                  Дасгалжуулагчтай:
+                                </span>
+                                <span
+                                  className={`aol-badge ${doc.hasCoach ? "yes" : "no"}`}
+                                >
+                                  {doc.hasCoach ? "Тийм" : "Үгүй"}
+                                </span>
+                              </div>
                             </>
                           )}
                           {role === "coach" && (
                             <>
                               <div className="aol-detail-item">
                                 <span className="aol-detail-label">
-                                  Оноо самбар:
+                                  Онооны цаг:
                                 </span>
-                                <span>
-                                  {doc.hasScoreboard ? "Тийм" : "Үгүй"}
+                                <span
+                                  className={`aol-badge ${doc.hasScoreClock ? "yes" : "no"}`}
+                                >
+                                  {doc.hasScoreClock ? "Тийм" : "Үгүй"}
                                 </span>
                               </div>
-                              {doc.programAvailable && (
-                                <div className="aol-detail-item">
-                                  <span className="aol-detail-label">
-                                    Хөтөлбөр:
-                                  </span>
-                                  <span>{doc.programAvailable}</span>
-                                </div>
-                              )}
-                              {doc.notes && (
-                                <div className="aol-detail-item">
-                                  <span className="aol-detail-label">
-                                    Тэмдэглэл:
-                                  </span>
-                                  <span>{doc.notes}</span>
-                                </div>
-                              )}
+                              <div className="aol-detail-item">
+                                <span className="aol-detail-label">
+                                  Мэргэжлийн дасгалжуулагч:
+                                </span>
+                                <span
+                                  className={`aol-badge ${doc.isProfessionalCoach ? "yes" : "no"}`}
+                                >
+                                  {doc.isProfessionalCoach ? "Тийм" : "Үгүй"}
+                                </span>
+                              </div>
                             </>
                           )}
+
                           <div className="aol-detail-item">
                             <span className="aol-detail-label">UID:</span>
                             <span className="aol-uid">{doc.uid ?? doc.id}</span>

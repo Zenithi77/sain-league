@@ -73,6 +73,16 @@ export default function Header() {
             </ul>
           </nav>
           <div className="header-right">
+            <a
+              href="https://sain-league-store.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="merch-store-btn"
+              title="Merch Store"
+            >
+              <i className="fas fa-shopping-bag"></i>
+              <span className="merch-store-label">Дэлгүүр</span>
+            </a>
             {showAuth && (
               <>
                 {user ? (
@@ -180,6 +190,16 @@ export default function Header() {
                 </Link>
               </li>
             ))}
+            <li>
+              <a
+                href="https://sain-league-store.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <i className="fas fa-shopping-bag"></i> Дэлгүүр
+              </a>
+            </li>
           </ul>
           {showAuth && (
             <div className="mobile-auth">
