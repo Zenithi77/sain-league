@@ -259,6 +259,24 @@ export function getNewsById(id: string): NewsArticleWithTeams | null {
   };
 }
 
+// Get games for a specific team
+export function getTeamGames(teamId: string): { upcoming: GameWithTeams[]; recent: GameWithTeams[] } {
+  const allGames = getGamesWithTeams();
+  const teamGames = allGames.filter(
+    (g) => g.homeTeamId === teamId || g.awayTeamId === teamId
+  );
+
+  const upcoming = teamGames
+    .filter((g) => g.status === "scheduled" || g.status === "live")
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  const recent = teamGames
+    .filter((g) => g.status === "finished")
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  return { upcoming, recent };
+}
+
 // Get top players by category
 export function getTopPlayersByCategory(
   category: string,
