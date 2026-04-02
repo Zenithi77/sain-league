@@ -129,6 +129,19 @@ export default function HeroIntro({ onComplete }: HeroIntroProps) {
     if (triggeredRef.current) return;
     triggeredRef.current = true;
     setPhase("transitioning");
+    // Fade audio out over the logo-move delay so it's not abrupt
+    const v = videoRef.current;
+    if (v && !v.muted) {
+      const startVol = v.volume;
+      const steps = 20;
+      const interval = LOGO_MOVE_DELAY / steps;
+      let step = 0;
+      const fade = setInterval(() => {
+        step++;
+        v.volume = Math.max(0, startVol * (1 - step / steps));
+        if (step >= steps) clearInterval(fade);
+      }, interval);
+    }
     setTimeout(flyLogo, LOGO_MOVE_DELAY);
   }, [flyLogo]);
 
@@ -149,13 +162,22 @@ export default function HeroIntro({ onComplete }: HeroIntroProps) {
     setTimeout(trigger, 500);
   }, [trigger]);
 
-  /* ── Programmatic play + autoplay-block fallback ───── */
+  /* ── Programmatic play: try with sound, fall back to muted ── */
   useEffect(() => {
     if (reducedMotion) return;
     const v = videoRef.current;
     if (!v) return;
+    // First attempt: play with sound
+    v.muted = false;
     const p = v.play();
-    if (p) p.catch(() => setTimeout(trigger, 1500));
+    if (p) {
+      p.catch(() => {
+        // Browser blocked unmuted autoplay → retry muted
+        v.muted = true;
+        const p2 = v.play();
+        if (p2) p2.catch(() => setTimeout(trigger, 1500));
+      });
+    }
   }, [trigger, reducedMotion]);
 
   /* ── Hard fallback timeout ─────────────────────────── */
@@ -182,7 +204,6 @@ export default function HeroIntro({ onComplete }: HeroIntroProps) {
       <video
         ref={videoRef}
         className="hero-intro__video"
-        muted
         playsInline
         preload="auto"
         onCanPlay={onCanPlay}

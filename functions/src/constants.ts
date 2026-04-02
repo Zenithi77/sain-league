@@ -58,6 +58,63 @@ export const playerGameRefPath = (
   gameId: string,
 ) => `seasons/${seasonId}/players/${playerId}/games/${gameId}` as const;
 
+/** Avatar task document (Meshy Image-to-3D) */
+export const avatarTaskPath = (docId: string) =>
+  `avatarTasks/${docId}` as const;
+
+// ---------------------------------------------------------------------------
+// Avatar task types (Meshy Image-to-3D)
+// ---------------------------------------------------------------------------
+
+export type AvatarTaskStatus =
+  | "queued"
+  | "pending"
+  | "IN_PROGRESS"
+  | "SUCCEEDED"
+  | "FAILED"
+  | "EXPIRED"
+  | "error";
+
+export interface AvatarTask {
+  playerId: string;
+  imageUrl: string;
+  textureImageUrl: string;
+  heightCm: number | null;
+  weightKg: number | null;
+  jerseyNumber: number | string | null;
+  teamColor: string | null;
+  modelType: string;
+  aiModel: string;
+  topology: string;
+  targetPolycount: number;
+  symmetryMode: string;
+  shouldRemesh: boolean;
+  shouldTexture: boolean;
+  enablePbr: boolean;
+  moderation: boolean;
+  imageEnhancement: boolean;
+  removeLighting: boolean;
+  targetFormats: string[];
+  autoSize: boolean;
+  originAt: string;
+  meshyTaskId: string | null;
+  status: AvatarTaskStatus;
+  progress: number | null;
+  modelUrls: Record<string, string> | null;
+  textureUrls: Array<Record<string, string>> | null;
+  thumbnailUrl: string | null;
+  taskError: string | null;
+  userId: string;
+  createdAt: FirebaseFirestore.FieldValue | string;
+  updatedAt: FirebaseFirestore.FieldValue | string;
+  webhookReceivedAt: FirebaseFirestore.FieldValue | string | null;
+  lastPollAt: FirebaseFirestore.FieldValue | string | null;
+  lastWebhookAt: FirebaseFirestore.FieldValue | string | null;
+  fallbackPollDueAt: Date | null;
+  fallbackPollCount: number;
+  retryCount: number;
+}
+
 // ---------------------------------------------------------------------------
 // Canonical boxscore field names (camelCase, used in Firestore documents)
 // ---------------------------------------------------------------------------

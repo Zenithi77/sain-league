@@ -24,6 +24,11 @@ import {
 } from "./integrityRecompute.js";
 import { requireAdmin } from "./adminSetup.js";
 import { app as onboardingApp } from "./onboardingApi.js";
+import {
+  handleCreateAvatarTask,
+  handleMeshyWebhook,
+  handleFallbackRetrieve,
+} from "./imageTo3d.js";
 
 setGlobalOptions({ maxInstances: 10 });
 
@@ -166,4 +171,55 @@ export const integrityRecomputeHttp = onRequest(
     const summary = await integrityRecomputeSeason(seasonId);
     res.json({ ok: true, ...summary });
   },
+);
+
+// ---------------------------------------------------------------------------
+// 6. Create avatar task — Meshy Image-to-3D (admin-only HTTP)
+// ---------------------------------------------------------------------------
+
+/**
+ * POST { playerId, imageUrl, heightCm?, weightKg?, jerseyNumber?, teamColor? }
+ * Creates a Meshy Image-to-3D task and stores it in Firestore.
+ */
+export const createAvatarTask = onRequest(
+  {
+    timeoutSeconds: 60,
+    memory: "256MiB",
+    cors: true,
+  },
+  handleCreateAvatarTask,
+);
+
+// ---------------------------------------------------------------------------
+// 7. Meshy webhook (server-to-server callback)
+// ---------------------------------------------------------------------------
+
+/**
+ * Receives the full Meshy task object on status changes.
+ * No auth — secured by verifying the meshyTaskId exists in Firestore.
+ */
+export const meshyWebhook = onRequest(
+  {
+    timeoutSeconds: 10,
+    memory: "128MiB",
+    cors: false,
+  },
+  handleMeshyWebhook,
+);
+
+// ---------------------------------------------------------------------------
+// 8. Fallback retrieval — poll stale Meshy tasks (admin-only HTTP)
+// ---------------------------------------------------------------------------
+
+/**
+ * Polls tasks that haven't received a webhook update for >= 5 minutes.
+ * Can be triggered manually or wired to Cloud Scheduler.
+ */
+export const fallbackRetrieve = onRequest(
+  {
+    timeoutSeconds: 120,
+    memory: "256MiB",
+    cors: true,
+  },
+  handleFallbackRetrieve,
 );

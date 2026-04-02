@@ -49,6 +49,22 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
+    // ── Media generation jobs (legacy) ─────────────────────────────────
+    // Admin-only read/write. Cloud Functions use admin SDK (bypasses rules).
+    match /mediaJobs/{jobId} {
+      allow read: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow write: if false; // Only written by Cloud Functions via admin SDK
+    }
+
+    // ── Avatar tasks (Meshy Image-to-3D) ────────────────────────────────
+    // Admin-only read. Only written by Cloud Functions via admin SDK.
+    match /avatarTasks/{taskId} {
+      allow read: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow write: if false;
+    }
+
     // ── Onboarding collections ──────────────────────────────────────────
     // Admin-only read; owner-only write.
     match /onboarding/kids/entries/{uid} {
