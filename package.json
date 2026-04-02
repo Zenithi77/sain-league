@@ -11,12 +11,17 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^44.3.0",
     "@ckeditor/ckeditor5-react": "^11.0.1",
+    "@next/swc-win32-x64-msvc": "^16.2.2",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
+    "@types/three": "^0.183.1",
     "firebase": "^11.10.0",
     "firebase-admin": "^13.6.1",
     "graceful-fs": "^4.2.11",
     "next": "^14.2.35",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "three": "^0.183.2",
     "uuid": "^9.0.0",
     "xlsx": "^0.18.5",
     "zustand": "^5.0.11"

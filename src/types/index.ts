@@ -77,7 +77,37 @@ export interface Player {
   image: string;
   country?: string;
   college?: string;
+  modelUrl?: string;
+  avatarTaskDocId?: string;
   stats: PlayerStats;
+}
+
+// ---------------------------------------------------------------------------
+// Avatar task (Meshy Image-to-3D) — frontend types
+// ---------------------------------------------------------------------------
+
+export type AvatarTaskStatus =
+  | "queued"
+  | "pending"
+  | "IN_PROGRESS"
+  | "SUCCEEDED"
+  | "FAILED"
+  | "EXPIRED"
+  | "error";
+
+export interface AvatarTask {
+  id: string;
+  playerId: string;
+  imageUrl: string;
+  meshyTaskId: string | null;
+  status: AvatarTaskStatus;
+  progress: number | null;
+  modelUrls: Record<string, string> | null;
+  textureUrls: Array<Record<string, string>> | null;
+  thumbnailUrl: string | null;
+  taskError: { message?: string } | string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
 }
 
 export interface PlayerAverages {

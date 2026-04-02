@@ -60,3 +60,45 @@ export async function saveOnboarding(
 
   return data as SaveOnboardingResult;
 }
+
+// ── POST /createAvatarTask ───────────────────────────────────────────────
+export interface CreateAvatarTaskPayload {
+  playerId: string;
+  imageUrl: string;
+}
+
+export interface CreateAvatarTaskResult {
+  docId: string;
+  meshyTaskId: string;
+  status: string;
+}
+
+/**
+ * Trigger a Meshy Image-to-3D task via the Cloud Function.
+ *
+ * @param payload  `{ playerId, imageUrl }` — player reference and full-body image URL
+ * @returns        `{ docId, meshyTaskId, status }` from the Cloud Function
+ * @throws         On auth, network, or server error
+ */
+export async function createAvatarTask(
+  payload: CreateAvatarTaskPayload,
+): Promise<CreateAvatarTaskResult> {
+  const token = await getIdToken();
+
+  const res = await fetch(`${FUNCTIONS_BASE_URL}/createAvatarTask`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.error ?? `Server error (${res.status})`);
+  }
+
+  return data as CreateAvatarTaskResult;
+}

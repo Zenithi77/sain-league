@@ -23,6 +23,7 @@ import {
   Season,
   Sponsor,
   CoachProfile,
+  AvatarTask,
 } from "@/types";
 
 // Collections
@@ -32,6 +33,7 @@ const GAMES_COLLECTION = "games";
 const SEASON_COLLECTION = "season";
 const SPONSORS_COLLECTION = "sponsors";
 const COACHES_COLLECTION = "coaches";
+const AVATAR_TASKS_COLLECTION = "avatarTasks";
 
 // ============================================
 // TEAMS
@@ -130,6 +132,35 @@ export async function updatePlayer(
 export async function deletePlayer(id: string): Promise<void> {
   const playerRef = doc(db, PLAYERS_COLLECTION, id);
   await deleteDoc(playerRef);
+}
+
+export async function getAvatarTasksByPlayer(
+  playerId: string,
+): Promise<AvatarTask[]> {
+  const tasksRef = collection(db, AVATAR_TASKS_COLLECTION);
+  const q = query(
+    tasksRef,
+    where("playerId", "==", playerId),
+    orderBy("createdAt", "desc"),
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id,
+      playerId: data.playerId ?? "",
+      imageUrl: data.imageUrl ?? "",
+      meshyTaskId: data.meshyTaskId ?? null,
+      status: data.status ?? "queued",
+      progress: data.progress ?? null,
+      modelUrls: data.modelUrls ?? null,
+      textureUrls: data.textureUrls ?? null,
+      thumbnailUrl: data.thumbnailUrl ?? null,
+      taskError: data.taskError ?? null,
+      createdAt: data.createdAt?.toDate?.().toISOString() ?? null,
+      updatedAt: data.updatedAt?.toDate?.().toISOString() ?? null,
+    } as AvatarTask;
+  });
 }
 
 // ============================================
