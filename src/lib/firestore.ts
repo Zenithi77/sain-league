@@ -22,6 +22,7 @@ import {
   GameWithTeams,
   Season,
   Sponsor,
+  CoachProfile,
 } from "@/types";
 
 // Collections
@@ -30,6 +31,7 @@ const PLAYERS_COLLECTION = "players";
 const GAMES_COLLECTION = "games";
 const SEASON_COLLECTION = "season";
 const SPONSORS_COLLECTION = "sponsors";
+const COACHES_COLLECTION = "coaches";
 
 // ============================================
 // TEAMS
@@ -396,4 +398,60 @@ export function generatePlayerId(): string {
 
 export function generateGameId(): string {
   return "game_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
+}
+
+// ============================================
+// COACHES
+// ============================================
+
+export async function getCoaches(): Promise<CoachProfile[]> {
+  const ref = collection(db, COACHES_COLLECTION);
+  const snapshot = await getDocs(ref);
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as CoachProfile);
+}
+
+export async function getCoach(id: string): Promise<CoachProfile | null> {
+  const docRef = doc(db, COACHES_COLLECTION, id);
+  const snapshot = await getDoc(docRef);
+  if (snapshot.exists()) {
+    return { id: snapshot.id, ...snapshot.data() } as CoachProfile;
+  }
+  return null;
+}
+
+export async function getCoachesByTeam(
+  teamId: string,
+): Promise<CoachProfile[]> {
+  const ref = collection(db, COACHES_COLLECTION);
+  const q = query(ref, where("teamId", "==", teamId));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as CoachProfile);
+}
+
+export async function createCoach(
+  coach: Omit<CoachProfile, "id">,
+): Promise<string> {
+  const ref = collection(db, COACHES_COLLECTION);
+  const newDocRef = doc(ref);
+  await setDoc(newDocRef, {
+    ...coach,
+    createdAt: serverTimestamp(),
+  });
+  return newDocRef.id;
+}
+
+export async function updateCoach(
+  id: string,
+  data: Partial<CoachProfile>,
+): Promise<void> {
+  const docRef = doc(db, COACHES_COLLECTION, id);
+  await updateDoc(docRef, {
+    ...data,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function deleteCoach(id: string): Promise<void> {
+  const docRef = doc(db, COACHES_COLLECTION, id);
+  await deleteDoc(docRef);
 }

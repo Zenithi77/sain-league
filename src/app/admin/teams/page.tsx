@@ -1,211 +1,255 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from "react";
-import type { Team, TeamWithAverages } from "@/types";
-import { getTeams, createTeam } from "@/lib/firestore";
+import { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
+import type { Team } from "@/types";
+import { getTeams, deleteTeam } from "@/lib/firestore";
+
+function getPct(wins: number, losses: number) {
+  const total = wins + losses;
+  if (total === 0) return "0.0";
+  return ((wins / total) * 100).toFixed(1);
+}
 
 export default function AdminTeamsPage() {
-  const [teams, setTeams] = useState<TeamWithAverages[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedConference, setSelectedConference] = useState("All");
 
   useEffect(() => {
-    fetchTeams();
+    getTeams()
+      .then((data) => setTeams(data))
+      .catch((err) => console.error("Error fetching teams:", err))
+      .finally(() => setLoading(false));
   }, []);
 
-  const fetchTeams = async () => {
+  const handleDelete = async (id: string) => {
+    const team = teams.find((t) => t.id === id);
+    if (
+      !window.confirm(
+        `"${team?.name}" багийг устгах уу? Энэ үйлдлийг буцаах боломжгүй.`,
+      )
+    )
+      return;
     try {
-      const data = await getTeams();
-      setTeams(data as TeamWithAverages[]);
+      await deleteTeam(id);
+      setTeams((prev) => prev.filter((t) => t.id !== id));
     } catch (error) {
-      console.error("Error fetching teams:", error);
+      console.error("Error deleting team:", error);
+      alert("Баг устгахад алдаа гарлаа");
     }
   };
 
-  const handleAddTeam = async (e: FormEvent) => {
-    e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-
-    const name = ((formData.get("name") as string) || "").trim();
-    const shortName = ((formData.get("shortName") as string) || "").trim();
-    const city = ((formData.get("city") as string) || "").trim();
-    const conference = ((formData.get("conference") as string) || "").trim() as
-      | "east"
-      | "west";
-    const school = ((formData.get("school") as string) || "").trim();
-    const coachName = ((formData.get("coachName") as string) || "").trim();
-    const primaryColor = (formData.get("primaryColor") as string) || "#FF6B35";
-    const secondaryColor =
-      (formData.get("secondaryColor") as string) || "#1A1A2E";
-
-    if (!name || name.length < 2) {
-      alert("Багийн нэр заавал оруулах шаардлагатай (2+ тэмдэгт)");
-      return;
+  const filteredTeams = useMemo(() => {
+    let result = teams;
+    if (searchTerm) {
+      const lower = searchTerm.toLowerCase();
+      result = result.filter(
+        (t) =>
+          t.name.toLowerCase().includes(lower) ||
+          t.shortName.toLowerCase().includes(lower) ||
+          t.school?.toLowerCase().includes(lower) ||
+          t.coach?.name?.toLowerCase().includes(lower),
+      );
     }
-    if (!shortName || shortName.length < 2) {
-      alert("Товчилсон нэр заавал оруулах шаардлагатай");
-      return;
+    if (selectedConference !== "All") {
+      result = result.filter((t) => t.conference === selectedConference);
     }
-    if (!conference || (conference !== "east" && conference !== "west")) {
-      alert("Бүс заавал сонгох шаардлагатай (East/West)");
-      return;
-    }
-    if (!school || school.length < 2) {
-      alert("Сургуулийн нэр заавал оруулах шаардлагатай (2+ тэмдэгт)");
-      return;
-    }
-
-    try {
-      const teamData: Omit<Team, "id"> = {
-        name,
-        shortName,
-        logo: "/assets/logos/default.png",
-        city,
-        conference,
-        school,
-        coach: {
-          id: `coach-${Date.now()}`,
-          name: coachName,
-          image: "/assets/coaches/default.png",
-        },
-        colors: { primary: primaryColor, secondary: secondaryColor },
-        stats: {
-          wins: 0,
-          losses: 0,
-          pointsFor: 0,
-          pointsAgainst: 0,
-          gamesPlayed: 0,
-        },
-      };
-
-      await createTeam(teamData);
-      alert("Баг амжилттай нэмэгдлээ!");
-      form.reset();
-      fetchTeams();
-    } catch (error) {
-      console.error("Error creating team:", error);
-      alert("Баг үүсгэхэд алдаа гарлаа");
-    }
-  };
+    return result.sort(
+      (a, b) => b.stats.wins - a.stats.wins || a.stats.losses - b.stats.losses,
+    );
+  }, [teams, searchTerm, selectedConference]);
 
   return (
     <div className="admin-page-content">
+      {/* Header */}
       <div className="admin-page-header">
-        <h1>
-          <i className="fas fa-users"></i> Баг удирдах
-        </h1>
-        <p>Шинэ баг нэмэх, багийн мэдээлэл удирдах</p>
+        <div>
+          <h1>
+            <i className="fas fa-users"></i> Багууд
+          </h1>
+          <p>Нийт {teams.length} баг</p>
+        </div>
+        <Link href="/admin/teams/add" className="btn btn-primary">
+          <i className="fas fa-plus"></i> Баг нэмэх
+        </Link>
       </div>
 
-      <section className="admin-section">
-        <h3>
-          <i className="fas fa-users"></i> Шинэ баг нэмэх
-        </h3>
-        <form onSubmit={handleAddTeam}>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Багийн нэр</label>
-              <input
-                type="text"
-                name="name"
-                required
-                placeholder="Ulaanbaatar Warriors"
-              />
-            </div>
-            <div className="form-group">
-              <label>Товчлол (3-4 үсэг)</label>
-              <input
-                type="text"
-                name="shortName"
-                required
-                placeholder="UBW"
-                maxLength={4}
-              />
-            </div>
-            <div className="form-group">
-              <label>Хот</label>
-              <input
-                type="text"
-                name="city"
-                required
-                placeholder="Улаанбаатар"
-              />
-            </div>
-            <div className="form-group">
-              <label>Бүс</label>
-              <select name="conference" required>
-                <option value="">Бүс сонгох</option>
-                <option value="east">East</option>
-                <option value="west">West</option>
-              </select>
-            </div>
+      {/* Filters */}
+      <div className="players-filters" style={{ marginBottom: 24 }}>
+        <div className="players-filter-group">
+          <div className="players-search-wrapper">
+            <i className="fas fa-search players-search-icon"></i>
+            <input
+              type="text"
+              className="players-search-input"
+              placeholder="Баг, сургууль, дасгалжуулагч хайх..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Сургууль</label>
-              <input
-                type="text"
-                name="school"
-                required
-                placeholder="Сургуулийн нэр"
-              />
-            </div>
-            <div className="form-group">
-              <label>Дасгалжуулагч</label>
-              <input type="text" name="coachName" placeholder="Нэр" />
-            </div>
+          <div className="players-select-wrapper">
+            <label className="players-filter-label">Бүс</label>
+            <select
+              className="players-select"
+              value={selectedConference}
+              onChange={(e) => setSelectedConference(e.target.value)}
+            >
+              <option value="All">Бүгд</option>
+              <option value="west">Баруун (West)</option>
+              <option value="east">Зүүн (East)</option>
+            </select>
           </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Үндсэн өнгө</label>
-              <input type="color" name="primaryColor" defaultValue="#F15F22" />
-            </div>
-            <div className="form-group">
-              <label>Хоёрдогч өнгө</label>
-              <input
-                type="color"
-                name="secondaryColor"
-                defaultValue="#1A1A2E"
-              />
-            </div>
-            <div className="form-group">
-              <label>&nbsp;</label>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                style={{ width: "100%" }}
-              >
-                <i className="fas fa-plus"></i> Баг нэмэх
-              </button>
-            </div>
-          </div>
-        </form>
-      </section>
+        </div>
+        <div className="players-count-badge">
+          <i className="fas fa-users"></i> {filteredTeams.length} баг
+        </div>
+      </div>
 
-      {/* Existing Teams List */}
-      {teams.length > 0 && (
-        <section className="admin-section">
-          <h3>
-            <i className="fas fa-list"></i> Бүртгэлтэй багууд ({teams.length})
-          </h3>
-          <div className="admin-teams-list">
-            {teams.map((team) => (
-              <div key={team.id} className="admin-team-item">
-                <div
-                  className="admin-team-color"
-                  style={{
-                    background: team.colors?.primary || "var(--primary-color)",
-                  }}
-                />
-                <div className="admin-team-info">
-                  <strong>{team.name}</strong>
-                  <span>
-                    {team.shortName} · {team.school || "—"} · {team.conference}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+      {/* Table */}
+      {loading ? (
+        <div
+          style={{
+            padding: 60,
+            textAlign: "center",
+            color: "var(--text-muted)",
+          }}
+        >
+          <i className="fas fa-spinner fa-spin" style={{ fontSize: 28 }}></i>
+          <p style={{ marginTop: 16 }}>Ачаалж байна...</p>
+        </div>
+      ) : (
+        <div
+          className="admin-section"
+          style={{ padding: 0, overflow: "hidden" }}
+        >
+          <table className="sgl-teams-table" style={{ width: "100%" }}>
+            <thead>
+              <tr>
+                <th className="sgl-th-rank">#</th>
+                <th className="sgl-th-team">Баг</th>
+                <th className="sgl-th-num">Бүс</th>
+                <th className="sgl-th-num">W</th>
+                <th className="sgl-th-num">L</th>
+                <th className="sgl-th-num">GP</th>
+                <th className="sgl-th-num">PCT</th>
+                <th className="sgl-th-num">Дасгалжуулагч</th>
+                <th className="sgl-th-num" style={{ width: 110 }}>
+                  Үйлдэл
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTeams.map((team, i) => {
+                const pct = getPct(team.stats.wins, team.stats.losses);
+                const accent = team.colors?.primary || "#F15F22";
+                return (
+                  <tr key={team.id} className="sgl-team-tr">
+                    <td className="sgl-td-rank">
+                      <span className="sgl-rank-badge">{i + 1}</span>
+                    </td>
+                    <td className="sgl-td-team">
+                      <div
+                        className="sgl-team-link"
+                        style={{ cursor: "default" }}
+                      >
+                        <span
+                          className="sgl-team-logo"
+                          style={{ background: accent }}
+                        >
+                          {team.shortName}
+                        </span>
+                        <div className="sgl-team-text">
+                          <span className="sgl-team-name">{team.name}</span>
+                          <span className="sgl-team-school">{team.school}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="sgl-td-num">
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 700,
+                          letterSpacing: "0.05em",
+                          padding: "2px 8px",
+                          borderRadius: 4,
+                          background:
+                            team.conference === "west"
+                              ? "rgba(241,95,34,0.15)"
+                              : "rgba(0,114,188,0.15)",
+                          color:
+                            team.conference === "west" ? "#F15F22" : "#0072bc",
+                        }}
+                      >
+                        {team.conference === "west" ? "WEST" : "EAST"}
+                      </span>
+                    </td>
+                    <td className="sgl-td-num sgl-wins">{team.stats.wins}</td>
+                    <td className="sgl-td-num sgl-losses">
+                      {team.stats.losses}
+                    </td>
+                    <td className="sgl-td-num">{team.stats.gamesPlayed}</td>
+                    <td className="sgl-td-num sgl-pct">
+                      <div className="sgl-pct-wrap">
+                        <div
+                          className="sgl-pct-bar"
+                          style={{ width: `${pct}%`, background: accent }}
+                        ></div>
+                        <span>{pct}%</span>
+                      </div>
+                    </td>
+                    <td
+                      className="sgl-td-num"
+                      style={{ fontSize: 13, color: "var(--text-muted)" }}
+                    >
+                      {team.coach?.name || "—"}
+                    </td>
+                    <td className="sgl-td-num">
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 6,
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Link
+                          href={`/admin/teams/${team.id}/edit`}
+                          className="btn btn-secondary"
+                          style={{ padding: "4px 10px", fontSize: 12 }}
+                        >
+                          <i className="fas fa-edit"></i>
+                        </Link>
+                        <button
+                          className="btn btn-danger"
+                          style={{ padding: "4px 10px", fontSize: 12 }}
+                          onClick={() => handleDelete(team.id)}
+                        >
+                          <i className="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+              {filteredTeams.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={9}
+                    style={{
+                      textAlign: "center",
+                      padding: 32,
+                      color: "var(--text-muted)",
+                    }}
+                  >
+                    <i className="fas fa-search" style={{ marginRight: 8 }}></i>
+                    Хайлтын үр дүн олдсонгүй
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

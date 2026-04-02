@@ -188,6 +188,20 @@ export interface Podcast {
   date: string;
 }
 
+export type CoachType = "HeadCoach" | "AssociateCoach" | "AssistantCoach";
+
+export interface CoachProfile {
+  id: string;
+  firstName: string;
+  lastName: string;
+  teamId: string;
+  school: string;
+  coachType: CoachType;
+  birthYear: number;
+  description: string;
+  image?: string;
+}
+
 export interface Database {
   season: Season;
   teams: Team[];

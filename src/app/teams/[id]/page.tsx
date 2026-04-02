@@ -9,10 +9,11 @@ export default async function TeamDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const team = getTeamById(params.id);
+  const { id } = await params;
+  const team = getTeamById(id);
   if (!team) notFound();
 
-  const { upcoming, recent } = getTeamGames(params.id);
+  const { upcoming, recent } = getTeamGames(id);
 
   return <TeamDetailClient team={team} upcoming={upcoming} recent={recent} />;
 }

@@ -35,6 +35,11 @@ const navItems: NavItem[] = [
         href: "/admin/games",
         icon: "fas fa-basketball-ball",
       },
+      {
+        label: "Дасгалжуулагчид",
+        href: "/admin/coaches",
+        icon: "fas fa-user-tie",
+      },
     ],
   },
   {
@@ -59,7 +64,7 @@ const navItems: NavItem[] = [
       { label: "Хүүхдүүд", href: "/admin/kids", icon: "fas fa-child" },
       {
         label: "Дасгалжуулагчид",
-        href: "/admin/coaches",
+        href: "/admin/registrations/coaches",
         icon: "fas fa-clipboard",
       },
     ],

@@ -1,12 +1,32 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import PlayerCard from "@/components/PlayerCard";
-import { TeamWithAverages, PlayerWithAverages, GameWithTeams } from "@/types";
+import {
+  TeamWithAverages,
+  PlayerWithAverages,
+  GameWithTeams,
+  CoachProfile,
+  CoachType,
+} from "@/types";
+import { getCoachesByTeam } from "@/lib/firestore";
 
 const MN_WEEKDAYS = ["Ням", "Дав", "Мяг", "Лха", "Пүр", "Баа", "Бям"];
-const MN_MONTHS = ["1-р сар","2-р сар","3-р сар","4-р сар","5-р сар","6-р сар","7-р сар","8-р сар","9-р сар","10-р сар","11-р сар","12-р сар"];
+const MN_MONTHS = [
+  "1-р сар",
+  "2-р сар",
+  "3-р сар",
+  "4-р сар",
+  "5-р сар",
+  "6-р сар",
+  "7-р сар",
+  "8-р сар",
+  "9-р сар",
+  "10-р сар",
+  "11-р сар",
+  "12-р сар",
+];
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr + "T00:00:00");
@@ -24,14 +44,34 @@ interface TeamDetailClientProps {
   recent: GameWithTeams[];
 }
 
-type TabId = "overview" | "roster" | "schedule" | "stats";
+type TabId = "overview" | "roster" | "schedule" | "stats" | "coaches";
 
-export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailClientProps) {
+export default function TeamDetailClient({
+  team,
+  upcoming,
+  recent,
+}: TeamDetailClientProps) {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const tickerRef = useRef<HTMLDivElement>(null);
+  const [coaches, setCoaches] = useState<CoachProfile[]>([]);
+  const [coachesLoaded, setCoachesLoaded] = useState(false);
+  const [coachesLoading, setCoachesLoading] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "coaches" && !coachesLoaded) {
+      setCoachesLoading(true);
+      getCoachesByTeam(team.id)
+        .then((data) => {
+          setCoaches(data);
+          setCoachesLoaded(true);
+        })
+        .catch((err) => console.error("Error fetching coaches:", err))
+        .finally(() => setCoachesLoading(false));
+    }
+  }, [activeTab, coachesLoaded, team.id]);
 
   const allGames = [...upcoming, ...recent].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 
   const tabs: { id: TabId; label: string; icon: string }[] = [
@@ -39,27 +79,46 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
     { id: "roster", label: "Тоглогчид", icon: "fas fa-users" },
     { id: "schedule", label: "Хуваарь", icon: "fas fa-calendar-alt" },
     { id: "stats", label: "Статистик", icon: "fas fa-chart-bar" },
+    { id: "coaches", label: "Дасгалжуулагчид", icon: "fas fa-user-tie" },
   ];
 
   const scrollTicker = (dir: "left" | "right") => {
     if (tickerRef.current) {
       const amount = 320;
-      tickerRef.current.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
+      tickerRef.current.scrollBy({
+        left: dir === "left" ? -amount : amount,
+        behavior: "smooth",
+      });
     }
   };
 
   return (
-    <div className="td" style={{ "--td-primary": team.colors?.primary || "#1a365d", "--td-secondary": team.colors?.secondary || "#2d4a7a" } as React.CSSProperties}>
+    <div
+      className="td"
+      style={
+        {
+          "--td-primary": team.colors?.primary || "#1a365d",
+          "--td-secondary": team.colors?.secondary || "#2d4a7a",
+        } as React.CSSProperties
+      }
+    >
       {/* === TEAM SUBNAV === */}
       <div className="td-subnav">
         <div className="td-subnav-inner">
           <div className="td-subnav-identity">
-            <div className="td-subnav-logo" style={{ background: `linear-gradient(135deg, ${team.colors?.primary || "#333"} 0%, ${team.colors?.secondary || "#666"} 100%)` }}>
+            <div
+              className="td-subnav-logo"
+              style={{
+                background: `linear-gradient(135deg, ${team.colors?.primary || "#333"} 0%, ${team.colors?.secondary || "#666"} 100%)`,
+              }}
+            >
               <span>{team.shortName}</span>
             </div>
             <div className="td-subnav-team">
               <span className="td-subnav-name">{team.name}</span>
-              <span className="td-subnav-record">{team.stats.wins}-{team.stats.losses}</span>
+              <span className="td-subnav-record">
+                {team.stats.wins}-{team.stats.losses}
+              </span>
             </div>
           </div>
           <nav className="td-subnav-tabs">
@@ -79,13 +138,21 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
             </Link>
           </nav>
         </div>
-        <div className="td-subnav-accent" style={{ background: `linear-gradient(90deg, ${team.colors?.primary} 0%, ${team.colors?.secondary} 100%)` }} />
+        <div
+          className="td-subnav-accent"
+          style={{
+            background: `linear-gradient(90deg, ${team.colors?.primary} 0%, ${team.colors?.secondary} 100%)`,
+          }}
+        />
       </div>
 
       {/* === GAME TICKER CAROUSEL (always visible) === */}
       {allGames.length > 0 && (
         <div className="td-ticker-section">
-          <button className="td-ticker-arrow td-ticker-left" onClick={() => scrollTicker("left")}>
+          <button
+            className="td-ticker-arrow td-ticker-left"
+            onClick={() => scrollTicker("left")}
+          >
             <i className="fas fa-chevron-left"></i>
           </button>
           <div className="td-ticker-track" ref={tickerRef}>
@@ -98,33 +165,55 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
               const lost = game.status === "finished" && myScore < oppScore;
 
               return (
-                <Link href={`/game/${game.id}`} key={game.id} className={`td-ticker-card ${game.status}`}>
+                <Link
+                  href={`/game/${game.id}`}
+                  key={game.id}
+                  className={`td-ticker-card ${game.status}`}
+                >
                   <div className="td-ticker-date">{formatDate(game.date)}</div>
                   <div className="td-ticker-matchup">
                     <div className="td-ticker-team">
-                      <div className="td-ticker-logo" style={{ background: `linear-gradient(135deg, ${team.colors?.primary} 0%, ${team.colors?.secondary} 100%)` }}>
+                      <div
+                        className="td-ticker-logo"
+                        style={{
+                          background: `linear-gradient(135deg, ${team.colors?.primary} 0%, ${team.colors?.secondary} 100%)`,
+                        }}
+                      >
                         {team.shortName?.charAt(0)}
                       </div>
                       <span className="td-ticker-short">{team.shortName}</span>
                     </div>
                     <span className="td-ticker-vs">{isHome ? "vs." : "@"}</span>
                     <div className="td-ticker-team">
-                      <div className="td-ticker-logo" style={{ background: `linear-gradient(135deg, ${opponent?.colors?.primary || "#444"} 0%, ${opponent?.colors?.secondary || "#666"} 100%)` }}>
+                      <div
+                        className="td-ticker-logo"
+                        style={{
+                          background: `linear-gradient(135deg, ${opponent?.colors?.primary || "#444"} 0%, ${opponent?.colors?.secondary || "#666"} 100%)`,
+                        }}
+                      >
                         {opponent?.shortName?.charAt(0) || "?"}
                       </div>
-                      <span className="td-ticker-short">{opponent?.shortName || "TBD"}</span>
+                      <span className="td-ticker-short">
+                        {opponent?.shortName || "TBD"}
+                      </span>
                     </div>
                   </div>
                   <div className="td-ticker-info">
                     {game.status === "finished" ? (
                       <>
-                        <span className="td-ticker-record-line">{team.stats.wins}-{team.stats.losses}</span>
-                        <span className={`td-ticker-score ${won ? "win" : "loss"}`}>
+                        <span className="td-ticker-record-line">
+                          {team.stats.wins}-{team.stats.losses}
+                        </span>
+                        <span
+                          className={`td-ticker-score ${won ? "win" : "loss"}`}
+                        >
                           {myScore}-{oppScore}
                         </span>
                       </>
                     ) : game.status === "live" ? (
-                      <span className="td-ticker-live"><span className="live-dot"></span> LIVE</span>
+                      <span className="td-ticker-live">
+                        <span className="live-dot"></span> LIVE
+                      </span>
                     ) : (
                       <span className="td-ticker-scheduled">Товлосон</span>
                     )}
@@ -147,7 +236,10 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
               );
             })}
           </div>
-          <button className="td-ticker-arrow td-ticker-right" onClick={() => scrollTicker("right")}>
+          <button
+            className="td-ticker-arrow td-ticker-right"
+            onClick={() => scrollTicker("right")}
+          >
             <i className="fas fa-chevron-right"></i>
           </button>
         </div>
@@ -160,17 +252,41 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
           <div className="td-tab-content">
             {/* Team Hero Banner */}
             <div className="td-hero">
-              <div className="td-hero-bg" style={{ background: `linear-gradient(135deg, ${team.colors?.primary}22 0%, ${team.colors?.secondary}22 50%, transparent 100%)` }} />
-              <div className="td-hero-logo" style={{ background: `linear-gradient(135deg, ${team.colors?.primary} 0%, ${team.colors?.secondary} 100%)` }}>
+              <div
+                className="td-hero-bg"
+                style={{
+                  background: `linear-gradient(135deg, ${team.colors?.primary}22 0%, ${team.colors?.secondary}22 50%, transparent 100%)`,
+                }}
+              />
+              <div
+                className="td-hero-logo"
+                style={{
+                  background: `linear-gradient(135deg, ${team.colors?.primary} 0%, ${team.colors?.secondary} 100%)`,
+                }}
+              >
                 <span>{team.shortName}</span>
               </div>
               <div className="td-hero-info">
                 <h1 className="td-hero-name">{team.name}</h1>
                 <div className="td-hero-meta">
-                  <span><i className="fas fa-school"></i> {team.school}</span>
-                  <span><i className="fas fa-map-marker-alt"></i> {team.city}</span>
-                  <span><i className="fas fa-globe-asia"></i> {team.conference === "east" ? "East" : team.conference === "west" ? "West" : "N/A"}</span>
-                  <span><i className="fas fa-user-tie"></i> {team.coach?.name || "N/A"}</span>
+                  <span>
+                    <i className="fas fa-school"></i> {team.school}
+                  </span>
+                  <span>
+                    <i className="fas fa-map-marker-alt"></i> {team.city}
+                  </span>
+                  <span>
+                    <i className="fas fa-globe-asia"></i>{" "}
+                    {team.conference === "east"
+                      ? "East"
+                      : team.conference === "west"
+                        ? "West"
+                        : "N/A"}
+                  </span>
+                  <span>
+                    <i className="fas fa-user-tie"></i>{" "}
+                    {team.coach?.name || "N/A"}
+                  </span>
                 </div>
                 <div className="td-hero-record">
                   <div className="td-hero-wl">
@@ -184,7 +300,9 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
                   </div>
                   <div className="td-hero-wl-divider" />
                   <div className="td-hero-wl">
-                    <span className="td-hero-wl-num">{team.winPercentage}%</span>
+                    <span className="td-hero-wl-num">
+                      {team.winPercentage}%
+                    </span>
                     <span className="td-hero-wl-label">Хожлын %</span>
                   </div>
                 </div>
@@ -193,12 +311,42 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
 
             {/* Quick Stats Bar */}
             <div className="td-quick-stats">
-              <div className="td-qstat"><span className="td-qstat-val">{team.averages?.pointsPerGame || 0}</span><span className="td-qstat-lbl">PPG</span></div>
-              <div className="td-qstat"><span className="td-qstat-val">{team.averages?.reboundsPerGame || 0}</span><span className="td-qstat-lbl">RPG</span></div>
-              <div className="td-qstat"><span className="td-qstat-val">{team.averages?.assistsPerGame || 0}</span><span className="td-qstat-lbl">APG</span></div>
-              <div className="td-qstat"><span className="td-qstat-val">{team.averages?.stealsPerGame || 0}</span><span className="td-qstat-lbl">SPG</span></div>
-              <div className="td-qstat"><span className="td-qstat-val">{team.averages?.blocksPerGame || 0}</span><span className="td-qstat-lbl">BPG</span></div>
-              <div className="td-qstat"><span className="td-qstat-val">{team.averages?.pointsAllowedPerGame || 0}</span><span className="td-qstat-lbl">OPPG</span></div>
+              <div className="td-qstat">
+                <span className="td-qstat-val">
+                  {team.averages?.pointsPerGame || 0}
+                </span>
+                <span className="td-qstat-lbl">PPG</span>
+              </div>
+              <div className="td-qstat">
+                <span className="td-qstat-val">
+                  {team.averages?.reboundsPerGame || 0}
+                </span>
+                <span className="td-qstat-lbl">RPG</span>
+              </div>
+              <div className="td-qstat">
+                <span className="td-qstat-val">
+                  {team.averages?.assistsPerGame || 0}
+                </span>
+                <span className="td-qstat-lbl">APG</span>
+              </div>
+              <div className="td-qstat">
+                <span className="td-qstat-val">
+                  {team.averages?.stealsPerGame || 0}
+                </span>
+                <span className="td-qstat-lbl">SPG</span>
+              </div>
+              <div className="td-qstat">
+                <span className="td-qstat-val">
+                  {team.averages?.blocksPerGame || 0}
+                </span>
+                <span className="td-qstat-lbl">BPG</span>
+              </div>
+              <div className="td-qstat">
+                <span className="td-qstat-val">
+                  {team.averages?.pointsAllowedPerGame || 0}
+                </span>
+                <span className="td-qstat-lbl">OPPG</span>
+              </div>
             </div>
 
             {/* Recent Results + Upcoming side by side */}
@@ -206,48 +354,96 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
               <div className="td-og-panel">
                 <div className="td-og-header">
                   <h3>Сүүлийн үр дүн</h3>
-                  <button className="td-og-more" onClick={() => setActiveTab("schedule")}>Бүгд →</button>
+                  <button
+                    className="td-og-more"
+                    onClick={() => setActiveTab("schedule")}
+                  >
+                    Бүгд →
+                  </button>
                 </div>
-                {recent.length > 0 ? recent.slice(0, 3).map((game) => {
-                  const isHome = game.homeTeamId === team.id;
-                  const opp = isHome ? game.awayTeam : game.homeTeam;
-                  const my = isHome ? game.homeScore : game.awayScore;
-                  const op = isHome ? game.awayScore : game.homeScore;
-                  const won = my > op;
-                  return (
-                    <Link href={`/game/${game.id}`} key={game.id} className="td-og-row">
-                      <span className="td-og-date">{formatShortDate(game.date)}</span>
-                      <span className="td-og-vs">{isHome ? "vs" : "@"}</span>
-                      <div className="td-og-opp-logo" style={{ background: `linear-gradient(135deg, ${opp?.colors?.primary || "#444"} 0%, ${opp?.colors?.secondary || "#666"} 100%)` }}>
-                        {opp?.shortName?.charAt(0) || "?"}
-                      </div>
-                      <span className="td-og-opp">{opp?.shortName || "TBD"}</span>
-                      <span className={`td-og-wl ${won ? "W" : "L"}`}>{won ? "W" : "L"}</span>
-                      <span className="td-og-score">{my}-{op}</span>
-                    </Link>
-                  );
-                }) : <div className="td-og-empty">Үр дүн байхгүй</div>}
+                {recent.length > 0 ? (
+                  recent.slice(0, 3).map((game) => {
+                    const isHome = game.homeTeamId === team.id;
+                    const opp = isHome ? game.awayTeam : game.homeTeam;
+                    const my = isHome ? game.homeScore : game.awayScore;
+                    const op = isHome ? game.awayScore : game.homeScore;
+                    const won = my > op;
+                    return (
+                      <Link
+                        href={`/game/${game.id}`}
+                        key={game.id}
+                        className="td-og-row"
+                      >
+                        <span className="td-og-date">
+                          {formatShortDate(game.date)}
+                        </span>
+                        <span className="td-og-vs">{isHome ? "vs" : "@"}</span>
+                        <div
+                          className="td-og-opp-logo"
+                          style={{
+                            background: `linear-gradient(135deg, ${opp?.colors?.primary || "#444"} 0%, ${opp?.colors?.secondary || "#666"} 100%)`,
+                          }}
+                        >
+                          {opp?.shortName?.charAt(0) || "?"}
+                        </div>
+                        <span className="td-og-opp">
+                          {opp?.shortName || "TBD"}
+                        </span>
+                        <span className={`td-og-wl ${won ? "W" : "L"}`}>
+                          {won ? "W" : "L"}
+                        </span>
+                        <span className="td-og-score">
+                          {my}-{op}
+                        </span>
+                      </Link>
+                    );
+                  })
+                ) : (
+                  <div className="td-og-empty">Үр дүн байхгүй</div>
+                )}
               </div>
               <div className="td-og-panel">
                 <div className="td-og-header">
                   <h3>Удахгүй болох</h3>
-                  <button className="td-og-more" onClick={() => setActiveTab("schedule")}>Бүгд →</button>
+                  <button
+                    className="td-og-more"
+                    onClick={() => setActiveTab("schedule")}
+                  >
+                    Бүгд →
+                  </button>
                 </div>
-                {upcoming.length > 0 ? upcoming.slice(0, 3).map((game) => {
-                  const isHome = game.homeTeamId === team.id;
-                  const opp = isHome ? game.awayTeam : game.homeTeam;
-                  return (
-                    <Link href={`/game/${game.id}`} key={game.id} className="td-og-row">
-                      <span className="td-og-date">{formatShortDate(game.date)}</span>
-                      <span className="td-og-vs">{isHome ? "vs" : "@"}</span>
-                      <div className="td-og-opp-logo" style={{ background: `linear-gradient(135deg, ${opp?.colors?.primary || "#444"} 0%, ${opp?.colors?.secondary || "#666"} 100%)` }}>
-                        {opp?.shortName?.charAt(0) || "?"}
-                      </div>
-                      <span className="td-og-opp">{opp?.shortName || "TBD"}</span>
-                      <span className="td-og-scheduled">Товлосон</span>
-                    </Link>
-                  );
-                }) : <div className="td-og-empty">Товлосон тоглолт байхгүй</div>}
+                {upcoming.length > 0 ? (
+                  upcoming.slice(0, 3).map((game) => {
+                    const isHome = game.homeTeamId === team.id;
+                    const opp = isHome ? game.awayTeam : game.homeTeam;
+                    return (
+                      <Link
+                        href={`/game/${game.id}`}
+                        key={game.id}
+                        className="td-og-row"
+                      >
+                        <span className="td-og-date">
+                          {formatShortDate(game.date)}
+                        </span>
+                        <span className="td-og-vs">{isHome ? "vs" : "@"}</span>
+                        <div
+                          className="td-og-opp-logo"
+                          style={{
+                            background: `linear-gradient(135deg, ${opp?.colors?.primary || "#444"} 0%, ${opp?.colors?.secondary || "#666"} 100%)`,
+                          }}
+                        >
+                          {opp?.shortName?.charAt(0) || "?"}
+                        </div>
+                        <span className="td-og-opp">
+                          {opp?.shortName || "TBD"}
+                        </span>
+                        <span className="td-og-scheduled">Товлосон</span>
+                      </Link>
+                    );
+                  })
+                ) : (
+                  <div className="td-og-empty">Товлосон тоглолт байхгүй</div>
+                )}
               </div>
             </div>
 
@@ -255,11 +451,20 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
             <div className="td-section">
               <div className="td-section-header">
                 <h2>Гол тоглогчид</h2>
-                <button className="td-og-more" onClick={() => setActiveTab("roster")}>Бүгд →</button>
+                <button
+                  className="td-og-more"
+                  onClick={() => setActiveTab("roster")}
+                >
+                  Бүгд →
+                </button>
               </div>
               <div className="players-grid">
                 {team.players.slice(0, 4).map((player) => (
-                  <PlayerCard key={player.id} player={player} teamName={team.name} />
+                  <PlayerCard
+                    key={player.id}
+                    player={player}
+                    teamName={team.name}
+                  />
                 ))}
               </div>
             </div>
@@ -271,11 +476,18 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
           <div className="td-tab-content">
             <div className="td-section">
               <div className="td-section-header">
-                <h2><i className="fas fa-users"></i> Тоглогчид ({team.players.length})</h2>
+                <h2>
+                  <i className="fas fa-users"></i> Тоглогчид (
+                  {team.players.length})
+                </h2>
               </div>
               <div className="players-grid">
                 {team.players.map((player) => (
-                  <PlayerCard key={player.id} player={player} teamName={team.name} />
+                  <PlayerCard
+                    key={player.id}
+                    player={player}
+                    teamName={team.name}
+                  />
                 ))}
               </div>
             </div>
@@ -288,26 +500,50 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
             {upcoming.length > 0 && (
               <div className="td-section">
                 <div className="td-section-header">
-                  <h2><i className="fas fa-calendar-alt"></i> Удахгүй болох тоглолт</h2>
+                  <h2>
+                    <i className="fas fa-calendar-alt"></i> Удахгүй болох
+                    тоглолт
+                  </h2>
                 </div>
                 <div className="td-sched-list">
                   {upcoming.map((game) => {
                     const isHome = game.homeTeamId === team.id;
                     const opp = isHome ? game.awayTeam : game.homeTeam;
                     return (
-                      <Link href={`/game/${game.id}`} key={game.id} className="td-sched-row">
+                      <Link
+                        href={`/game/${game.id}`}
+                        key={game.id}
+                        className="td-sched-row"
+                      >
                         <div className="td-sched-date">
-                          <span className="td-sched-day">{formatDate(game.date)}</span>
+                          <span className="td-sched-day">
+                            {formatDate(game.date)}
+                          </span>
                         </div>
                         <div className="td-sched-matchup">
-                          <span className="td-sched-vs">{isHome ? "vs" : "@"}</span>
-                          <div className="td-sched-opp-logo" style={{ background: `linear-gradient(135deg, ${opp?.colors?.primary || "#444"} 0%, ${opp?.colors?.secondary || "#666"} 100%)` }}>
+                          <span className="td-sched-vs">
+                            {isHome ? "vs" : "@"}
+                          </span>
+                          <div
+                            className="td-sched-opp-logo"
+                            style={{
+                              background: `linear-gradient(135deg, ${opp?.colors?.primary || "#444"} 0%, ${opp?.colors?.secondary || "#666"} 100%)`,
+                            }}
+                          >
                             {opp?.shortName?.charAt(0) || "?"}
                           </div>
-                          <span className="td-sched-opp-name">{opp?.name || "TBD"}</span>
+                          <span className="td-sched-opp-name">
+                            {opp?.name || "TBD"}
+                          </span>
                         </div>
                         <div className="td-sched-status scheduled">
-                          {game.status === "live" ? <><span className="live-dot"></span> LIVE</> : "Товлосон"}
+                          {game.status === "live" ? (
+                            <>
+                              <span className="live-dot"></span> LIVE
+                            </>
+                          ) : (
+                            "Товлосон"
+                          )}
                         </div>
                       </Link>
                     );
@@ -318,7 +554,9 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
             {recent.length > 0 && (
               <div className="td-section">
                 <div className="td-section-header">
-                  <h2><i className="fas fa-trophy"></i> Болсон тоглолт</h2>
+                  <h2>
+                    <i className="fas fa-trophy"></i> Болсон тоглолт
+                  </h2>
                 </div>
                 <div className="td-sched-list">
                   {recent.map((game) => {
@@ -328,20 +566,39 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
                     const op = isHome ? game.awayScore : game.homeScore;
                     const won = my > op;
                     return (
-                      <Link href={`/game/${game.id}`} key={game.id} className="td-sched-row">
+                      <Link
+                        href={`/game/${game.id}`}
+                        key={game.id}
+                        className="td-sched-row"
+                      >
                         <div className="td-sched-date">
-                          <span className="td-sched-day">{formatDate(game.date)}</span>
+                          <span className="td-sched-day">
+                            {formatDate(game.date)}
+                          </span>
                         </div>
                         <div className="td-sched-matchup">
-                          <span className="td-sched-vs">{isHome ? "vs" : "@"}</span>
-                          <div className="td-sched-opp-logo" style={{ background: `linear-gradient(135deg, ${opp?.colors?.primary || "#444"} 0%, ${opp?.colors?.secondary || "#666"} 100%)` }}>
+                          <span className="td-sched-vs">
+                            {isHome ? "vs" : "@"}
+                          </span>
+                          <div
+                            className="td-sched-opp-logo"
+                            style={{
+                              background: `linear-gradient(135deg, ${opp?.colors?.primary || "#444"} 0%, ${opp?.colors?.secondary || "#666"} 100%)`,
+                            }}
+                          >
                             {opp?.shortName?.charAt(0) || "?"}
                           </div>
-                          <span className="td-sched-opp-name">{opp?.name || "TBD"}</span>
+                          <span className="td-sched-opp-name">
+                            {opp?.name || "TBD"}
+                          </span>
                         </div>
                         <div className="td-sched-result">
-                          <span className={`td-sched-wl ${won ? "W" : "L"}`}>{won ? "W" : "L"}</span>
-                          <span className="td-sched-score">{my}-{op}</span>
+                          <span className={`td-sched-wl ${won ? "W" : "L"}`}>
+                            {won ? "W" : "L"}
+                          </span>
+                          <span className="td-sched-score">
+                            {my}-{op}
+                          </span>
                         </div>
                       </Link>
                     );
@@ -363,27 +620,39 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
           <div className="td-tab-content">
             <div className="td-section">
               <div className="td-section-header">
-                <h2><i className="fas fa-chart-bar"></i> Багийн статистик</h2>
+                <h2>
+                  <i className="fas fa-chart-bar"></i> Багийн статистик
+                </h2>
               </div>
               <div className="td-stats-grid">
                 <div className="td-stat-card">
-                  <div className="td-stat-val">{team.averages?.pointsPerGame || 0}</div>
+                  <div className="td-stat-val">
+                    {team.averages?.pointsPerGame || 0}
+                  </div>
                   <div className="td-stat-lbl">Дундаж Оноо</div>
                 </div>
                 <div className="td-stat-card">
-                  <div className="td-stat-val">{team.averages?.reboundsPerGame || 0}</div>
+                  <div className="td-stat-val">
+                    {team.averages?.reboundsPerGame || 0}
+                  </div>
                   <div className="td-stat-lbl">Дундаж Самбар</div>
                 </div>
                 <div className="td-stat-card">
-                  <div className="td-stat-val">{team.averages?.assistsPerGame || 0}</div>
+                  <div className="td-stat-val">
+                    {team.averages?.assistsPerGame || 0}
+                  </div>
                   <div className="td-stat-lbl">Дундаж Дамжуулалт</div>
                 </div>
                 <div className="td-stat-card">
-                  <div className="td-stat-val">{team.averages?.stealsPerGame || 0}</div>
+                  <div className="td-stat-val">
+                    {team.averages?.stealsPerGame || 0}
+                  </div>
                   <div className="td-stat-lbl">Дундаж Тасалдал</div>
                 </div>
                 <div className="td-stat-card">
-                  <div className="td-stat-val">{team.averages?.blocksPerGame || 0}</div>
+                  <div className="td-stat-val">
+                    {team.averages?.blocksPerGame || 0}
+                  </div>
                   <div className="td-stat-lbl">Дундаж Хаалт</div>
                 </div>
                 <div className="td-stat-card">
@@ -391,7 +660,9 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
                   <div className="td-stat-lbl">Хожлын %</div>
                 </div>
                 <div className="td-stat-card">
-                  <div className="td-stat-val">{team.averages?.pointsAllowedPerGame || 0}</div>
+                  <div className="td-stat-val">
+                    {team.averages?.pointsAllowedPerGame || 0}
+                  </div>
                   <div className="td-stat-lbl">Алдсан оноо</div>
                 </div>
                 <div className="td-stat-card">
@@ -425,15 +696,26 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
                   </thead>
                   <tbody>
                     {team.players
-                      .sort((a, b) => parseFloat(b.averages.pointsPerGame) - parseFloat(a.averages.pointsPerGame))
+                      .sort(
+                        (a, b) =>
+                          parseFloat(b.averages.pointsPerGame) -
+                          parseFloat(a.averages.pointsPerGame),
+                      )
                       .map((p) => (
                         <tr key={p.id}>
                           <td>
-                            <Link href={`/players/${p.id}`} className="td-pst-name">{p.name}</Link>
+                            <Link
+                              href={`/players/${p.id}`}
+                              className="td-pst-name"
+                            >
+                              {p.name}
+                            </Link>
                           </td>
                           <td>{p.number}</td>
                           <td>{p.stats.gamesPlayed}</td>
-                          <td className="td-pst-highlight">{p.averages.pointsPerGame}</td>
+                          <td className="td-pst-highlight">
+                            {p.averages.pointsPerGame}
+                          </td>
                           <td>{p.averages.reboundsPerGame}</td>
                           <td>{p.averages.assistsPerGame}</td>
                           <td>{p.averages.stealsPerGame}</td>
@@ -446,6 +728,219 @@ export default function TeamDetailClient({ team, upcoming, recent }: TeamDetailC
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* ===== COACHES TAB ===== */}
+        {activeTab === "coaches" && (
+          <div className="td-tab-content">
+            <div className="td-section">
+              <div className="td-section-header">
+                <h2>
+                  <i className="fas fa-user-tie"></i> Дасгалжуулагчид
+                </h2>
+              </div>
+
+              {coachesLoading ? (
+                <div
+                  style={{
+                    padding: 60,
+                    textAlign: "center",
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  <i
+                    className="fas fa-spinner fa-spin"
+                    style={{ fontSize: 28 }}
+                  ></i>
+                  <p style={{ marginTop: 16 }}>Ачаалж байна...</p>
+                </div>
+              ) : coaches.length === 0 ? (
+                <div className="td-empty-state">
+                  <i className="fas fa-user-tie"></i>
+                  <p>Дасгалжуулагчийн мэдээлэл байхгүй байна</p>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns:
+                      "repeat(auto-fill, minmax(280px, 1fr))",
+                    gap: 20,
+                  }}
+                >
+                  {coaches.map((coach) => {
+                    const typeColors: Record<CoachType, string> = {
+                      HeadCoach: "#F15F22",
+                      AssociateCoach: "#0072bc",
+                      AssistantCoach: "#16a34a",
+                    };
+                    const typeLabels: Record<CoachType, string> = {
+                      HeadCoach: "Ерөнхий дасгалжуулагч",
+                      AssociateCoach: "Туслах дасгалжуулагч",
+                      AssistantCoach: "Нэмэлт дасгалжуулагч",
+                    };
+                    const color =
+                      typeColors[coach.coachType] || "var(--text-muted)";
+                    const initials =
+                      `${coach.lastName?.charAt(0) ?? ""}${coach.firstName?.charAt(0) ?? ""}`.toUpperCase() ||
+                      "?";
+
+                    return (
+                      <div
+                        key={coach.id}
+                        style={{
+                          background: "var(--bg-card)",
+                          border: "1px solid var(--border-color)",
+                          borderRadius: 16,
+                          padding: 24,
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 14,
+                          transition: "box-shadow 0.15s",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.boxShadow =
+                            "0 4px 20px rgba(0,0,0,0.15)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.boxShadow = "none")
+                        }
+                      >
+                        {/* Avatar + name row */}
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 16,
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: 64,
+                              height: 64,
+                              borderRadius: "50%",
+                              background: `${team.colors?.primary}22`,
+                              border: `2px solid ${team.colors?.primary || "var(--border-color)"}`,
+                              overflow: "hidden",
+                              flexShrink: 0,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: 20,
+                              fontWeight: 700,
+                              color:
+                                team.colors?.primary || "var(--text-muted)",
+                            }}
+                          >
+                            {coach.image ? (
+                              <img
+                                src={coach.image}
+                                alt={`${coach.lastName} ${coach.firstName}`}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            ) : (
+                              initials
+                            )}
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div
+                              style={{
+                                fontWeight: 700,
+                                fontSize: 16,
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              {coach.lastName} {coach.firstName}
+                            </div>
+                            <span
+                              style={{
+                                display: "inline-block",
+                                marginTop: 4,
+                                padding: "2px 10px",
+                                borderRadius: 6,
+                                fontSize: 11,
+                                fontWeight: 700,
+                                background: `${color}20`,
+                                color,
+                              }}
+                            >
+                              {typeLabels[coach.coachType]}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Details */}
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 6,
+                          }}
+                        >
+                          {coach.school && (
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 8,
+                                fontSize: 13,
+                                color: "var(--text-muted)",
+                              }}
+                            >
+                              <i
+                                className="fas fa-school"
+                                style={{ width: 14, textAlign: "center" }}
+                              ></i>
+                              <span>{coach.school}</span>
+                            </div>
+                          )}
+                          {coach.birthYear ? (
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 8,
+                                fontSize: 13,
+                                color: "var(--text-muted)",
+                              }}
+                            >
+                              <i
+                                className="fas fa-birthday-cake"
+                                style={{ width: 14, textAlign: "center" }}
+                              ></i>
+                              <span>{coach.birthYear}</span>
+                            </div>
+                          ) : null}
+                        </div>
+
+                        {/* Description */}
+                        {coach.description && (
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              color: "var(--text-muted)",
+                              lineHeight: 1.6,
+                              borderTop: "1px solid var(--border-color)",
+                              paddingTop: 12,
+                            }}
+                          >
+                            {coach.description}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}
