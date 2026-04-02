@@ -486,3 +486,178 @@ export async function deleteCoach(id: string): Promise<void> {
   const docRef = doc(db, COACHES_COLLECTION, id);
   await deleteDoc(docRef);
 }
+
+// ============================================
+// ACTIVE SEASON + PLAYER AGGREGATES
+// ============================================
+
+/** Get the currently active season ID. */
+export async function getActiveSeasonId(): Promise<string | null> {
+  const q = query(collection(db, "seasons"), where("isActive", "==", true));
+  const snap = await getDocs(q);
+  if (snap.empty) return null;
+  return snap.docs[0].id;
+}
+
+/** Fetch all playerAggregate docs for a season. */
+export async function getPlayerAggregates(
+  seasonId: string,
+): Promise<Record<string, PlayerAggregateData>> {
+  const colRef = collection(db, `seasons/${seasonId}/playerAggregates`);
+  const snap = await getDocs(colRef);
+  const map: Record<string, PlayerAggregateData> = {};
+  snap.forEach((d) => {
+    const data = d.data();
+    if ((data.gamesPlayed ?? 0) > 0) {
+      map[d.id] = {
+        gamesPlayed: Number(data.gamesPlayed ?? 0),
+        minutesPlayed: Number(data.minutesPlayed ?? 0),
+        totalPoints: Number(data.points ?? 0),
+        totalRebounds: Number(data.totalRebounds ?? 0),
+        totalAssists: Number(data.assists ?? 0),
+        totalSteals: Number(data.steals ?? 0),
+        totalBlocks: Number(data.blocks ?? 0),
+        totalTurnovers: Number(data.turnovers ?? 0),
+        totalFouls: Number(data.personalFoulsCommitted ?? 0),
+        fieldGoalsMade: Number(data.fieldGoalsMade ?? 0),
+        fieldGoalsAttempted: Number(data.fieldGoalsAttempted ?? 0),
+        threePointersMade: Number(data.threePointFieldGoalsMade ?? 0),
+        threePointersAttempted: Number(data.threePointFieldGoalsAttempted ?? 0),
+        freeThrowsMade: Number(data.freeThrowsMade ?? 0),
+        freeThrowsAttempted: Number(data.freeThrowsAttempted ?? 0),
+      };
+    }
+  });
+  return map;
+}
+
+/** Re-export type so pages can reference it. */
+export interface PlayerAggregateData {
+  gamesPlayed: number;
+  minutesPlayed: number;
+  totalPoints: number;
+  totalRebounds: number;
+  totalAssists: number;
+  totalSteals: number;
+  totalBlocks: number;
+  totalTurnovers: number;
+  totalFouls: number;
+  fieldGoalsMade: number;
+  fieldGoalsAttempted: number;
+  threePointersMade: number;
+  threePointersAttempted: number;
+  freeThrowsMade: number;
+  freeThrowsAttempted: number;
+}
+
+/**
+ * Strip Firestore Timestamps and other non-plain objects so the result
+ * can safely pass from Server Components to Client Components.
+ */
+function stripTimestamps<T>(obj: T): T {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+/** Build a default (zeroed) stats object. */
+function emptyStats(): PlayerAggregateData {
+  return {
+    gamesPlayed: 0,
+    minutesPlayed: 0,
+    totalPoints: 0,
+    totalRebounds: 0,
+    totalAssists: 0,
+    totalSteals: 0,
+    totalBlocks: 0,
+    totalTurnovers: 0,
+    totalFouls: 0,
+    fieldGoalsMade: 0,
+    fieldGoalsAttempted: 0,
+    threePointersMade: 0,
+    threePointersAttempted: 0,
+    freeThrowsMade: 0,
+    freeThrowsAttempted: 0,
+  };
+}
+
+/**
+ * Fetch all players from Firestore, merge with season aggregate stats,
+ * calculate averages, and attach team data.
+ * Returns the same PlayerWithAverages shape PlayersClient expects.
+ */
+export async function getPlayersWithAveragesFromFirestore(): Promise<
+  PlayerWithAverages[]
+> {
+  const [players, teams, seasonId] = await Promise.all([
+    getPlayers(),
+    getTeams(),
+    getActiveSeasonId(),
+  ]);
+
+  const aggregates = seasonId ? await getPlayerAggregates(seasonId) : {};
+  const teamMap = new Map(teams.map((t) => [t.id, t]));
+
+  return players.map((player) => {
+    const agg = aggregates[player.id] ?? emptyStats();
+    const merged: Player = {
+      ...player,
+      stats: {
+        ...agg,
+      },
+    };
+    const withAvg = calculatePlayerAverages(merged);
+    const team = teamMap.get(player.teamId);
+    return stripTimestamps({
+      ...withAvg,
+      teamName: team?.name,
+      teamShortName: team?.shortName,
+      team,
+    });
+  });
+}
+
+/**
+ * Fetch a single player from Firestore, merge with aggregate stats,
+ * and attach the full team object.
+ * Shape matches what /players/[id] page expects.
+ */
+export async function getPlayerByIdFromFirestore(
+  id: string,
+): Promise<(PlayerWithAverages & { team?: Team }) | null> {
+  const [player, seasonId] = await Promise.all([
+    getPlayer(id),
+    getActiveSeasonId(),
+  ]);
+  if (!player) return null;
+
+  let agg: PlayerAggregateData = emptyStats();
+  if (seasonId) {
+    const docRef = doc(db, `seasons/${seasonId}/playerAggregates`, id);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      agg = {
+        gamesPlayed: Number(data.gamesPlayed ?? 0),
+        minutesPlayed: Number(data.minutesPlayed ?? 0),
+        totalPoints: Number(data.points ?? 0),
+        totalRebounds: Number(data.totalRebounds ?? 0),
+        totalAssists: Number(data.assists ?? 0),
+        totalSteals: Number(data.steals ?? 0),
+        totalBlocks: Number(data.blocks ?? 0),
+        totalTurnovers: Number(data.turnovers ?? 0),
+        totalFouls: Number(data.personalFoulsCommitted ?? 0),
+        fieldGoalsMade: Number(data.fieldGoalsMade ?? 0),
+        fieldGoalsAttempted: Number(data.fieldGoalsAttempted ?? 0),
+        threePointersMade: Number(data.threePointFieldGoalsMade ?? 0),
+        threePointersAttempted: Number(data.threePointFieldGoalsAttempted ?? 0),
+        freeThrowsMade: Number(data.freeThrowsMade ?? 0),
+        freeThrowsAttempted: Number(data.freeThrowsAttempted ?? 0),
+      };
+    }
+  }
+
+  const merged: Player = { ...player, stats: { ...agg } };
+  const withAvg = calculatePlayerAverages(merged);
+  const team = await getTeam(player.teamId);
+
+  return stripTimestamps({ ...withAvg, team: team ?? undefined });
+}

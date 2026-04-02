@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
-import { getPlayerById } from "@/lib/database";
+import { getPlayerByIdFromFirestore } from "@/lib/firestore";
 import Link from "next/link";
+import Avatar3DViewer from "@/components/Avatar3DViewer";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,7 @@ export default async function PlayerDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const player = getPlayerById(id);
+  const player = await getPlayerByIdFromFirestore(id);
 
   if (!player) {
     notFound();
@@ -29,7 +30,7 @@ export default async function PlayerDetailPage({
 
   return (
     <main className="main-content" style={{ padding: 0 }}>
-      {/* ===== HERO SECTION (like WNBA) ===== */}
+      {/* ===== HERO SECTION ===== */}
       <div
         className="pp-hero"
         style={
@@ -39,123 +40,263 @@ export default async function PlayerDetailPage({
           } as React.CSSProperties
         }
       >
-        <div className="pp-hero-inner">
-          {/* Player Photo */}
-          <div className="pp-hero-photo">
-            <div className="pp-photo-frame" style={{ borderColor: teamColor }}>
-              {player.image ? (
-                <img
-                  src={player.image}
-                  alt={player.name}
-                  className="pp-photo-img"
-                />
-              ) : (
-                <div className="pp-photo-placeholder">
-                  <span>
-                    {player.name
-                      .split(" ")
-                      .map((w) => w[0])
-                      .join("")
-                      .substring(0, 2)}
-                  </span>
+        {player.modelUrl ? (
+          /* ── Split layout: left info + right 3D ── */
+          <div className="pp-hero-split">
+            <div className="pp-hero-left">
+              {/* Player Photo */}
+              <div className="pp-hero-photo">
+                <div
+                  className="pp-photo-frame"
+                  style={{ borderColor: teamColor }}
+                >
+                  {player.image ? (
+                    <img
+                      src={player.image}
+                      alt={player.name}
+                      className="pp-photo-img"
+                    />
+                  ) : (
+                    <div className="pp-photo-placeholder">
+                      <span>
+                        {player.name
+                          .split(" ")
+                          .map((w) => w[0])
+                          .join("")
+                          .substring(0, 2)}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            {player.team && (
-              <div className="pp-team-badge">
-                <span className="pp-team-badge-text">
-                  {player.team.shortName}
-                </span>
+                {player.team && (
+                  <div className="pp-team-badge">
+                    <span className="pp-team-badge-text">
+                      {player.team.shortName}
+                    </span>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          {/* Player Name & Info */}
-          <div className="pp-hero-info">
-            <h1 className="pp-name">{player.name}</h1>
-            <p className="pp-team-position">
-              {player.team?.name || "Unknown"} /{" "}
-              {positionFullName[player.position] || player.position}
-            </p>
-          </div>
+              {/* Name + Team + Jersey grouped */}
+              <div className="pp-identity">
+                <h1 className="pp-name">{player.name}</h1>
+                <div className="pp-meta-row">
+                  <p className="pp-team-position">
+                    {player.team?.name || "Unknown"} /{" "}
+                    {positionFullName[player.position] || player.position}
+                  </p>
+                  <div className="pp-jersey-inline">
+                    <span className="pp-jersey-hash">#</span>
+                    <span className="pp-jersey-num">{player.number}</span>
+                  </div>
+                </div>
+              </div>
 
-          {/* Jersey Number */}
-          <div className="pp-jersey-number">
-            <span className="pp-jersey-hash">#</span>
-            <span className="pp-jersey-num">{player.number}</span>
-          </div>
-        </div>
+              {/* Quick Stats */}
+              <div className="pp-big-stats">
+                <div className="pp-big-stat">
+                  <span className="pp-big-num">
+                    {player.averages.pointsPerGame}
+                  </span>
+                  <span className="pp-big-label">PPG</span>
+                </div>
+                <div className="pp-big-stat">
+                  <span className="pp-big-num">
+                    {player.averages.reboundsPerGame}
+                  </span>
+                  <span className="pp-big-label">RPG</span>
+                </div>
+                <div className="pp-big-stat">
+                  <span className="pp-big-num">
+                    {player.averages.assistsPerGame}
+                  </span>
+                  <span className="pp-big-label">APG</span>
+                </div>
+                <div className="pp-big-stat">
+                  <span className="pp-big-num">
+                    {player.averages.stealsPerGame}
+                  </span>
+                  <span className="pp-big-label">SPG</span>
+                </div>
+                <div className="pp-big-stat">
+                  <span className="pp-big-num">
+                    {player.averages.blocksPerGame}
+                  </span>
+                  <span className="pp-big-label">BPG</span>
+                </div>
+              </div>
 
-        {/* Stats Row + Info Grid below hero */}
-        <div className="pp-hero-bottom">
-          {/* Quick Stats Table */}
-          <div className="pp-big-stats">
-            <div className="pp-big-stat">
-              <span className="pp-big-num">
-                {player.averages.pointsPerGame}
-              </span>
-              <span className="pp-big-label">PPG</span>
+              {/* Info Grid */}
+              <div className="pp-info-grid">
+                <div className="pp-info-row">
+                  <div className="pp-info-cell">
+                    <span className="pp-info-label">HEIGHT</span>
+                    <span className="pp-info-value">
+                      {player.height || "—"}
+                    </span>
+                  </div>
+                  <div className="pp-info-cell">
+                    <span className="pp-info-label">AGE</span>
+                    <span className="pp-info-value">{player.age || "—"}</span>
+                  </div>
+                  <div className="pp-info-cell">
+                    <span className="pp-info-label">WEIGHT</span>
+                    <span className="pp-info-value">
+                      {player.weight || "—"}
+                    </span>
+                  </div>
+                </div>
+                <div className="pp-info-row">
+                  <div className="pp-info-cell">
+                    <span className="pp-info-label">COUNTRY</span>
+                    <span className="pp-info-value">
+                      {player.country || "—"}
+                    </span>
+                  </div>
+                  <div className="pp-info-cell">
+                    <span className="pp-info-label">SCHOOL</span>
+                    <span className="pp-info-value">
+                      {player.team?.school || "—"}
+                    </span>
+                  </div>
+                  <div className="pp-info-cell">
+                    <span className="pp-info-label">POSITION</span>
+                    <span className="pp-info-value">{player.position}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="pp-big-stat">
-              <span className="pp-big-num">
-                {player.averages.reboundsPerGame}
-              </span>
-              <span className="pp-big-label">RPG</span>
-            </div>
-            <div className="pp-big-stat">
-              <span className="pp-big-num">
-                {player.averages.assistsPerGame}
-              </span>
-              <span className="pp-big-label">APG</span>
-            </div>
-            <div className="pp-big-stat">
-              <span className="pp-big-num">
-                {player.averages.stealsPerGame}
-              </span>
-              <span className="pp-big-label">SPG</span>
-            </div>
-            <div className="pp-big-stat">
-              <span className="pp-big-num">
-                {player.averages.blocksPerGame}
-              </span>
-              <span className="pp-big-label">BPG</span>
-            </div>
-          </div>
 
-          {/* Info Grid */}
-          <div className="pp-info-grid">
-            <div className="pp-info-row">
-              <div className="pp-info-cell">
-                <span className="pp-info-label">HEIGHT</span>
-                <span className="pp-info-value">{player.height || "—"}</span>
-              </div>
-              <div className="pp-info-cell">
-                <span className="pp-info-label">AGE</span>
-                <span className="pp-info-value">{player.age || "—"}</span>
-              </div>
-              <div className="pp-info-cell">
-                <span className="pp-info-label">WEIGHT</span>
-                <span className="pp-info-value">{player.weight || "—"}</span>
-              </div>
-            </div>
-            <div className="pp-info-row">
-              <div className="pp-info-cell">
-                <span className="pp-info-label">COUNTRY</span>
-                <span className="pp-info-value">{player.country || "—"}</span>
-              </div>
-              <div className="pp-info-cell">
-                <span className="pp-info-label">SCHOOL</span>
-                <span className="pp-info-value">
-                  {player.team?.school || "—"}
-                </span>
-              </div>
-              <div className="pp-info-cell">
-                <span className="pp-info-label">POSITION</span>
-                <span className="pp-info-value">{player.position}</span>
-              </div>
+            {/* ── RIGHT COLUMN: 3D Model Canvas ── */}
+            <div className="pp-hero-right">
+              <Avatar3DViewer glbUrl={player.modelUrl} height={720} />
             </div>
           </div>
-        </div>
+        ) : (
+          /* ── Classic layout: no 3D model ── */
+          <>
+            <div className="pp-hero-inner">
+              <div className="pp-hero-photo">
+                <div
+                  className="pp-photo-frame"
+                  style={{ borderColor: teamColor }}
+                >
+                  {player.image ? (
+                    <img
+                      src={player.image}
+                      alt={player.name}
+                      className="pp-photo-img"
+                    />
+                  ) : (
+                    <div className="pp-photo-placeholder">
+                      <span>
+                        {player.name
+                          .split(" ")
+                          .map((w) => w[0])
+                          .join("")
+                          .substring(0, 2)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {player.team && (
+                  <div className="pp-team-badge">
+                    <span className="pp-team-badge-text">
+                      {player.team.shortName}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="pp-hero-info">
+                <h1 className="pp-name">{player.name}</h1>
+                <p className="pp-team-position">
+                  {player.team?.name || "Unknown"} /{" "}
+                  {positionFullName[player.position] || player.position}
+                </p>
+              </div>
+
+              <div className="pp-jersey-number">
+                <span className="pp-jersey-hash">#</span>
+                <span className="pp-jersey-num">{player.number}</span>
+              </div>
+            </div>
+
+            <div className="pp-hero-bottom">
+              <div className="pp-big-stats">
+                <div className="pp-big-stat">
+                  <span className="pp-big-num">
+                    {player.averages.pointsPerGame}
+                  </span>
+                  <span className="pp-big-label">PPG</span>
+                </div>
+                <div className="pp-big-stat">
+                  <span className="pp-big-num">
+                    {player.averages.reboundsPerGame}
+                  </span>
+                  <span className="pp-big-label">RPG</span>
+                </div>
+                <div className="pp-big-stat">
+                  <span className="pp-big-num">
+                    {player.averages.assistsPerGame}
+                  </span>
+                  <span className="pp-big-label">APG</span>
+                </div>
+                <div className="pp-big-stat">
+                  <span className="pp-big-num">
+                    {player.averages.stealsPerGame}
+                  </span>
+                  <span className="pp-big-label">SPG</span>
+                </div>
+                <div className="pp-big-stat">
+                  <span className="pp-big-num">
+                    {player.averages.blocksPerGame}
+                  </span>
+                  <span className="pp-big-label">BPG</span>
+                </div>
+              </div>
+
+              <div className="pp-info-grid">
+                <div className="pp-info-row">
+                  <div className="pp-info-cell">
+                    <span className="pp-info-label">HEIGHT</span>
+                    <span className="pp-info-value">
+                      {player.height || "—"}
+                    </span>
+                  </div>
+                  <div className="pp-info-cell">
+                    <span className="pp-info-label">AGE</span>
+                    <span className="pp-info-value">{player.age || "—"}</span>
+                  </div>
+                  <div className="pp-info-cell">
+                    <span className="pp-info-label">WEIGHT</span>
+                    <span className="pp-info-value">
+                      {player.weight || "—"}
+                    </span>
+                  </div>
+                </div>
+                <div className="pp-info-row">
+                  <div className="pp-info-cell">
+                    <span className="pp-info-label">COUNTRY</span>
+                    <span className="pp-info-value">
+                      {player.country || "—"}
+                    </span>
+                  </div>
+                  <div className="pp-info-cell">
+                    <span className="pp-info-label">SCHOOL</span>
+                    <span className="pp-info-value">
+                      {player.team?.school || "—"}
+                    </span>
+                  </div>
+                  <div className="pp-info-cell">
+                    <span className="pp-info-label">POSITION</span>
+                    <span className="pp-info-value">{player.position}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* ===== CONTENT SECTIONS ===== */}
