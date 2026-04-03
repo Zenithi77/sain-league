@@ -661,3 +661,72 @@ export async function getPlayerByIdFromFirestore(
 
   return stripTimestamps({ ...withAvg, team: team ?? undefined });
 }
+
+// ============================================
+// TEAMS WITH AVERAGES (Firestore)
+// ============================================
+
+export async function getTeamsWithAveragesFromFirestore(): Promise<
+  TeamWithAverages[]
+> {
+  const [teams, players] = await Promise.all([getTeams(), getPlayers()]);
+  return teams.map((team) => calculateTeamAverages(team, players));
+}
+
+export async function getTeamByIdFromFirestore(
+  id: string,
+): Promise<(TeamWithAverages & { players: PlayerWithAverages[] }) | null> {
+  const [team, allPlayers, seasonId] = await Promise.all([
+    getTeam(id),
+    getPlayers(),
+    getActiveSeasonId(),
+  ]);
+  if (!team) return null;
+
+  const teamPlayers = allPlayers.filter((p) => p.teamId === id);
+  const aggregates = seasonId ? await getPlayerAggregates(seasonId) : {};
+
+  const teamWithAverages = calculateTeamAverages(team, allPlayers);
+  const playersWithAverages = teamPlayers.map((player) => {
+    const agg = aggregates[player.id] ?? emptyStats();
+    const merged: Player = { ...player, stats: { ...agg } };
+    return stripTimestamps(calculatePlayerAverages(merged));
+  });
+
+  return stripTimestamps({ ...teamWithAverages, players: playersWithAverages });
+}
+
+// ============================================
+// TEAM GAMES (Firestore)
+// ============================================
+
+export async function getGamesWithTeamsFromFirestore(): Promise<
+  GameWithTeams[]
+> {
+  const [games, teams] = await Promise.all([getGames(), getTeams()]);
+  const teamMap = new Map(teams.map((t) => [t.id, t]));
+  return games.map((game) => ({
+    ...game,
+    homeTeam: teamMap.get(game.homeTeamId) ?? null,
+    awayTeam: teamMap.get(game.awayTeamId) ?? null,
+  }));
+}
+
+export async function getTeamGamesFromFirestore(
+  teamId: string,
+): Promise<{ upcoming: GameWithTeams[]; recent: GameWithTeams[] }> {
+  const allGames = await getGamesWithTeamsFromFirestore();
+  const teamGames = allGames.filter(
+    (g) => g.homeTeamId === teamId || g.awayTeamId === teamId,
+  );
+
+  const upcoming = teamGames
+    .filter((g) => g.status === "scheduled" || g.status === "live")
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  const recent = teamGames
+    .filter((g) => g.status === "finished")
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  return { upcoming, recent };
+}

@@ -1,16 +1,32 @@
-import Link from 'next/link';
-import { getTeamsWithAverages } from '@/lib/database';
-import { TeamWithAverages } from '@/types';
+import Link from "next/link";
+import { getTeamsWithAveragesFromFirestore } from "@/lib/firestore";
+import { TeamWithAverages } from "@/types";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-function ConferenceTable({ teams, conference }: { teams: TeamWithAverages[]; conference: 'west' | 'east' }) {
-  const isWest = conference === 'west';
-  const accent = isWest ? '#F15F22' : '#0072bc';
-  const glowColor = isWest ? 'rgba(241, 95, 34, 0.15)' : 'rgba(0, 114, 188, 0.15)';
+function ConferenceTable({
+  teams,
+  conference,
+}: {
+  teams: TeamWithAverages[];
+  conference: "west" | "east";
+}) {
+  const isWest = conference === "west";
+  const accent = isWest ? "#F15F22" : "#0072bc";
+  const glowColor = isWest
+    ? "rgba(241, 95, 34, 0.15)"
+    : "rgba(0, 114, 188, 0.15)";
 
   return (
-    <div className="sgl-conf-card" style={{ '--conf-accent': accent, '--conf-glow': glowColor } as React.CSSProperties}>
+    <div
+      className="sgl-conf-card"
+      style={
+        {
+          "--conf-accent": accent,
+          "--conf-glow": glowColor,
+        } as React.CSSProperties
+      }
+    >
       {/* Glow effect */}
       <div className="sgl-conf-glow"></div>
 
@@ -20,8 +36,12 @@ function ConferenceTable({ teams, conference }: { teams: TeamWithAverages[]; con
           <i className="fas fa-basketball-ball"></i>
         </div>
         <div>
-          <h2 className="sgl-conf-title">{isWest ? 'WESTERN CONFERENCE' : 'EASTERN CONFERENCE'}</h2>
-          <span className="sgl-conf-subtitle">{teams.length} баг · {isWest ? 'Баруун' : 'Зүүн'} бүс</span>
+          <h2 className="sgl-conf-title">
+            {isWest ? "WESTERN CONFERENCE" : "EASTERN CONFERENCE"}
+          </h2>
+          <span className="sgl-conf-subtitle">
+            {teams.length} баг · {isWest ? "Баруун" : "Зүүн"} бүс
+          </span>
         </div>
       </div>
 
@@ -43,18 +63,28 @@ function ConferenceTable({ teams, conference }: { teams: TeamWithAverages[]; con
         <tbody>
           {teams.map((team, i) => {
             const total = team.stats.wins + team.stats.losses;
-            const pct = total > 0 ? ((team.stats.wins / total) * 100).toFixed(1) : '0.0';
+            const pct =
+              total > 0 ? ((team.stats.wins / total) * 100).toFixed(1) : "0.0";
 
             return (
-              <tr key={team.id} className="sgl-team-tr" style={{ animationDelay: `${i * 0.04}s` }}>
+              <tr
+                key={team.id}
+                className="sgl-team-tr"
+                style={{ animationDelay: `${i * 0.04}s` }}
+              >
                 <td className="sgl-td-rank">
-                  <span className={`sgl-rank-badge ${i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : ''}`}>
+                  <span
+                    className={`sgl-rank-badge ${i === 0 ? "gold" : i === 1 ? "silver" : i === 2 ? "bronze" : ""}`}
+                  >
                     {i + 1}
                   </span>
                 </td>
                 <td className="sgl-td-team">
                   <Link href={`/teams/${team.id}`} className="sgl-team-link">
-                    <span className="sgl-team-logo" style={{ background: team.colors?.primary || accent }}>
+                    <span
+                      className="sgl-team-logo"
+                      style={{ background: team.colors?.primary || accent }}
+                    >
                       {team.shortName}
                     </span>
                     <div className="sgl-team-text">
@@ -65,16 +95,27 @@ function ConferenceTable({ teams, conference }: { teams: TeamWithAverages[]; con
                 </td>
                 <td className="sgl-td-num sgl-wins">{team.stats.wins}</td>
                 <td className="sgl-td-num sgl-losses">{team.stats.losses}</td>
-                <td className="sgl-td-num sgl-hide-sm">{team.stats.gamesPlayed}</td>
+                <td className="sgl-td-num sgl-hide-sm">
+                  {team.stats.gamesPlayed}
+                </td>
                 <td className="sgl-td-num sgl-pct">
                   <div className="sgl-pct-wrap">
-                    <div className="sgl-pct-bar" style={{ width: `${pct}%`, background: accent }}></div>
+                    <div
+                      className="sgl-pct-bar"
+                      style={{ width: `${pct}%`, background: accent }}
+                    ></div>
                     <span>{pct}%</span>
                   </div>
                 </td>
-                <td className="sgl-td-num sgl-ppg">{team.averages.pointsPerGame}</td>
-                <td className="sgl-td-num sgl-hide-sm">{team.averages.reboundsPerGame}</td>
-                <td className="sgl-td-num sgl-hide-sm">{team.averages.assistsPerGame}</td>
+                <td className="sgl-td-num sgl-ppg">
+                  {team.averages.pointsPerGame}
+                </td>
+                <td className="sgl-td-num sgl-hide-sm">
+                  {team.averages.reboundsPerGame}
+                </td>
+                <td className="sgl-td-num sgl-hide-sm">
+                  {team.averages.assistsPerGame}
+                </td>
               </tr>
             );
           })}
@@ -85,15 +126,20 @@ function ConferenceTable({ teams, conference }: { teams: TeamWithAverages[]; con
 }
 
 export default async function TeamsPage() {
-  const teams = getTeamsWithAverages();
+  const teams = await getTeamsWithAveragesFromFirestore();
   const westTeams = teams
-    .filter((t) => t.conference === 'west')
-    .sort((a, b) => b.stats.wins - a.stats.wins || a.stats.losses - b.stats.losses);
+    .filter((t) => t.conference === "west")
+    .sort(
+      (a, b) => b.stats.wins - a.stats.wins || a.stats.losses - b.stats.losses,
+    );
   const eastTeams = teams
-    .filter((t) => t.conference === 'east')
-    .sort((a, b) => b.stats.wins - a.stats.wins || a.stats.losses - b.stats.losses);
+    .filter((t) => t.conference === "east")
+    .sort(
+      (a, b) => b.stats.wins - a.stats.wins || a.stats.losses - b.stats.losses,
+    );
 
-  const totalGames = teams.reduce((s, t) => s + t.stats.wins + t.stats.losses, 0) / 2;
+  const totalGames =
+    teams.reduce((s, t) => s + t.stats.wins + t.stats.losses, 0) / 2;
 
   return (
     <main className="main-content">
@@ -113,12 +159,24 @@ export default async function TeamsPage() {
             </div>
             <div className="sgl-hero-stat-divider"></div>
             <div className="sgl-hero-stat">
-              <span className="sgl-hero-stat-num">{Math.round(totalGames)}</span>
+              <span className="sgl-hero-stat-num">
+                {Math.round(totalGames)}
+              </span>
               <span className="sgl-hero-stat-label">Тоглолт</span>
             </div>
             <div className="sgl-hero-stat-divider"></div>
             <div className="sgl-hero-stat">
-              <span className="sgl-hero-stat-num">{teams.length > 0 ? (teams.reduce((s, t) => s + parseFloat(t.averages.pointsPerGame || '0'), 0) / teams.length).toFixed(1) : '0'}</span>
+              <span className="sgl-hero-stat-num">
+                {teams.length > 0
+                  ? (
+                      teams.reduce(
+                        (s, t) =>
+                          s + parseFloat(t.averages.pointsPerGame || "0"),
+                        0,
+                      ) / teams.length
+                    ).toFixed(1)
+                  : "0"}
+              </span>
               <span className="sgl-hero-stat-label">AVG PPG</span>
             </div>
           </div>

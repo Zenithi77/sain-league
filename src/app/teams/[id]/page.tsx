@@ -1,6 +1,9 @@
 ﻿import { notFound } from "next/navigation";
 import TeamDetailClient from "@/components/TeamDetailClient";
-import { getTeamById, getTeamGames } from "@/lib/database";
+import {
+  getTeamByIdFromFirestore,
+  getTeamGamesFromFirestore,
+} from "@/lib/firestore";
 
 export const dynamic = "force-dynamic";
 
@@ -10,10 +13,10 @@ export default async function TeamDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const team = getTeamById(id);
+  const team = await getTeamByIdFromFirestore(id);
   if (!team) notFound();
 
-  const { upcoming, recent } = getTeamGames(id);
+  const { upcoming, recent } = await getTeamGamesFromFirestore(id);
 
   return <TeamDetailClient team={team} upcoming={upcoming} recent={recent} />;
 }

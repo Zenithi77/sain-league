@@ -219,11 +219,11 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Podcast Preview */}
-        <PodcastPreview />
-
         {/* Sponsors / Partners */}
         <SponsorLogos />
+
+        {/* Podcast Preview */}
+        <PodcastPreview />
       </main>
     </>
   );

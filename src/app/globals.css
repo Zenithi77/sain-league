@@ -3613,6 +3613,229 @@ ul {
   color: var(--primary-color);
 }
 
+/* ---- Team Add Page ---- */
+.team-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.team-add-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 820px) {
+  .team-add-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.team-add-logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.team-add-logo-section h3 {
+  align-self: flex-start;
+}
+
+.team-logo-upload-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.team-logo-dropzone {
+  width: 160px;
+  height: 160px;
+  border: 2px dashed var(--border-color);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+  color: var(--text-muted);
+}
+
+.team-logo-dropzone:hover {
+  border-color: var(--primary-color);
+  background: rgba(241, 95, 34, 0.06);
+  color: var(--primary-color);
+}
+
+.team-logo-dropzone i {
+  font-size: 32px;
+}
+
+.team-logo-dropzone span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.team-logo-dropzone small {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+.team-logo-preview-wrapper {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bg-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--border-color);
+}
+
+.team-logo-remove-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.team-logo-remove-btn:hover {
+  background: var(--primary-color);
+}
+
+.team-add-info-section {
+  flex: 1;
+}
+
+/* Conference radio toggle */
+.team-conference-toggle {
+  display: flex;
+  gap: 10px;
+}
+
+.team-conference-option {
+  flex: 1;
+  cursor: pointer;
+}
+
+.team-conference-option input {
+  display: none;
+}
+
+.team-conference-option span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-dark);
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.team-conference-option input:checked + span {
+  background: rgba(241, 95, 34, 0.12);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.team-conference-option:hover span {
+  border-color: var(--primary-color);
+}
+
+/* Color pickers */
+.team-colors-row {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.team-color-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.team-color-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.team-color-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+
+.team-color-input-wrap input[type="color"] {
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 6px;
+}
+
+.team-color-hex {
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--text-light);
+  text-transform: uppercase;
+}
+
+.team-color-preview-strip {
+  display: flex;
+  width: 120px;
+  height: 36px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+/* Actions bar */
+.team-add-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.team-add-actions .btn {
+  min-width: 140px;
+  justify-content: center;
+}
+
 .form-group {
   margin-bottom: 20px;
 }

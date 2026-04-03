@@ -1,14 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readDatabase, writeDatabase } from "@/lib/database";
-import { v4 as uuidv4 } from "uuid";
+import { getAdminFirestore } from "@/lib/firebase-admin";
+
+const COLLECTION = "podcasts";
 
 // GET /api/podcasts — get all podcasts
 export async function GET() {
   try {
-    const db = readDatabase() as any;
-    const podcasts = (db.podcasts || []).sort(
-      (a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    const db = getAdminFirestore();
+    const snapshot = await db
+      .collection(COLLECTION)
+      .orderBy("date", "desc")
+      .get();
+    const podcasts = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
     return NextResponse.json(podcasts);
   } catch (error) {
     console.error("Error fetching podcasts:", error);
@@ -29,19 +35,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const db = readDatabase() as any;
+    const db = getAdminFirestore();
     const newPodcast = {
-      id: `podcast-${uuidv4().slice(0, 8)}`,
       title,
       youtubeUrl,
       description: description || "",
       date: new Date().toISOString(),
     };
 
-    db.podcasts = [...(db.podcasts || []), newPodcast];
-    writeDatabase(db);
+    const docRef = await db.collection(COLLECTION).add(newPodcast);
 
-    return NextResponse.json(newPodcast, { status: 201 });
+    return NextResponse.json({ id: docRef.id, ...newPodcast }, { status: 201 });
   } catch (error) {
     console.error("Error creating podcast:", error);
     return NextResponse.json(

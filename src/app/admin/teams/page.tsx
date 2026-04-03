@@ -134,7 +134,6 @@ export default function AdminTeamsPage() {
                 <th className="sgl-th-num">L</th>
                 <th className="sgl-th-num">GP</th>
                 <th className="sgl-th-num">PCT</th>
-                <th className="sgl-th-num">Дасгалжуулагч</th>
                 <th className="sgl-th-num" style={{ width: 110 }}>
                   Үйлдэл
                 </th>
@@ -199,12 +198,6 @@ export default function AdminTeamsPage() {
                         <span>{pct}%</span>
                       </div>
                     </td>
-                    <td
-                      className="sgl-td-num"
-                      style={{ fontSize: 13, color: "var(--text-muted)" }}
-                    >
-                      {team.coach?.name || "—"}
-                    </td>
                     <td className="sgl-td-num">
                       <div
                         style={{
@@ -235,7 +228,7 @@ export default function AdminTeamsPage() {
               {filteredTeams.length === 0 && (
                 <tr>
                   <td
-                    colSpan={9}
+                    colSpan={8}
                     style={{
                       textAlign: "center",
                       padding: 32,
