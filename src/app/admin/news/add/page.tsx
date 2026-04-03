@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import type { TeamWithAverages, NewsArticleWithTeams } from "@/types";
 import { getTeams } from "@/lib/firestore";
 
-// Dynamically import CKEditor to avoid SSR issues
+// Dynamically import TipTap editor to avoid SSR issues
 const BlogEditor = dynamic(() => import("@/components/BlogEditor"), {
   ssr: false,
   loading: () => (

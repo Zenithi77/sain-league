@@ -1,40 +1,61 @@
-import { NextResponse } from 'next/server';
-import * as XLSX from 'xlsx';
+import { NextResponse } from "next/server";
+import ExcelJS from "exceljs";
 
 export async function GET() {
-  const templateData = [
-    {
-      PlayerName: 'Sample Player',
-      Team: 'UBW',
-      Number: 23,
-      Position: 'PG',
-      Minutes: 32,
-      Points: 18,
-      Rebounds: 5,
-      Assists: 8,
-      Steals: 2,
-      Blocks: 1,
-      Turnovers: 3,
-      Fouls: 2,
-      FGM: 7,
-      FGA: 14,
-      '3PM': 2,
-      '3PA': 5,
-      FTM: 2,
-      FTA: 3,
-    },
+  const columns = [
+    "PlayerName",
+    "Team",
+    "Number",
+    "Position",
+    "Minutes",
+    "Points",
+    "Rebounds",
+    "Assists",
+    "Steals",
+    "Blocks",
+    "Turnovers",
+    "Fouls",
+    "FGM",
+    "FGA",
+    "3PM",
+    "3PA",
+    "FTM",
+    "FTA",
   ];
-  
-  const worksheet = XLSX.utils.json_to_sheet(templateData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Game Stats');
-  
-  const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-  
+
+  const sampleRow = [
+    "Sample Player",
+    "UBW",
+    23,
+    "PG",
+    32,
+    18,
+    5,
+    8,
+    2,
+    1,
+    3,
+    2,
+    7,
+    14,
+    2,
+    5,
+    2,
+    3,
+  ];
+
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Game Stats");
+  worksheet.columns = columns.map((header) => ({ header, key: header }));
+  worksheet.addRow(sampleRow);
+
+  const buffer = await workbook.xlsx.writeBuffer();
+
   return new NextResponse(buffer, {
     headers: {
-      'Content-Disposition': 'attachment; filename=game_stats_template.xlsx',
-      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      "Content-Disposition": "attachment; filename=game_stats_template.xlsx",
+      "Content-Type":
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     },
   });
 }

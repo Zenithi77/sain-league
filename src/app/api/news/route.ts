@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin, getAdminFirestore } from "@/lib/firebase-admin";
-import { readDatabase } from "@/lib/database";
 import { v4 as uuidv4 } from "uuid";
 
-// GET /api/news — get all news articles (from local database.json)
+// GET /api/news — get all news articles from Firestore
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -12,13 +11,16 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status");
     const limit = parseInt(searchParams.get("limit") || "50");
 
-    const db = readDatabase();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let articles: any[] = (db.news || [])
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, limit);
+    const db = getAdminFirestore();
 
-    // Filter by status
+    const snapshot = await db.collection("news").get();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let articles: any[] = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    // Filter in JS to avoid composite index requirements
     if (status) {
       articles = articles.filter((a) => a.status === status);
     }
@@ -29,10 +31,39 @@ export async function GET(request: NextRequest) {
       articles = articles.filter((a) => a.featured);
     }
 
-    // Resolve team data from local DB
-    const teamsMap = new Map(db.teams.map((t) => [t.id, t]));
+    // Sort by date descending, then limit
+    articles.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
+    articles = articles.slice(0, limit);
 
-    const articlesWithTeams = articles.map((article) => ({
+    // Resolve team data
+    const teamIds = new Set<string>();
+    for (const article of articles) {
+      for (const tid of (article as any).teamIds || []) {
+        teamIds.add(tid);
+      }
+    }
+
+    const teamsMap = new Map<string, any>();
+    if (teamIds.size > 0) {
+      const teamChunks: string[][] = [];
+      const ids = Array.from(teamIds);
+      for (let i = 0; i < ids.length; i += 10) {
+        teamChunks.push(ids.slice(i, i + 10));
+      }
+      for (const chunk of teamChunks) {
+        const teamSnap = await db
+          .collection("teams")
+          .where("__name__", "in", chunk)
+          .get();
+        teamSnap.docs.forEach((d) =>
+          teamsMap.set(d.id, { id: d.id, ...d.data() }),
+        );
+      }
+    }
+
+    const articlesWithTeams = articles.map((article: any) => ({
       ...article,
       teams: (article.teamIds || [])
         .map((tid: string) => teamsMap.get(tid))

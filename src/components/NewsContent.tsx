@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useMemo } from "react";
+import DOMPurify from "dompurify";
 
 export interface TocItem {
   id: string;
@@ -97,7 +98,23 @@ export default function NewsContent({
 
   const { html: processedContent, toc } = useMemo(() => {
     const withEmbeds = processMediaEmbeds(content);
-    return processHeadings(withEmbeds);
+    const { html, toc } = processHeadings(withEmbeds);
+    // Sanitize HTML to prevent XSS — allow iframes for YouTube/Vimeo embeds
+    const sanitized =
+      typeof window !== "undefined"
+        ? DOMPurify.sanitize(html, {
+            ADD_TAGS: ["iframe"],
+            ADD_ATTR: [
+              "allow",
+              "allowfullscreen",
+              "frameborder",
+              "scrolling",
+              "src",
+              "style",
+            ],
+          })
+        : html;
+    return { html: sanitized, toc };
   }, [content]);
 
   useEffect(() => {

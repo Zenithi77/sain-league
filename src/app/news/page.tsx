@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import type { NewsArticleWithTeams } from "@/types";
 
@@ -19,6 +19,24 @@ const CATEGORY_ICONS: Record<string, string> = {
   interview: "fas fa-microphone",
   transfer: "fas fa-exchange-alt",
 };
+
+function formatDate(dateStr: string) {
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("mn-MN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
+function readingTime(html: string) {
+  const text = html.replace(/<[^>]*>/g, "");
+  return Math.max(1, Math.ceil(text.length / 900));
+}
 
 export default function NewsPage() {
   const [articles, setArticles] = useState<NewsArticleWithTeams[]>([]);
@@ -43,15 +61,31 @@ export default function NewsPage() {
     }
   };
 
-  const filteredArticles =
-    activeCategory === "all"
-      ? articles
-      : articles.filter((a) => a.category === activeCategory);
+  const filteredArticles = useMemo(() => {
+    if (activeCategory === "all") return articles;
+    return articles.filter((a) => a.category === activeCategory);
+  }, [articles, activeCategory]);
 
-  const featuredArticles = articles.filter((a) => a.featured);
-  const regularArticles = filteredArticles.filter(
-    (a) => !a.featured || activeCategory !== "all",
+  const featuredArticles = useMemo(
+    () => articles.filter((a) => a.featured),
+    [articles],
   );
+
+  const regularArticles = useMemo(() => {
+    if (activeCategory === "all") {
+      const featuredIds = new Set(featuredArticles.map((a) => a.id));
+      return filteredArticles.filter((a) => !featuredIds.has(a.id));
+    }
+    return filteredArticles;
+  }, [filteredArticles, featuredArticles, activeCategory]);
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: articles.length };
+    for (const a of articles) {
+      counts[a.category] = (counts[a.category] || 0) + 1;
+    }
+    return counts;
+  }, [articles]);
 
   if (loading) {
     return (
@@ -66,92 +100,118 @@ export default function NewsPage() {
 
   return (
     <main className="main-content">
-      <div className="page-header">
-        <h1>
-          <i className="fas fa-newspaper"></i> Мэдээ & Тойм
-        </h1>
-        <p>Тоглолтын тойм, highlight, ярилцлага болон бусад мэдээллүүд</p>
+      {/* ── Page Header ── */}
+      <div className="news-page-header">
+        <div className="news-page-header-inner">
+          <span className="news-page-label">SGL Media</span>
+          <h1>Мэдээ & Тойм</h1>
+          <p>Тоглолтын тойм, highlight, ярилцлага болон бусад мэдээллүүд</p>
+        </div>
       </div>
 
-      {/* Category Filter */}
-      <div className="news-categories">
-        <button
-          className={`news-cat-btn ${activeCategory === "all" ? "active" : ""}`}
-          onClick={() => setActiveCategory("all")}
-        >
-          <i className="fas fa-th-large"></i> Бүгд
-        </button>
-        {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+      <div className="news-page-container">
+        {/* ── Category Pills ── */}
+        <nav className="news-filter-bar">
           <button
-            key={key}
-            className={`news-cat-btn ${activeCategory === key ? "active" : ""}`}
-            onClick={() => setActiveCategory(key)}
+            className={`news-pill ${activeCategory === "all" ? "active" : ""}`}
+            onClick={() => setActiveCategory("all")}
           >
-            <i className={CATEGORY_ICONS[key]}></i> {label}
+            <i className="fas fa-th-large"></i>
+            <span>Бүгд</span>
+            <span className="news-pill-count">{categoryCounts.all || 0}</span>
           </button>
-        ))}
-      </div>
+          {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+            <button
+              key={key}
+              className={`news-pill ${activeCategory === key ? "active" : ""}`}
+              onClick={() => setActiveCategory(key)}
+            >
+              <i className={CATEGORY_ICONS[key]}></i>
+              <span>{label}</span>
+              {(categoryCounts[key] ?? 0) > 0 && (
+                <span className="news-pill-count">{categoryCounts[key]}</span>
+              )}
+            </button>
+          ))}
+        </nav>
 
-      {/* Featured Hero Section — only show on "all" tab */}
-      {activeCategory === "all" && featuredArticles.length > 0 && (
-        <section className="news-featured-section">
-          <div className="news-featured-grid">
-            {featuredArticles.slice(0, 1).map((article) => (
-              <Link
-                href={`/news/${article.id}`}
-                key={article.id}
-                className="news-hero-card"
-              >
-                <div className="news-hero-image">
-                  {article.coverImage ? (
-                    <img src={article.coverImage} alt={article.title} />
-                  ) : (
-                    <div className="news-hero-placeholder">
-                      <i
-                        className={
-                          CATEGORY_ICONS[article.category] || "fas fa-newspaper"
-                        }
-                      ></i>
-                    </div>
-                  )}
-                  <div className="news-hero-overlay">
-                    <span className={`news-badge ${article.category}`}>
-                      <i className={CATEGORY_ICONS[article.category]}></i>
-                      {CATEGORY_LABELS[article.category]}
-                    </span>
-                    <h2>{article.title}</h2>
-                    <p>{article.summary}</p>
-                    <div className="news-hero-meta">
-                      <span>
-                        <i className="fas fa-calendar"></i> {article.date}
-                      </span>
-                      <span>
-                        <i className="fas fa-user"></i> {article.author}
-                      </span>
-                      {article.teams?.length > 0 && (
-                        <span className="news-hero-teams">
-                          {article.teams.map((t) => t.shortName).join(" vs ")}
-                        </span>
-                      )}
-                    </div>
+        {/* ── Featured Hero — only on "Бүгд" tab ── */}
+        {activeCategory === "all" && featuredArticles.length > 0 && (
+          <section className="news-hero-section">
+            <Link
+              href={`/news/${featuredArticles[0].id}`}
+              className="news-hero-main"
+            >
+              <div className="news-hero-img-wrap">
+                {featuredArticles[0].coverImage ? (
+                  <img
+                    src={featuredArticles[0].coverImage}
+                    alt={featuredArticles[0].title}
+                  />
+                ) : (
+                  <div className="news-hero-ph">
+                    <i
+                      className={
+                        CATEGORY_ICONS[featuredArticles[0].category] ||
+                        "fas fa-newspaper"
+                      }
+                    ></i>
                   </div>
+                )}
+                <div className="news-hero-gradient" />
+              </div>
+              <div className="news-hero-info">
+                <div className="news-hero-top-row">
+                  <span className={`news-tag ${featuredArticles[0].category}`}>
+                    <i
+                      className={CATEGORY_ICONS[featuredArticles[0].category]}
+                    ></i>
+                    {CATEGORY_LABELS[featuredArticles[0].category]}
+                  </span>
+                  <span className="news-hero-featured-badge">
+                    <i className="fas fa-star"></i> Онцлох
+                  </span>
                 </div>
-              </Link>
-            ))}
+                <h2>{featuredArticles[0].title}</h2>
+                <p className="news-hero-summary">
+                  {featuredArticles[0].summary}
+                </p>
+                <div className="news-hero-bottom">
+                  <span>
+                    <i className="far fa-calendar-alt"></i>{" "}
+                    {formatDate(featuredArticles[0].date)}
+                  </span>
+                  <span>
+                    <i className="far fa-user"></i> {featuredArticles[0].author}
+                  </span>
+                  <span>
+                    <i className="far fa-clock"></i>{" "}
+                    {readingTime(featuredArticles[0].contentHtml || "")} мин
+                  </span>
+                  {featuredArticles[0].teams?.length > 0 && (
+                    <span className="news-hero-teams-row">
+                      {featuredArticles[0].teams
+                        .map((t) => t.shortName)
+                        .join(" vs ")}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Link>
 
             {featuredArticles.length > 1 && (
-              <div className="news-featured-sidebar">
+              <div className="news-hero-side">
                 {featuredArticles.slice(1, 4).map((article) => (
                   <Link
                     href={`/news/${article.id}`}
                     key={article.id}
-                    className="news-sidebar-card"
+                    className="news-hero-side-card"
                   >
-                    <div className="news-sidebar-image">
+                    <div className="news-hero-side-img">
                       {article.coverImage ? (
                         <img src={article.coverImage} alt={article.title} />
                       ) : (
-                        <div className="news-sidebar-placeholder">
+                        <div className="news-hero-side-ph">
                           <i
                             className={
                               CATEGORY_ICONS[article.category] ||
@@ -161,36 +221,46 @@ export default function NewsPage() {
                         </div>
                       )}
                     </div>
-                    <div className="news-sidebar-content">
-                      <span className={`news-badge small ${article.category}`}>
+                    <div className="news-hero-side-body">
+                      <span className={`news-tag sm ${article.category}`}>
                         {CATEGORY_LABELS[article.category]}
                       </span>
                       <h3>{article.title}</h3>
-                      <span className="news-date">{article.date}</span>
+                      <span className="news-hero-side-date">
+                        <i className="far fa-calendar-alt"></i>{" "}
+                        {formatDate(article.date)}
+                      </span>
                     </div>
                   </Link>
                 ))}
               </div>
             )}
-          </div>
-        </section>
-      )}
+          </section>
+        )}
 
-      {/* Articles Grid */}
-      {regularArticles.length > 0 ? (
-        <section className="news-grid-section">
-          <div className="news-grid">
+        {/* ── Section Divider ── */}
+        {activeCategory === "all" &&
+          featuredArticles.length > 0 &&
+          regularArticles.length > 0 && (
+            <div className="news-section-divider">
+              <span>Сүүлийн мэдээнүүд</span>
+            </div>
+          )}
+
+        {/* ── Article Cards Grid ── */}
+        {regularArticles.length > 0 ? (
+          <section className="news-cards-grid">
             {regularArticles.map((article) => (
               <Link
                 href={`/news/${article.id}`}
                 key={article.id}
-                className="news-card"
+                className="ncard"
               >
-                <div className="news-card-image">
+                <div className="ncard-img">
                   {article.coverImage ? (
                     <img src={article.coverImage} alt={article.title} />
                   ) : (
-                    <div className="news-card-placeholder">
+                    <div className="ncard-ph">
                       <i
                         className={
                           CATEGORY_ICONS[article.category] || "fas fa-newspaper"
@@ -198,43 +268,54 @@ export default function NewsPage() {
                       ></i>
                     </div>
                   )}
-                  <span className={`news-badge ${article.category}`}>
+                  <span className={`news-tag ${article.category}`}>
                     {CATEGORY_LABELS[article.category]}
                   </span>
                 </div>
-                <div className="news-card-body">
+                <div className="ncard-body">
                   <h3>{article.title}</h3>
                   <p>{article.summary}</p>
-                  <div className="news-card-footer">
-                    <span className="news-date">
-                      <i className="fas fa-calendar"></i> {article.date}
+                  <div className="ncard-meta">
+                    <span className="ncard-date">
+                      <i className="far fa-calendar-alt"></i>{" "}
+                      {formatDate(article.date)}
                     </span>
-                    {article.teams?.length > 0 && (
-                      <div className="news-card-teams">
-                        {article.teams.map((t) => (
-                          <span
-                            key={t.id}
-                            className="news-team-pill"
-                            style={{ borderColor: t.colors.primary }}
-                          >
-                            {t.shortName}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                    <span className="ncard-read">
+                      <i className="far fa-clock"></i>{" "}
+                      {readingTime(article.contentHtml || "")} мин
+                    </span>
                   </div>
+                  {article.teams?.length > 0 && (
+                    <div className="ncard-teams">
+                      {article.teams.map((t) => (
+                        <span
+                          key={t.id}
+                          className="ncard-team"
+                          style={
+                            {
+                              "--team-clr": t.colors?.primary || "#f15f22",
+                            } as React.CSSProperties
+                          }
+                        >
+                          {t.shortName}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </Link>
             ))}
+          </section>
+        ) : (
+          <div className="news-empty-state">
+            <div className="news-empty-icon">
+              <i className="fas fa-newspaper"></i>
+            </div>
+            <h3>Мэдээ байхгүй байна</h3>
+            <p>Одоогоор энэ ангилалд мэдээ оруулаагүй байна</p>
           </div>
-        </section>
-      ) : (
-        <div className="news-empty">
-          <i className="fas fa-newspaper"></i>
-          <h3>Мэдээ байхгүй байна</h3>
-          <p>Одоогоор энэ ангилалд мэдээ оруулаагүй байна</p>
-        </div>
-      )}
+        )}
+      </div>
     </main>
   );
 }
