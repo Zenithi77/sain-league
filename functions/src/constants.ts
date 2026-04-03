@@ -39,17 +39,17 @@ export const playerAggregatePath = (seasonId: string, playerId: string) =>
 export const teamAggregatePath = (seasonId: string, teamId: string) =>
   `seasons/${seasonId}/teamAggregates/${teamId}` as const;
 
-/** Cached standings document (overall) */
+/** Cached standings document */
 export const standingsCachePath = (seasonId: string) =>
-  `seasons/${seasonId}/cached/standings/overall` as const;
+  `seasons/${seasonId}/cached/standings` as const;
 
 /** Cached player leaders by category */
 export const playerLeadersCachePath = (seasonId: string, category: string) =>
-  `seasons/${seasonId}/cached/playerLeaders/${category}` as const;
+  `seasons/${seasonId}/cached/playerLeaders_${category}` as const;
 
 /** Cached team leaders by category */
 export const teamLeadersCachePath = (seasonId: string, category: string) =>
-  `seasons/${seasonId}/cached/teamLeaders/${category}` as const;
+  `seasons/${seasonId}/cached/teamLeaders_${category}` as const;
 
 /** Player → game reference (for player game-log) */
 export const playerGameRefPath = (

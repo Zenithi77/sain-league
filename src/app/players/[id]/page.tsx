@@ -27,6 +27,7 @@ export default async function PlayerDetailPage({
 
   const teamColor = player.team?.colors?.primary || "#F15F22";
   const teamColorSecondary = player.team?.colors?.secondary || "#1A1A2E";
+  const playerAge = player.age ? new Date().getFullYear() - player.age : null;
 
   return (
     <main className="main-content" style={{ padding: 0 }}>
@@ -137,7 +138,7 @@ export default async function PlayerDetailPage({
                   </div>
                   <div className="pp-info-cell">
                     <span className="pp-info-label">AGE</span>
-                    <span className="pp-info-value">{player.age || "—"}</span>
+                    <span className="pp-info-value">{playerAge || "—"}</span>
                   </div>
                   <div className="pp-info-cell">
                     <span className="pp-info-label">WEIGHT</span>
@@ -266,7 +267,7 @@ export default async function PlayerDetailPage({
                   </div>
                   <div className="pp-info-cell">
                     <span className="pp-info-label">AGE</span>
-                    <span className="pp-info-value">{player.age || "—"}</span>
+                    <span className="pp-info-value">{playerAge || "—"}</span>
                   </div>
                   <div className="pp-info-cell">
                     <span className="pp-info-label">WEIGHT</span>

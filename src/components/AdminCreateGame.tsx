@@ -10,7 +10,13 @@ import {
 import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
-export default function AdminCreateGame() {
+interface AdminCreateGameProps {
+  onGameCreated?: (gameDate: string) => void;
+}
+
+export default function AdminCreateGame({
+  onGameCreated,
+}: AdminCreateGameProps) {
   const { userData } = useAuth();
   const { season, loading: seasonLoading } = useActiveSeason();
   const seasonId = season?.id ?? null;
@@ -98,6 +104,8 @@ export default function AdminCreateGame() {
         ok: true,
         message: `${homeName} vs ${awayName} тоглолт амжилттай үүслээ!`,
       });
+
+      onGameCreated?.(gameDate);
 
       // Reset form
       setHomeTeamId("");

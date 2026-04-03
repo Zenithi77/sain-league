@@ -224,6 +224,21 @@ export async function handleUploadGameCsv(
     return;
   }
 
+  // ---- 2b. Parse optional playerIdMap (derivedId → root player ID) ----
+  let playerIdMap: Record<string, string> | null = null;
+  if (fields.playerIdMap) {
+    try {
+      const parsed = JSON.parse(fields.playerIdMap);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        playerIdMap = parsed as Record<string, string>;
+      }
+    } catch {
+      // Ignore invalid JSON — fall back to derivePlayerId
+    }
+  }
+  console.log("[uploadGameCsv] fields received:", Object.keys(fields));
+  console.log("[uploadGameCsv] playerIdMap:", playerIdMap);
+
   // ---- 3. Verify game exists & load metadata ----
   const gameRef = db.doc(gamePath(seasonId, gameId));
   const gameSnap = await gameRef.get();
@@ -282,7 +297,12 @@ export async function handleUploadGameCsv(
     const playerName = String(row.playerName ?? "").trim();
     if (!playerName) continue;
 
-    const playerId = derivePlayerId(teamId, playerName);
+    const derivedId = derivePlayerId(teamId, playerName);
+    // Use root player ID from the map if provided, otherwise fall back to derived ID
+    const playerId = playerIdMap?.[derivedId] ?? derivedId;
+    console.log(
+      `[uploadGameCsv] player "${playerName}": derivedId=${derivedId}, resolvedId=${playerId}`,
+    );
     processedPlayerIds.add(playerId);
 
     const existing = existingMap.get(playerId);

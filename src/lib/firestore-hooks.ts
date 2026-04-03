@@ -220,6 +220,7 @@ export interface FirestoreGame {
 export function useGames(seasonId: string | null) {
   const [games, setGames] = useState<FirestoreGame[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     if (!seasonId) {
@@ -243,9 +244,11 @@ export function useGames(seasonId: string | null) {
         console.error("[useGames]", err);
         setLoading(false);
       });
-  }, [seasonId]);
+  }, [seasonId, refreshKey]);
 
-  return { games, loading };
+  const refetch = () => setRefreshKey((k) => k + 1);
+
+  return { games, loading, refetch };
 }
 
 // ---------------------------------------------------------------------------

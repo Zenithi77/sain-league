@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import { PlayerWithAverages } from '@/types';
-import Link from 'next/link';
+import { useState, useMemo } from "react";
+import { PlayerWithAverages } from "@/types";
+import Link from "next/link";
 
 interface PlayersClientProps {
   players: PlayerWithAverages[];
@@ -10,34 +10,34 @@ interface PlayersClientProps {
 }
 
 export default function PlayersClient({ players, teams }: PlayersClientProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedTeam, setSelectedTeam] = useState('All Teams');
-  const [selectedPosition, setSelectedPosition] = useState('All');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTeam, setSelectedTeam] = useState("All Teams");
+  const [selectedPosition, setSelectedPosition] = useState("All");
 
   const positions = useMemo(() => {
-    const pos = new Set(players.map(p => p.position));
-    return ['All', ...Array.from(pos).sort()];
+    const pos = new Set(players.map((p) => p.position));
+    return ["All", ...Array.from(pos).sort()];
   }, [players]);
 
   const groupedPlayers = useMemo(() => {
     let filtered = players;
 
     if (searchTerm) {
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter((p) =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
-    if (selectedTeam !== 'All Teams') {
-      filtered = filtered.filter(p => p.teamName === selectedTeam);
+    if (selectedTeam !== "All Teams") {
+      filtered = filtered.filter((p) => p.teamName === selectedTeam);
     }
 
-    if (selectedPosition !== 'All') {
-      filtered = filtered.filter(p => p.position === selectedPosition);
+    if (selectedPosition !== "All") {
+      filtered = filtered.filter((p) => p.position === selectedPosition);
     }
 
     const grouped: { [key: string]: PlayerWithAverages[] } = {};
-    filtered.forEach(player => {
+    filtered.forEach((player) => {
       const firstLetter = player.name.charAt(0).toUpperCase();
       if (!grouped[firstLetter]) {
         grouped[firstLetter] = [];
@@ -47,17 +47,28 @@ export default function PlayersClient({ players, teams }: PlayersClientProps) {
 
     return Object.keys(grouped)
       .sort()
-      .reduce((acc, key) => {
-        acc[key] = grouped[key];
-        return acc;
-      }, {} as { [key: string]: PlayerWithAverages[] });
+      .reduce(
+        (acc, key) => {
+          acc[key] = grouped[key];
+          return acc;
+        },
+        {} as { [key: string]: PlayerWithAverages[] },
+      );
   }, [players, searchTerm, selectedTeam, selectedPosition]);
 
-  const teamNames = ['All Teams', ...teams.map(t => t.name).sort()];
-  const totalFiltered = Object.values(groupedPlayers).reduce((sum, arr) => sum + arr.length, 0);
+  const teamNames = ["All Teams", ...teams.map((t) => t.name).sort()];
+  const totalFiltered = Object.values(groupedPlayers).reduce(
+    (sum, arr) => sum + arr.length,
+    0,
+  );
 
   const getInitials = (name: string) => {
-    return name.split(' ').map(part => part.charAt(0)).join('').substring(0, 2).toUpperCase();
+    return name
+      .split(" ")
+      .map((part) => part.charAt(0))
+      .join("")
+      .substring(0, 2)
+      .toUpperCase();
   };
 
   return (
@@ -69,7 +80,9 @@ export default function PlayersClient({ players, teams }: PlayersClientProps) {
           <h1 className="players-page-title">
             <i className="fas fa-users"></i> Тоглогчид
           </h1>
-          <p className="players-page-subtitle">Sain Girls League-ийн бүх тоглогчид</p>
+          <p className="players-page-subtitle">
+            Sain Girls League-ийн бүх тоглогчид
+          </p>
         </div>
       </div>
 
@@ -96,8 +109,10 @@ export default function PlayersClient({ players, teams }: PlayersClientProps) {
               value={selectedTeam}
               onChange={(e) => setSelectedTeam(e.target.value)}
             >
-              {teamNames.map(team => (
-                <option key={team} value={team}>{team === 'All Teams' ? 'Бүх баг' : team}</option>
+              {teamNames.map((team) => (
+                <option key={team} value={team}>
+                  {team === "All Teams" ? "Бүх баг" : team}
+                </option>
               ))}
             </select>
           </div>
@@ -110,8 +125,10 @@ export default function PlayersClient({ players, teams }: PlayersClientProps) {
               value={selectedPosition}
               onChange={(e) => setSelectedPosition(e.target.value)}
             >
-              {positions.map(pos => (
-                <option key={pos} value={pos}>{pos === 'All' ? 'Бүгд' : pos}</option>
+              {positions.map((pos) => (
+                <option key={pos} value={pos}>
+                  {pos === "All" ? "Бүгд" : pos}
+                </option>
               ))}
             </select>
           </div>
@@ -147,7 +164,9 @@ export default function PlayersClient({ players, teams }: PlayersClientProps) {
                     href={`/players/${player.id}`}
                     className="players-row-link"
                   >
-                    <div className={`players-row ${idx < letterPlayers.length - 1 ? 'has-border' : ''}`}>
+                    <div
+                      className={`players-row ${idx < letterPlayers.length - 1 ? "has-border" : ""}`}
+                    >
                       {/* Player Info */}
                       <div className="players-row-info">
                         <div className="players-row-avatar">
@@ -158,10 +177,16 @@ export default function PlayersClient({ players, teams }: PlayersClientProps) {
                           )}
                         </div>
                         <div className="players-row-name-group">
-                          <span className="players-row-name">{player.name}</span>
+                          <span className="players-row-name">
+                            {player.name}
+                          </span>
                           <div className="players-row-tags">
-                            <span className="players-row-number">#{player.number}</span>
-                            <span className="players-row-position">{player.position}</span>
+                            <span className="players-row-number">
+                              #{player.number}
+                            </span>
+                            <span className="players-row-position">
+                              {player.position}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -169,25 +194,25 @@ export default function PlayersClient({ players, teams }: PlayersClientProps) {
                       {/* Team */}
                       <div className="players-row-cell">
                         <span className="players-row-cell-label">Баг</span>
-                        <span className="players-row-cell-value">{player.teamName}</span>
+                        <span className="players-row-cell-value">
+                          {player.teamName}
+                        </span>
                       </div>
 
                       {/* Height */}
                       <div className="players-row-cell players-row-cell-sm">
                         <span className="players-row-cell-label">Өндөр</span>
-                        <span className="players-row-cell-value">{player.height}</span>
+                        <span className="players-row-cell-value">
+                          {player.height}
+                        </span>
                       </div>
 
                       {/* College */}
                       <div className="players-row-cell">
                         <span className="players-row-cell-label">Сургууль</span>
-                        <span className="players-row-cell-value">{player.college || '—'}</span>
-                      </div>
-
-                      {/* Country */}
-                      <div className="players-row-cell players-row-cell-sm">
-                        <span className="players-row-cell-label">Улс</span>
-                        <span className="players-row-cell-value">{player.country || '—'}</span>
+                        <span className="players-row-cell-value">
+                          {player.college || "—"}
+                        </span>
                       </div>
                     </div>
                   </Link>

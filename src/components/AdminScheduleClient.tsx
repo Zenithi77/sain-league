@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import DateSlider from "./DateSlider";
 import GameCard from "./GameCard";
 import AdminCreateGame from "./AdminCreateGame";
@@ -28,7 +28,11 @@ function getTodayString(): string {
 export default function AdminScheduleClient() {
   const { season, loading: seasonLoading } = useActiveSeason();
   const seasonId = season?.id ?? null;
-  const { games: firestoreGames, loading: gamesLoading } = useGames(seasonId);
+  const {
+    games: firestoreGames,
+    loading: gamesLoading,
+    refetch: refetchGames,
+  } = useGames(seasonId);
   const { teams: firestoreTeams, loading: teamsLoading } = useTeams(seasonId);
 
   // Build a team map and convert Firestore games to GameWithTeams
@@ -61,6 +65,14 @@ export default function AdminScheduleClient() {
   const [mounted, setMounted] = useState(false);
 
   const dataLoading = seasonLoading || gamesLoading || teamsLoading;
+
+  const handleGameCreated = useCallback(
+    (gameDate: string) => {
+      refetchGames();
+      setSelectedDate(gameDate);
+    },
+    [refetchGames],
+  );
 
   // Set today's date on client only
   useEffect(() => {
@@ -154,7 +166,7 @@ export default function AdminScheduleClient() {
   return (
     <div className="schedule-wrapper">
       {/* Admin: Create Game */}
-      <AdminCreateGame />
+      <AdminCreateGame onGameCreated={handleGameCreated} />
 
       {/* Date Slider */}
       <DateSlider
