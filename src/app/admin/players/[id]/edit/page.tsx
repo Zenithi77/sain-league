@@ -1361,7 +1361,7 @@ export default function AdminPlayersEditPage() {
                             3D загвар амжилттай үүслээ
                           </div>
                           <Avatar3DViewer
-                            glbUrl={`/api/proxy-model?url=${encodeURIComponent(avatarTask!.modelUrls!.glb)}`}
+                            glbUrl={avatarTask!.modelUrls!.glb}
                             height={400}
                           />
                         </div>
@@ -1486,7 +1486,7 @@ export default function AdminPlayersEditPage() {
                             Сонгосон 3D загвар
                           </div>
                           <Avatar3DViewer
-                            glbUrl={`/api/proxy-model?url=${encodeURIComponent(previewModelUrl)}`}
+                            glbUrl={previewModelUrl}
                             height={400}
                           />
                           <button

@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
+/** Allowed hostnames for SSRF prevention. */
+const ALLOWED_HOSTS = new Set(["assets.meshy.ai", "storage.googleapis.com"]);
+
 /**
- * Proxy GLB model files from Meshy's CDN to avoid CORS issues.
- * Only allows URLs from assets.meshy.ai for security (SSRF prevention).
+ * Proxy GLB model files to avoid CORS issues.
+ * Only allows URLs from Meshy CDN and Firebase Storage for security.
  *
- * Usage: GET /api/proxy-model?url=<encoded-meshy-url>
+ * Usage: GET /api/proxy-model?url=<encoded-url>
  */
 export async function GET(req: NextRequest) {
   const url = req.nextUrl.searchParams.get("url");
@@ -16,7 +19,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Only allow Meshy CDN URLs to prevent SSRF
+  // Only allow known CDN / storage hosts to prevent SSRF
   let parsed: URL;
   try {
     parsed = new URL(url);
@@ -24,7 +27,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
   }
 
-  if (parsed.hostname !== "assets.meshy.ai") {
+  if (!ALLOWED_HOSTS.has(parsed.hostname)) {
     return NextResponse.json({ error: "URL not allowed" }, { status: 403 });
   }
 

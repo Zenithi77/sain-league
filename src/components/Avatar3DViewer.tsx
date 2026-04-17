@@ -75,11 +75,14 @@ interface Avatar3DViewerProps {
   height?: number;
 }
 
+/** Hostnames that need proxying to avoid CORS. */
+const PROXY_HOSTS = new Set(["assets.meshy.ai", "storage.googleapis.com"]);
+
 /** Route external GLB URLs through our proxy to avoid CORS. */
 function proxyUrl(url: string): string {
   try {
     const parsed = new URL(url);
-    if (parsed.hostname === "assets.meshy.ai") {
+    if (PROXY_HOSTS.has(parsed.hostname)) {
       return `/api/proxy-model?url=${encodeURIComponent(url)}`;
     }
   } catch {}

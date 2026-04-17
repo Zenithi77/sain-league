@@ -1201,7 +1201,7 @@ export default function AdminPlayersAddPage() {
                           3D загвар амжилттай үүслээ
                         </div>
                         <Avatar3DViewer
-                          glbUrl={`/api/proxy-model?url=${encodeURIComponent(avatarTask.modelUrls.glb)}`}
+                          glbUrl={avatarTask.modelUrls.glb}
                           height={560}
                         />
                       </div>

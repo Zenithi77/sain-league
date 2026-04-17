@@ -15,6 +15,7 @@
 
 import { Request } from "firebase-functions/v2/https";
 import type { Response } from "express";
+import * as admin from "firebase-admin";
 import { db, FieldValue, requireAdmin } from "./adminSetup.js";
 import type { AvatarTaskStatus } from "./constants.js";
 
@@ -54,6 +55,48 @@ const TERMINAL_STATUSES: ReadonlySet<AvatarTaskStatus> = new Set([
 
 function isTerminalStatus(status: string): boolean {
   return TERMINAL_STATUSES.has(status as AvatarTaskStatus);
+}
+
+/**
+ * Downloads a GLB model from Meshy CDN and uploads it to Firebase Storage.
+ * Returns the public download URL from Firebase Storage, or null on failure.
+ */
+async function persistGlbToStorage(
+  meshyGlbUrl: string,
+  playerId: string,
+  meshyTaskId: string,
+): Promise<string | null> {
+  try {
+    const response = await fetch(meshyGlbUrl);
+    if (!response.ok) {
+      console.error(
+        `[persistGlb] Failed to download GLB: ${response.status} ${response.statusText}`,
+      );
+      return null;
+    }
+
+    const buffer = Buffer.from(await response.arrayBuffer());
+    const bucket = admin.storage().bucket();
+    const filePath = `avatars/models/${playerId}_${meshyTaskId}.glb`;
+    const file = bucket.file(filePath);
+
+    await file.save(buffer, {
+      metadata: {
+        contentType: "model/gltf-binary",
+        cacheControl: "public, max-age=31536000",
+      },
+    });
+
+    // Make publicly readable
+    await file.makePublic();
+
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filePath}`;
+    console.log(`[persistGlb] Uploaded GLB to ${publicUrl}`);
+    return publicUrl;
+  } catch (err) {
+    console.error("[persistGlb] Error persisting GLB to Storage:", err);
+    return null;
+  }
 }
 
 /**
@@ -384,6 +427,23 @@ export async function handleMeshyWebhook(
 
   // --- Merge webhook snapshot into Firestore --------------------------------
   const update = buildFirestoreUpdate(body, "webhook");
+
+  // --- Persist GLB to Firebase Storage when SUCCEEDED -----------------------
+  if (body.status === "SUCCEEDED" && body.model_urls && body.model_urls.glb) {
+    const playerId = existing.playerId as string;
+    const storageUrl = await persistGlbToStorage(
+      body.model_urls.glb,
+      playerId,
+      meshyTaskId,
+    );
+    if (storageUrl) {
+      // Override modelUrls.glb with the permanent Storage URL
+      const modelUrls = { ...(body.model_urls ?? {}), glb: storageUrl };
+      update.modelUrls = modelUrls;
+      update.storageGlbUrl = storageUrl;
+    }
+  }
+
   await docRef.update(update);
 
   console.log(
@@ -469,6 +529,25 @@ export async function handleFallbackRetrieve(
       // Set next fallback poll unless terminal
       if (!isTerminalStatus(task.status)) {
         update.fallbackPollDueAt = new Date(Date.now() + FALLBACK_WINDOW_MS);
+      }
+
+      // --- Persist GLB to Firebase Storage when SUCCEEDED -------------------
+      if (
+        task.status === "SUCCEEDED" &&
+        task.model_urls &&
+        task.model_urls.glb
+      ) {
+        const playerId = data.playerId as string;
+        const storageUrl = await persistGlbToStorage(
+          task.model_urls.glb,
+          playerId,
+          meshyTaskId,
+        );
+        if (storageUrl) {
+          const modelUrls = { ...(task.model_urls ?? {}), glb: storageUrl };
+          update.modelUrls = modelUrls;
+          update.storageGlbUrl = storageUrl;
+        }
       }
 
       await doc.ref.update(update);

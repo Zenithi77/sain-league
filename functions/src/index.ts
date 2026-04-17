@@ -200,8 +200,8 @@ export const createAvatarTask = onRequest(
  */
 export const meshyWebhook = onRequest(
   {
-    timeoutSeconds: 10,
-    memory: "128MiB",
+    timeoutSeconds: 120,
+    memory: "512MiB",
     cors: false,
   },
   handleMeshyWebhook,
