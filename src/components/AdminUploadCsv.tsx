@@ -15,7 +15,7 @@ import {
 // ---------------------------------------------------------------------------
 const FUNCTIONS_BASE_URL =
   process.env.NEXT_PUBLIC_FUNCTIONS_URL ??
-  "http://127.0.0.1:5001/YOUR_PROJECT_ID/us-central1";
+  "https://us-central1-sain-league.cloudfunctions.net";
 
 // ---------------------------------------------------------------------------
 // Types
