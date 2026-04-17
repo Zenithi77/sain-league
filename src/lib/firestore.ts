@@ -127,8 +127,12 @@ export async function createPlayer(
 ): Promise<string> {
   const playersRef = collection(db, PLAYERS_COLLECTION);
   const newDocRef = doc(playersRef);
+  // Strip undefined values — Firestore rejects them
+  const clean = Object.fromEntries(
+    Object.entries(player).filter(([, v]) => v !== undefined),
+  );
   await setDoc(newDocRef, {
-    ...player,
+    ...clean,
     createdAt: serverTimestamp(),
   });
   return newDocRef.id;
@@ -139,8 +143,11 @@ export async function updatePlayer(
   data: Partial<Player>,
 ): Promise<void> {
   const playerRef = doc(db, PLAYERS_COLLECTION, id);
+  const clean = Object.fromEntries(
+    Object.entries(data).filter(([, v]) => v !== undefined),
+  );
   await updateDoc(playerRef, {
-    ...data,
+    ...clean,
     updatedAt: serverTimestamp(),
   });
 }
