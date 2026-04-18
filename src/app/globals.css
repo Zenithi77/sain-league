@@ -13234,26 +13234,6 @@ ul {
     font-size: 10px;
   }
 
-  .nba-date-item {
-    min-width: 60px;
-    padding: 8px 10px;
-  }
-
-  .nba-games-section {
-    padding: 20px 16px;
-  }
-
-  .nba-games-header h2 {
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 480px) {
-  .ticker-card {
-    width: 200px;
-    padding: 10px 12px;
-  }
-
   .ticker-card-actions {
     flex-direction: column;
   }
@@ -13262,9 +13242,226 @@ ul {
     justify-content: center;
   }
 
-  .nba-ticker-arrow {
-    width: 30px;
+  .nba-date-item {
+    min-width: 60px;
+    padding: 8px 10px;
+  }
+
+  .nba-date-num {
+    font-size: 10px;
+  }
+
+  .nba-date-day {
+    font-size: 9px;
+  }
+
+  .nba-date-arrow {
+    width: 32px;
+    height: 48px;
     font-size: 12px;
+  }
+
+  .nba-date-item {
+    height: 48px;
+  }
+
+  .nba-games-section {
+    padding: 20px 12px;
+  }
+
+  .nba-games-header {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+
+  .nba-games-header h2 {
+    font-size: 18px;
+  }
+
+  .nba-games-count {
+    font-size: 12px;
+    padding: 4px 12px;
+  }
+
+  /* Grid game cards mobile */
+  .game-card {
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .game-date {
+    font-size: 11px;
+    margin-bottom: 10px;
+  }
+
+  .team-name-short {
+    font-size: 13px;
+  }
+
+  .team-score {
+    font-size: 20px;
+  }
+
+  .team-logo {
+    width: 30px;
+    height: 30px;
+    font-size: 10px;
+  }
+
+  /* No games state */
+  .nba-no-games {
+    padding: 48px 16px;
+  }
+
+  .nba-no-games-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 14px;
+  }
+
+  .nba-no-games-icon i {
+    font-size: 24px;
+  }
+
+  .nba-no-games h3 {
+    font-size: 18px;
+  }
+
+  .nba-no-games p {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ticker-card {
+    width: 180px;
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .ticker-card-date {
+    font-size: 10px;
+  }
+
+  .ticker-team {
+    gap: 6px;
+  }
+
+  .ticker-team-logo {
+    width: 24px;
+    height: 24px;
+    font-size: 9px;
+  }
+
+  .ticker-team-score {
+    font-size: 18px;
+    min-width: 24px;
+  }
+
+  .ticker-team-abbr {
+    font-size: 13px;
+  }
+
+  .ticker-vs-label {
+    font-size: 8px;
+    min-width: 28px;
+  }
+
+  .ticker-vs {
+    font-size: 11px;
+  }
+
+  .ticker-records {
+    gap: 6px;
+  }
+
+  .ticker-record {
+    font-size: 9px;
+  }
+
+  .ticker-record-stats {
+    font-size: 9px;
+  }
+
+  .ticker-live-badge {
+    font-size: 8px;
+    padding: 2px 6px;
+  }
+
+  .ticker-btn {
+    padding: 4px 6px;
+    font-size: 9px;
+    gap: 3px;
+  }
+
+  .nba-ticker-arrow {
+    width: 28px;
+    font-size: 11px;
+  }
+
+  .nba-date-item {
+    min-width: 52px;
+    padding: 6px 8px;
+    height: 44px;
+  }
+
+  .nba-date-num {
+    font-size: 9px;
+  }
+
+  .nba-date-day {
+    font-size: 8px;
+  }
+
+  .nba-date-games {
+    width: 14px;
+    height: 14px;
+    font-size: 7px;
+  }
+
+  .nba-games-section {
+    padding: 16px 10px;
+  }
+
+  .nba-games-grid {
+    gap: 10px;
+  }
+
+  .game-card {
+    padding: 12px;
+  }
+
+  .game-teams {
+    gap: 8px;
+  }
+
+  .team-name-short {
+    font-size: 12px;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .team-score {
+    font-size: 18px;
+  }
+
+  .team-logo {
+    width: 28px;
+    height: 28px;
+    font-size: 9px;
+    border-radius: 8px;
+  }
+
+  .team-info {
+    gap: 8px;
+  }
+
+  .nba-no-games {
+    padding: 36px 12px;
   }
 }
 
