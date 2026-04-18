@@ -13389,3 +13389,173 @@ ul {
   opacity: 0;
   pointer-events: none;
 }
+
+/* ============================================
+   MOBILE RESPONSIVE FIXES
+   ============================================ */
+
+/* ── Column-hiding helpers ── */
+@media (max-width: 768px) {
+  .sgl-hide-mobile {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .sgl-hide-sm {
+    display: none !important;
+  }
+}
+
+/* ── Standings table mobile ── */
+@media (max-width: 768px) {
+  .standings-table th,
+  .standings-table td {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+
+  .standings-table .rank {
+    font-size: 14px;
+  }
+
+  .standings-table .team-name span {
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .team-logo-small {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+}
+
+/* ── Box score table mobile ── */
+@media (max-width: 768px) {
+  .box-score-table {
+    min-width: 0;
+    font-size: 11px;
+  }
+
+  .box-score-table th,
+  .box-score-table td {
+    padding: 8px 4px;
+    font-size: 11px;
+  }
+
+  .box-score-table th.player-col {
+    min-width: 120px;
+    padding-left: 8px;
+  }
+
+  .box-score-table td.player-col {
+    padding-left: 8px;
+  }
+
+  .box-score-player-avatar {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .box-score-player-link {
+    gap: 6px;
+  }
+
+  .box-score-player-link span {
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* ── Team detail subnav tabs — horizontal scroll on mobile ── */
+@media (max-width: 480px) {
+  .td-subnav-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .td-subnav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .td-tab-btn {
+    flex-shrink: 0;
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+}
+
+/* ── Stats category tabs — horizontal scroll on mobile ── */
+@media (max-width: 768px) {
+  .stats-cat-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .stats-cat-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stats-cat-tab {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+}
+
+/* ── Footer links — single column on very small screens ── */
+@media (max-width: 400px) {
+  .footer-links {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Players grid — single column on very small screens ── */
+@media (max-width: 400px) {
+  .players-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+/* ── Players filters — stack on mobile ── */
+@media (max-width: 480px) {
+  .players-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .players-filter-group {
+    flex-direction: column;
+  }
+
+  .players-search-wrapper {
+    max-width: none;
+    min-width: 0;
+  }
+
+  .players-select-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .players-select {
+    width: 100%;
+  }
+
+  .players-count-badge {
+    justify-content: center;
+  }
+}
