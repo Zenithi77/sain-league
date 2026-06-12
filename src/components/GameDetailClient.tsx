@@ -141,19 +141,19 @@ function BoxScoreTable({
           <thead>
             <tr>
               <th className="player-col">Тоглогч</th>
-              <th>MIN</th>
+              <th className="sgl-hide-sm">MIN</th>
               <th>FGM-A</th>
-              <th>FG%</th>
+              <th className="sgl-hide-mobile">FG%</th>
               <th>3PM-A</th>
-              <th>3P%</th>
-              <th>FTM-A</th>
-              <th>FT%</th>
+              <th className="sgl-hide-mobile">3P%</th>
+              <th className="sgl-hide-sm">FTM-A</th>
+              <th className="sgl-hide-mobile">FT%</th>
               <th>REB</th>
               <th>AST</th>
               <th>STL</th>
-              <th>BLK</th>
-              <th>TO</th>
-              <th>PF</th>
+              <th className="sgl-hide-mobile">BLK</th>
+              <th className="sgl-hide-mobile">TO</th>
+              <th className="sgl-hide-mobile">PF</th>
               <th>PTS</th>
             </tr>
           </thead>
@@ -172,25 +172,25 @@ function BoxScoreTable({
                       <span>{ps.playerName || "Unknown"}</span>
                     </Link>
                   </td>
-                  <td>{ps.minutes}</td>
+                  <td className="sgl-hide-sm">{ps.minutes}</td>
                   <td>
                     {ps.fgMade}-{ps.fgAttempted}
                   </td>
-                  <td>{calcFgPct(ps.fgMade, ps.fgAttempted)}</td>
+                  <td className="sgl-hide-mobile">{calcFgPct(ps.fgMade, ps.fgAttempted)}</td>
                   <td>
                     {ps.threeMade}-{ps.threeAttempted}
                   </td>
-                  <td>{calcFgPct(ps.threeMade, ps.threeAttempted)}</td>
-                  <td>
+                  <td className="sgl-hide-mobile">{calcFgPct(ps.threeMade, ps.threeAttempted)}</td>
+                  <td className="sgl-hide-sm">
                     {ps.ftMade}-{ps.ftAttempted}
                   </td>
-                  <td>{calcFgPct(ps.ftMade, ps.ftAttempted)}</td>
+                  <td className="sgl-hide-mobile">{calcFgPct(ps.ftMade, ps.ftAttempted)}</td>
                   <td>{ps.rebounds}</td>
                   <td>{ps.assists}</td>
                   <td>{ps.steals}</td>
-                  <td>{ps.blocks}</td>
-                  <td>{ps.turnovers}</td>
-                  <td>{ps.fouls}</td>
+                  <td className="sgl-hide-mobile">{ps.blocks}</td>
+                  <td className="sgl-hide-mobile">{ps.turnovers}</td>
+                  <td className="sgl-hide-mobile">{ps.fouls}</td>
                   <td className="pts-col">{ps.points}</td>
                 </tr>
               );
@@ -201,25 +201,25 @@ function BoxScoreTable({
               <td className="player-col">
                 <strong>Нийт</strong>
               </td>
-              <td>{totals.minutes}</td>
+              <td className="sgl-hide-sm">{totals.minutes}</td>
               <td>
                 {totals.fgMade}-{totals.fgAttempted}
               </td>
-              <td>{calcFgPct(totals.fgMade, totals.fgAttempted)}</td>
+              <td className="sgl-hide-mobile">{calcFgPct(totals.fgMade, totals.fgAttempted)}</td>
               <td>
                 {totals.threeMade}-{totals.threeAttempted}
               </td>
-              <td>{calcFgPct(totals.threeMade, totals.threeAttempted)}</td>
-              <td>
+              <td className="sgl-hide-mobile">{calcFgPct(totals.threeMade, totals.threeAttempted)}</td>
+              <td className="sgl-hide-sm">
                 {totals.ftMade}-{totals.ftAttempted}
               </td>
-              <td>{calcFgPct(totals.ftMade, totals.ftAttempted)}</td>
+              <td className="sgl-hide-mobile">{calcFgPct(totals.ftMade, totals.ftAttempted)}</td>
               <td>{totals.rebounds}</td>
               <td>{totals.assists}</td>
               <td>{totals.steals}</td>
-              <td>{totals.blocks}</td>
-              <td>{totals.turnovers}</td>
-              <td>{totals.fouls}</td>
+              <td className="sgl-hide-mobile">{totals.blocks}</td>
+              <td className="sgl-hide-mobile">{totals.turnovers}</td>
+              <td className="sgl-hide-mobile">{totals.fouls}</td>
               <td className="pts-col">
                 <strong>{totals.points}</strong>
               </td>

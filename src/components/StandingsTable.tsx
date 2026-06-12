@@ -35,13 +35,13 @@ export default function StandingsTable({
             <th>Хожил</th>
             <th>Хожигдол</th>
             <th>PCT</th>
-            <th>GB</th>
-            {useCached && <th>HOME</th>}
-            {useCached && <th>ROAD</th>}
-            {useCached && <th>STREAK</th>}
-            {useCached && <th>L-10</th>}
-            <th>Оноо авсан</th>
-            <th>Оноо алдсан</th>
+            <th className="sgl-hide-mobile">GB</th>
+            {useCached && <th className="sgl-hide-mobile">HOME</th>}
+            {useCached && <th className="sgl-hide-mobile">ROAD</th>}
+            {useCached && <th className="sgl-hide-mobile">STREAK</th>}
+            {useCached && <th className="sgl-hide-mobile">L-10</th>}
+            <th className="sgl-hide-sm">Оноо авсан</th>
+            <th className="sgl-hide-sm">Оноо алдсан</th>
           </tr>
         </thead>
         <tbody>
@@ -79,13 +79,13 @@ export default function StandingsTable({
                   <td>{row.wins}</td>
                   <td>{row.losses}</td>
                   <td className="win-pct">{(row.pct * 100).toFixed(1)}%</td>
-                  <td>{row.gb === 0 ? "–" : row.gb.toFixed(1)}</td>
-                  <td>{row.home}</td>
-                  <td>{row.road}</td>
-                  <td>{row.streak}</td>
-                  <td>{row.l10}</td>
-                  <td>{row.pointsFor}</td>
-                  <td>{row.pointsAgainst}</td>
+                  <td className="sgl-hide-mobile">{row.gb === 0 ? "–" : row.gb.toFixed(1)}</td>
+                  <td className="sgl-hide-mobile">{row.home}</td>
+                  <td className="sgl-hide-mobile">{row.road}</td>
+                  <td className="sgl-hide-mobile">{row.streak}</td>
+                  <td className="sgl-hide-mobile">{row.l10}</td>
+                  <td className="sgl-hide-sm">{row.pointsFor}</td>
+                  <td className="sgl-hide-sm">{row.pointsAgainst}</td>
                 </tr>
               );
             }
@@ -116,9 +116,9 @@ export default function StandingsTable({
                 <td>{team.stats.wins}</td>
                 <td>{team.stats.losses}</td>
                 <td className="win-pct">{team.winPercentage}%</td>
-                <td>–</td>
-                <td>{team.stats.pointsFor}</td>
-                <td>{team.stats.pointsAgainst}</td>
+                <td className="sgl-hide-mobile">–</td>
+                <td className="sgl-hide-sm">{team.stats.pointsFor}</td>
+                <td className="sgl-hide-sm">{team.stats.pointsAgainst}</td>
               </tr>
             );
           })}
