@@ -2,6 +2,7 @@
 
 import { TeamWithAverages } from "@/types";
 import Link from "next/link";
+import TeamLogo from "@/components/TeamLogo";
 
 interface TeamCardProps {
   team: TeamWithAverages;
@@ -19,12 +20,12 @@ export default function TeamCard({ team }: TeamCardProps) {
         }}
       />
       <div className="team-card-body">
-        <div
+        <TeamLogo
           className="team-logo"
-          style={{ backgroundColor: primaryColor }}
-        >
-          {team.shortName}
-        </div>
+          logo={team.logo}
+          shortName={team.shortName}
+          color={primaryColor}
+        />
         <h3>{team.name}</h3>
         <p className="team-school">{team.school || team.city}</p>
         <p className="team-conference">{team.conference === 'west' ? 'Баруун бүс' : 'Зүүн бүс'}</p>

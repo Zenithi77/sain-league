@@ -38,6 +38,41 @@ function formatShortDate(dateStr: string) {
   return `${d.getMonth() + 1}/${d.getDate()}`;
 }
 
+/** Logo badge: real logo on white when available, else gradient + initial. */
+function TdLogo({
+  logo,
+  shortName,
+  colors,
+  className,
+}: {
+  logo?: string | null;
+  shortName?: string | null;
+  colors?: { primary?: string; secondary?: string };
+  className: string;
+}) {
+  if (logo) {
+    return (
+      <div className={className} style={{ background: "#fff" }}>
+        <img
+          src={logo}
+          alt={shortName || "Team"}
+          style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "inherit", padding: 2 }}
+        />
+      </div>
+    );
+  }
+  return (
+    <div
+      className={className}
+      style={{
+        background: `linear-gradient(135deg, ${colors?.primary || "#444"} 0%, ${colors?.secondary || "#666"} 100%)`,
+      }}
+    >
+      {shortName?.charAt(0) || "?"}
+    </div>
+  );
+}
+
 interface TeamDetailClientProps {
   team: TeamWithAverages & { players: PlayerWithAverages[] };
   upcoming: GameWithTeams[];
@@ -108,11 +143,23 @@ export default function TeamDetailClient({
           <div className="td-subnav-identity">
             <div
               className="td-subnav-logo"
-              style={{
-                background: `linear-gradient(135deg, ${team.colors?.primary || "#333"} 0%, ${team.colors?.secondary || "#666"} 100%)`,
-              }}
+              style={
+                team.logo
+                  ? { background: "#fff" }
+                  : {
+                      background: `linear-gradient(135deg, ${team.colors?.primary || "#333"} 0%, ${team.colors?.secondary || "#666"} 100%)`,
+                    }
+              }
             >
-              <span>{team.shortName}</span>
+              {team.logo ? (
+                <img
+                  src={team.logo}
+                  alt={team.name}
+                  style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "inherit", padding: 3 }}
+                />
+              ) : (
+                <span>{team.shortName}</span>
+              )}
             </div>
             <div className="td-subnav-team">
               <span className="td-subnav-name">{team.name}</span>
@@ -173,26 +220,12 @@ export default function TeamDetailClient({
                   <div className="td-ticker-date">{formatDate(game.date)}</div>
                   <div className="td-ticker-matchup">
                     <div className="td-ticker-team">
-                      <div
-                        className="td-ticker-logo"
-                        style={{
-                          background: `linear-gradient(135deg, ${team.colors?.primary} 0%, ${team.colors?.secondary} 100%)`,
-                        }}
-                      >
-                        {team.shortName?.charAt(0)}
-                      </div>
+                      <TdLogo className="td-ticker-logo" logo={team.logo} shortName={team.shortName} colors={team.colors} />
                       <span className="td-ticker-short">{team.shortName}</span>
                     </div>
                     <span className="td-ticker-vs">{isHome ? "vs." : "@"}</span>
                     <div className="td-ticker-team">
-                      <div
-                        className="td-ticker-logo"
-                        style={{
-                          background: `linear-gradient(135deg, ${opponent?.colors?.primary || "#444"} 0%, ${opponent?.colors?.secondary || "#666"} 100%)`,
-                        }}
-                      >
-                        {opponent?.shortName?.charAt(0) || "?"}
-                      </div>
+                      <TdLogo className="td-ticker-logo" logo={opponent?.logo} shortName={opponent?.shortName} colors={opponent?.colors} />
                       <span className="td-ticker-short">
                         {opponent?.shortName || "TBD"}
                       </span>
@@ -260,11 +293,23 @@ export default function TeamDetailClient({
               />
               <div
                 className="td-hero-logo"
-                style={{
-                  background: `linear-gradient(135deg, ${team.colors?.primary} 0%, ${team.colors?.secondary} 100%)`,
-                }}
+                style={
+                  team.logo
+                    ? { background: "#fff" }
+                    : {
+                        background: `linear-gradient(135deg, ${team.colors?.primary} 0%, ${team.colors?.secondary} 100%)`,
+                      }
+                }
               >
-                <span>{team.shortName}</span>
+                {team.logo ? (
+                  <img
+                    src={team.logo}
+                    alt={team.name}
+                    style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "inherit", padding: 6 }}
+                  />
+                ) : (
+                  <span>{team.shortName}</span>
+                )}
               </div>
               <div className="td-hero-info">
                 <h1 className="td-hero-name">{team.name}</h1>
@@ -378,14 +423,7 @@ export default function TeamDetailClient({
                           {formatShortDate(game.date)}
                         </span>
                         <span className="td-og-vs">{isHome ? "vs" : "@"}</span>
-                        <div
-                          className="td-og-opp-logo"
-                          style={{
-                            background: `linear-gradient(135deg, ${opp?.colors?.primary || "#444"} 0%, ${opp?.colors?.secondary || "#666"} 100%)`,
-                          }}
-                        >
-                          {opp?.shortName?.charAt(0) || "?"}
-                        </div>
+                        <TdLogo className="td-og-opp-logo" logo={opp?.logo} shortName={opp?.shortName} colors={opp?.colors} />
                         <span className="td-og-opp">
                           {opp?.shortName || "TBD"}
                         </span>
@@ -426,14 +464,7 @@ export default function TeamDetailClient({
                           {formatShortDate(game.date)}
                         </span>
                         <span className="td-og-vs">{isHome ? "vs" : "@"}</span>
-                        <div
-                          className="td-og-opp-logo"
-                          style={{
-                            background: `linear-gradient(135deg, ${opp?.colors?.primary || "#444"} 0%, ${opp?.colors?.secondary || "#666"} 100%)`,
-                          }}
-                        >
-                          {opp?.shortName?.charAt(0) || "?"}
-                        </div>
+                        <TdLogo className="td-og-opp-logo" logo={opp?.logo} shortName={opp?.shortName} colors={opp?.colors} />
                         <span className="td-og-opp">
                           {opp?.shortName || "TBD"}
                         </span>
@@ -524,14 +555,7 @@ export default function TeamDetailClient({
                           <span className="td-sched-vs">
                             {isHome ? "vs" : "@"}
                           </span>
-                          <div
-                            className="td-sched-opp-logo"
-                            style={{
-                              background: `linear-gradient(135deg, ${opp?.colors?.primary || "#444"} 0%, ${opp?.colors?.secondary || "#666"} 100%)`,
-                            }}
-                          >
-                            {opp?.shortName?.charAt(0) || "?"}
-                          </div>
+                          <TdLogo className="td-sched-opp-logo" logo={opp?.logo} shortName={opp?.shortName} colors={opp?.colors} />
                           <span className="td-sched-opp-name">
                             {opp?.name || "TBD"}
                           </span>
@@ -580,14 +604,7 @@ export default function TeamDetailClient({
                           <span className="td-sched-vs">
                             {isHome ? "vs" : "@"}
                           </span>
-                          <div
-                            className="td-sched-opp-logo"
-                            style={{
-                              background: `linear-gradient(135deg, ${opp?.colors?.primary || "#444"} 0%, ${opp?.colors?.secondary || "#666"} 100%)`,
-                            }}
-                          >
-                            {opp?.shortName?.charAt(0) || "?"}
-                          </div>
+                          <TdLogo className="td-sched-opp-logo" logo={opp?.logo} shortName={opp?.shortName} colors={opp?.colors} />
                           <span className="td-sched-opp-name">
                             {opp?.name || "TBD"}
                           </span>

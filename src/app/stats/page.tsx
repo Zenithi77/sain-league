@@ -148,7 +148,7 @@ export default function StatsPage() {
                 {season?.year ?? 2026} оны улирал
               </span>
             </div>
-            <h1 style={{ fontSize: 60, marginTop: 12 }}>СТАТИСТИК</h1>
+            <h1 style={{ fontSize: "clamp(32px, 9vw, 60px)", marginTop: 12 }}>СТАТИСТИК</h1>
             <p>Лигийн тэргүүлэгчид бүх ангиллаар. Тоглогч болон багуудын үзүүлэлтийг харьцуул.</p>
           </div>
           <div style={{ display: "flex", background: "#17171F", borderRadius: 999, padding: 5, boxShadow: "0 12px 30px -16px rgba(0,0,0,.6)" }}>
@@ -238,7 +238,7 @@ export default function StatsPage() {
                 <div className="sgl-stats-hero-flex" style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20, margin: "10px 0" }}>
                   <div style={{ minWidth: 0 }}>
                     <div style={{ fontFamily: "var(--sgl-head)", fontSize: 13, fontWeight: 600, letterSpacing: 1, color: catColor, marginBottom: 6 }}>#1</div>
-                    <div style={{ fontFamily: "var(--sgl-head)", fontSize: 34, fontWeight: 700, lineHeight: 1 }}>{leader.name}</div>
+                    <div style={{ fontFamily: "var(--sgl-head)", fontSize: "clamp(24px, 6vw, 34px)", fontWeight: 700, lineHeight: 1 }}>{leader.name}</div>
                     {leader.sub && (
                       <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 12, background: "rgba(255,255,255,.08)", padding: "6px 13px", borderRadius: 999 }}>
                         <span style={{ width: 9, height: 9, borderRadius: "50%", background: leader.teamColor }} />
@@ -246,7 +246,7 @@ export default function StatsPage() {
                       </div>
                     )}
                   </div>
-                  <span style={{ fontFamily: "'Rajdhani',sans-serif", fontSize: 130, fontWeight: 700, lineHeight: 0.8, color: catColor, letterSpacing: -2, flex: "none", textAlign: "right" }}>
+                  <span style={{ fontFamily: "'Rajdhani',sans-serif", fontSize: "clamp(72px, 22vw, 130px)", fontWeight: 700, lineHeight: 0.8, color: catColor, letterSpacing: -2, flex: "none", textAlign: "right" }}>
                     {activeCat.format(leader.value)}
                   </span>
                 </div>

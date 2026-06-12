@@ -63,8 +63,8 @@ function ConferenceCard({
         <span style={{ textAlign: "center" }}>Х</span>
         <span style={{ textAlign: "center" }}>Я</span>
         <span style={{ textAlign: "center" }}>Хувь</span>
-        <span style={{ textAlign: "center" }}>Зөрүү</span>
-        <span style={{ textAlign: "right" }}>Сүүл 10</span>
+        <span className="sgl-std2-extra" style={{ textAlign: "center" }}>Зөрүү</span>
+        <span className="sgl-std2-extra" style={{ textAlign: "right" }}>Сүүл 10</span>
       </div>
 
       {rows.map((r, i) => {
@@ -84,24 +84,32 @@ function ConferenceCard({
               {i + 1}
             </span>
             <span style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0 }}>
-              <span
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 8,
-                  flex: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: team?.colors?.primary || accent,
-                  fontFamily: "var(--sgl-head)",
-                  fontSize: 9,
-                  fontWeight: 700,
-                  color: "#fff",
-                }}
-              >
-                {team?.shortName?.charAt(0) || "T"}
-              </span>
+              {team?.logo ? (
+                <img
+                  src={team.logo}
+                  alt={team.shortName || "Team"}
+                  style={{ width: 28, height: 28, borderRadius: 8, flex: "none", objectFit: "contain", background: "#fff", padding: 2 }}
+                />
+              ) : (
+                <span
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 8,
+                    flex: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: team?.colors?.primary || accent,
+                    fontFamily: "var(--sgl-head)",
+                    fontSize: 9,
+                    fontWeight: 700,
+                    color: "#fff",
+                  }}
+                >
+                  {team?.shortName?.charAt(0) || "T"}
+                </span>
+              )}
               <span style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
                 <span style={{ fontWeight: 700, fontSize: 13, color: "var(--sgl-ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                   {team?.name || r.teamId}
@@ -116,10 +124,10 @@ function ConferenceCard({
             <span style={{ textAlign: "center", fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: 12, color: "var(--sgl-ink)" }}>
               {r.pct.toFixed(3).replace(/^0/, "")}
             </span>
-            <span style={{ textAlign: "center", fontSize: 12, fontWeight: 700, color: "var(--sgl-muted)" }}>
+            <span className="sgl-std2-extra" style={{ textAlign: "center", fontSize: 12, fontWeight: 700, color: "var(--sgl-muted)" }}>
               {r.gb === 0 ? "—" : r.gb.toFixed(r.gb % 1 ? 1 : 0)}
             </span>
-            <span style={{ textAlign: "right", fontSize: 12, fontWeight: 700, color: "var(--sgl-muted-2)" }}>{r.l10}</span>
+            <span className="sgl-std2-extra" style={{ textAlign: "right", fontSize: 12, fontWeight: 700, color: "var(--sgl-muted-2)" }}>{r.l10}</span>
           </Link>
         );
       })}
@@ -180,7 +188,7 @@ export default function StandingsPage() {
               {season?.year ?? 2026} оны улирал
             </span>
           </div>
-          <h1 style={{ fontSize: 58 }}>БАЙР ДАРААЛАЛ</h1>
+          <h1 style={{ fontSize: "clamp(30px, 9vw, 58px)" }}>БАЙР ДАРААЛАЛ</h1>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 18, marginTop: 12 }}>
             <p style={{ maxWidth: 430 }}>
               Хоёр бүсийн өрсөлдөөн. Эхний 4 баг плей-оффт шууд шалгарна.
@@ -227,9 +235,13 @@ export default function StandingsPage() {
                     const color = team?.colors?.primary || "#F15F22";
                     return (
                       <div key={r.teamId} style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                        <span style={{ width: 30, height: 30, borderRadius: 9, flex: "none", display: "flex", alignItems: "center", justifyContent: "center", background: color, fontFamily: "var(--sgl-head)", fontSize: 10, fontWeight: 700, color: "#fff" }}>
-                          {team?.shortName?.charAt(0) || "T"}
-                        </span>
+                        {team?.logo ? (
+                          <img src={team.logo} alt={team.shortName || "Team"} style={{ width: 30, height: 30, borderRadius: 9, flex: "none", objectFit: "contain", background: "#fff", padding: 2 }} />
+                        ) : (
+                          <span style={{ width: 30, height: 30, borderRadius: 9, flex: "none", display: "flex", alignItems: "center", justifyContent: "center", background: color, fontFamily: "var(--sgl-head)", fontSize: 10, fontWeight: 700, color: "#fff" }}>
+                            {team?.shortName?.charAt(0) || "T"}
+                          </span>
+                        )}
                         <span style={{ width: 150, fontWeight: 700, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} className="sgl-hide-md-inline">
                           {team?.name || r.teamId}
                         </span>

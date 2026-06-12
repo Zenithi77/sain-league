@@ -82,9 +82,13 @@ export default function FanPoll({ teams }: { teams: FirestoreTeam[] }) {
                   transition: "all .2s ease",
                 }}
               >
-                <span style={{ width: 40, height: 40, borderRadius: 12, flex: "none", display: "flex", alignItems: "center", justifyContent: "center", background: color, color: "#fff", fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: 12 }}>
-                  {team.shortName?.charAt(0) || "T"}
-                </span>
+                {team.logo ? (
+                  <img src={team.logo} alt={team.shortName || "Team"} style={{ width: 40, height: 40, borderRadius: 12, flex: "none", objectFit: "contain", background: "#fff", padding: 3 }} />
+                ) : (
+                  <span style={{ width: 40, height: 40, borderRadius: 12, flex: "none", display: "flex", alignItems: "center", justifyContent: "center", background: color, color: "#fff", fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: 12 }}>
+                    {team.shortName?.charAt(0) || "T"}
+                  </span>
+                )}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", gap: 10, marginBottom: 7 }}>
                     <span style={{ fontWeight: 700, fontSize: 14, color: "var(--sgl-ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{team.name}</span>

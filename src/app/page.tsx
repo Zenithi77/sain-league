@@ -754,24 +754,32 @@ export default function HomePage() {
                         {r.rank}
                       </span>
                       <span style={{ display: "flex", alignItems: "center", gap: 11, minWidth: 0 }}>
-                        <span
-                          style={{
-                            width: 30,
-                            height: 30,
-                            borderRadius: 9,
-                            flex: "none",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            background: team?.colors?.primary || "#F15F22",
-                            fontFamily: "var(--sgl-head)",
-                            fontSize: 10,
-                            fontWeight: 700,
-                            color: "#fff",
-                          }}
-                        >
-                          {team?.shortName?.charAt(0) || "T"}
-                        </span>
+                        {team?.logo ? (
+                          <img
+                            src={team.logo}
+                            alt={team.shortName || "Team"}
+                            style={{ width: 30, height: 30, borderRadius: 9, flex: "none", objectFit: "contain", background: "#fff", padding: 2 }}
+                          />
+                        ) : (
+                          <span
+                            style={{
+                              width: 30,
+                              height: 30,
+                              borderRadius: 9,
+                              flex: "none",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              background: team?.colors?.primary || "#F15F22",
+                              fontFamily: "var(--sgl-head)",
+                              fontSize: 10,
+                              fontWeight: 700,
+                              color: "#fff",
+                            }}
+                          >
+                            {team?.shortName?.charAt(0) || "T"}
+                          </span>
+                        )}
                         <span style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
                           <span
                             style={{
@@ -898,7 +906,7 @@ export default function HomePage() {
             borderRadius: 30,
             overflow: "hidden",
             background: "linear-gradient(120deg,#F15F22 0%,#20C4F4 58%,#0072BC 100%)",
-            padding: "54px 44px",
+            padding: "clamp(34px, 6vw, 54px) clamp(22px, 5vw, 44px)",
             color: "#fff",
           }}
         >
@@ -908,7 +916,7 @@ export default function HomePage() {
             <span style={{ fontFamily: "var(--sgl-head)", fontSize: 13, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", opacity: 0.9 }}>
               Чамайг хүлээж байна
             </span>
-            <h2 style={{ fontFamily: "var(--sgl-head)", fontSize: 48, fontWeight: 700, lineHeight: 1, margin: "12px 0 14px", letterSpacing: 0.5 }}>
+            <h2 style={{ fontFamily: "var(--sgl-head)", fontSize: "clamp(30px, 7vw, 48px)", fontWeight: 700, lineHeight: 1, margin: "12px 0 14px", letterSpacing: 0.5 }}>
               ТОГЛОХОД БЭЛЭН ҮҮ?
             </h2>
             <p style={{ fontSize: 17, lineHeight: 1.55, fontWeight: 500, opacity: 0.95, maxWidth: 480 }}>

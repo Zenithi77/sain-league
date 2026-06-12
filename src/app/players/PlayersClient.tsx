@@ -82,7 +82,7 @@ export default function PlayersClient({ players }: { players: PlayerWithAverages
               2026 оны улирал
             </span>
           </div>
-          <h1 style={{ fontSize: 58 }}>ТОГЛОГЧИД</h1>
+          <h1 style={{ fontSize: "clamp(32px, 9vw, 58px)" }}>ТОГЛОГЧИД</h1>
           <p>Лигийн шилдэг тоглогчид. Нэрээр хайх, байрлалаар шүүх, статистикаар эрэмбэл.</p>
         </div>
       </section>

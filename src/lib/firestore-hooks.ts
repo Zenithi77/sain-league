@@ -262,6 +262,7 @@ export interface FirestoreTeam {
   city: string;
   conference: "east" | "west";
   school: string;
+  logo?: string;
   colors: { primary: string; secondary: string };
   [key: string]: unknown;
 }
@@ -289,6 +290,7 @@ export function useTeams(_seasonId?: string | null) {
               city: String(raw.city ?? ""),
               conference: (raw.conference ?? "east") as "east" | "west",
               school: String(raw.school ?? ""),
+              logo: raw.logo ? String(raw.logo) : undefined,
               colors: raw.colors ?? { primary: "#333", secondary: "#666" },
             } as FirestoreTeam;
           }),

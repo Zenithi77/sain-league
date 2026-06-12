@@ -2,6 +2,7 @@
 
 import { CachedStandingEntry, FirestoreTeam } from "@/lib/firestore-hooks";
 import { TeamWithAverages } from "@/types";
+import TeamLogo from "@/components/TeamLogo";
 
 /* Accept EITHER the new cached Firestore rows or the legacy TeamWithAverages. */
 type StandingsRow = CachedStandingEntry | TeamWithAverages;
@@ -58,17 +59,13 @@ export default function StandingsTable({
                   <td className="rank">{row.rank}</td>
                   <td>
                     <div className="team-name">
-                      {teamMap?.get(row.teamId)?.colors && (
-                        <div
+                      {teamMap?.get(row.teamId) && (
+                        <TeamLogo
                           className="team-logo-small"
-                          style={{
-                            backgroundColor:
-                              teamMap.get(row.teamId)?.colors?.primary ||
-                              "#333",
-                          }}
-                        >
-                          {teamMap.get(row.teamId)?.shortName?.charAt(0) || "T"}
-                        </div>
+                          logo={teamMap.get(row.teamId)?.logo}
+                          shortName={teamMap.get(row.teamId)?.shortName}
+                          color={teamMap.get(row.teamId)?.colors?.primary}
+                        />
                       )}
                       <span>
                         {teamMap?.get(row.teamId)?.name || row.teamId}
@@ -101,14 +98,12 @@ export default function StandingsTable({
                 <td className="rank">{index + 1}</td>
                 <td>
                   <div className="team-name">
-                    <div
+                    <TeamLogo
                       className="team-logo-small"
-                      style={{
-                        backgroundColor: team.colors?.primary || "#333",
-                      }}
-                    >
-                      {team.shortName?.charAt(0) || "T"}
-                    </div>
+                      logo={team.logo}
+                      shortName={team.shortName}
+                      color={team.colors?.primary}
+                    />
                     <span>{team.name}</span>
                   </div>
                 </td>

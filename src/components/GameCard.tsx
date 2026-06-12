@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { GameWithTeams } from "@/types";
+import TeamLogo from "@/components/TeamLogo";
 
 interface GameCardProps {
   game: GameWithTeams;
@@ -67,14 +68,13 @@ export default function GameCard({
         <div className="game-teams">
           <div className="game-team">
             <div className="team-info">
-              <div
+              <TeamLogo
                 className="team-logo"
-                style={{
-                  backgroundColor: game.homeTeam?.colors?.primary || "#333",
-                }}
-              >
-                {game.homeTeam?.shortName?.charAt(0) || "H"}
-              </div>
+                logo={game.homeTeam?.logo}
+                shortName={game.homeTeam?.shortName}
+                color={game.homeTeam?.colors?.primary}
+                fallback="H"
+              />
               <span className="team-name-short">
                 {game.homeTeam?.shortName || "HOME"}
               </span>
@@ -87,14 +87,13 @@ export default function GameCard({
           </div>
           <div className="game-team">
             <div className="team-info">
-              <div
+              <TeamLogo
                 className="team-logo"
-                style={{
-                  backgroundColor: game.awayTeam?.colors?.primary || "#333",
-                }}
-              >
-                {game.awayTeam?.shortName?.charAt(0) || "A"}
-              </div>
+                logo={game.awayTeam?.logo}
+                shortName={game.awayTeam?.shortName}
+                color={game.awayTeam?.colors?.primary}
+                fallback="A"
+              />
               <span className="team-name-short">
                 {game.awayTeam?.shortName || "AWAY"}
               </span>
@@ -120,14 +119,13 @@ export default function GameCard({
           // Finished game - show scores
           <>
             <div className={`ticker-team ${homeWon ? "winner" : "loser"}`}>
-              <div
+              <TeamLogo
                 className="ticker-team-logo"
-                style={{
-                  backgroundColor: game.homeTeam?.colors?.primary || "#333",
-                }}
-              >
-                {game.homeTeam?.shortName?.charAt(0) || "H"}
-              </div>
+                logo={game.homeTeam?.logo}
+                shortName={game.homeTeam?.shortName}
+                color={game.homeTeam?.colors?.primary}
+                fallback="H"
+              />
               <span className="ticker-team-score">{game.homeScore}</span>
               <span className="ticker-vs-label">
                 {homeWon ? "Ялсан" : ""}
@@ -135,14 +133,13 @@ export default function GameCard({
               <span className="ticker-team-score away-score">
                 {game.awayScore}
               </span>
-              <div
+              <TeamLogo
                 className="ticker-team-logo"
-                style={{
-                  backgroundColor: game.awayTeam?.colors?.primary || "#333",
-                }}
-              >
-                {game.awayTeam?.shortName?.charAt(0) || "A"}
-              </div>
+                logo={game.awayTeam?.logo}
+                shortName={game.awayTeam?.shortName}
+                color={game.awayTeam?.colors?.primary}
+                fallback="A"
+              />
             </div>
             <div className="ticker-records">
               <span className="ticker-record">{game.homeTeam?.shortName || "HOME"}</span>
@@ -155,25 +152,23 @@ export default function GameCard({
           // Live game  
           <>
             <div className="ticker-team live-matchup">
-              <div
+              <TeamLogo
                 className="ticker-team-logo"
-                style={{
-                  backgroundColor: game.homeTeam?.colors?.primary || "#333",
-                }}
-              >
-                {game.homeTeam?.shortName?.charAt(0) || "H"}
-              </div>
+                logo={game.homeTeam?.logo}
+                shortName={game.homeTeam?.shortName}
+                color={game.homeTeam?.colors?.primary}
+                fallback="H"
+              />
               <span className="ticker-team-score">{game.homeScore}</span>
               <span className="ticker-live-badge">LIVE</span>
               <span className="ticker-team-score">{game.awayScore}</span>
-              <div
+              <TeamLogo
                 className="ticker-team-logo"
-                style={{
-                  backgroundColor: game.awayTeam?.colors?.primary || "#333",
-                }}
-              >
-                {game.awayTeam?.shortName?.charAt(0) || "A"}
-              </div>
+                logo={game.awayTeam?.logo}
+                shortName={game.awayTeam?.shortName}
+                color={game.awayTeam?.colors?.primary}
+                fallback="A"
+              />
             </div>
             <div className="ticker-records">
               <span className="ticker-record">{game.homeTeam?.shortName || "HOME"}</span>
@@ -186,14 +181,13 @@ export default function GameCard({
           // Scheduled game - show matchup
           <>
             <div className="ticker-team scheduled-matchup">
-              <div
+              <TeamLogo
                 className="ticker-team-logo"
-                style={{
-                  backgroundColor: game.homeTeam?.colors?.primary || "#333",
-                }}
-              >
-                {game.homeTeam?.shortName?.charAt(0) || "H"}
-              </div>
+                logo={game.homeTeam?.logo}
+                shortName={game.homeTeam?.shortName}
+                color={game.homeTeam?.colors?.primary}
+                fallback="H"
+              />
               <span className="ticker-team-abbr">
                 {game.homeTeam?.shortName || "HOME"}
               </span>
@@ -201,14 +195,13 @@ export default function GameCard({
               <span className="ticker-team-abbr">
                 {game.awayTeam?.shortName || "AWAY"}
               </span>
-              <div
+              <TeamLogo
                 className="ticker-team-logo"
-                style={{
-                  backgroundColor: game.awayTeam?.colors?.primary || "#333",
-                }}
-              >
-                {game.awayTeam?.shortName?.charAt(0) || "A"}
-              </div>
+                logo={game.awayTeam?.logo}
+                shortName={game.awayTeam?.shortName}
+                color={game.awayTeam?.colors?.primary}
+                fallback="A"
+              />
             </div>
             <div className="ticker-records">
               <span className="ticker-record-stats">{homeRecord}</span>

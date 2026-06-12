@@ -151,7 +151,7 @@ export default function PlayerDetailClient({
                   </span>
                 )}
               </div>
-              <h1 style={{ fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: 50, lineHeight: 0.96, letterSpacing: 0.5 }}>
+              <h1 style={{ fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: "clamp(30px, 7vw, 50px)", lineHeight: 0.96, letterSpacing: 0.5 }}>
                 {player.name}
               </h1>
               {player.team && (

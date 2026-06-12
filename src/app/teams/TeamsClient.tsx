@@ -19,11 +19,11 @@ function TeamCard({ team }: { team: RankedTeam }) {
 
   return (
     <div
-      style={{ position: "relative", height: 230, cursor: "pointer" }}
+      style={{ position: "relative", height: 248, cursor: "pointer" }}
       onClick={() => setFlipped((f) => !f)}
     >
       {/* FRONT */}
-      <div className="sgl-card" style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
+      <div className="sgl-card" style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 1 }}>
         <div
           style={{
             position: "relative",
@@ -47,19 +47,34 @@ function TeamCard({ team }: { team: RankedTeam }) {
               borderRadius: "50%",
             }}
           />
-          <span
-            style={{
-              position: "relative",
-              fontFamily: "var(--sgl-head)",
-              fontSize: 26,
-              fontWeight: 700,
-              color: "#fff",
-              letterSpacing: 1,
-              zIndex: 2,
-            }}
-          >
-            {team.shortName}
-          </span>
+          {team.logo ? (
+            <img
+              src={team.logo}
+              alt={team.name}
+              style={{
+                position: "relative",
+                zIndex: 2,
+                height: 50,
+                width: 50,
+                objectFit: "contain",
+                filter: "drop-shadow(0 2px 6px rgba(0,0,0,.25))",
+              }}
+            />
+          ) : (
+            <span
+              style={{
+                position: "relative",
+                fontFamily: "var(--sgl-head)",
+                fontSize: 26,
+                fontWeight: 700,
+                color: "#fff",
+                letterSpacing: 1,
+                zIndex: 2,
+              }}
+            >
+              {team.shortName}
+            </span>
+          )}
           <span
             style={{
               position: "relative",
@@ -139,6 +154,7 @@ function TeamCard({ team }: { team: RankedTeam }) {
           pointerEvents: flipped ? "auto" : "none",
           transition: "opacity .35s ease",
           boxShadow: "var(--sgl-shadow-card)",
+          zIndex: 2,
         }}
       >
         <div>
@@ -225,7 +241,7 @@ export default function TeamsClient({ teams }: { teams: TeamWithAverages[] }) {
               Sain Girls League 2026
             </span>
           </div>
-          <h1 style={{ fontSize: 60 }}>
+          <h1 style={{ fontSize: "clamp(34px, 9vw, 60px)" }}>
             Бүх <span style={{ color: "#F15F22" }}>багууд</span>
           </h1>
           <p>2 бүс, {teams.length} баг, нэг зорилго. Картыг дарж дэлгэрэнгүйг хар.</p>

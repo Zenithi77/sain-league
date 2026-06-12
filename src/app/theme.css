@@ -926,6 +926,26 @@ body {
 }
 
 /* ============================================================
+   GAME DETAIL (new structure)
+   ============================================================ */
+.sgl-gd-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+.sgl-gd-score { font-size: 74px; }
+.sgl-gd-teamname { font-size: 22px; }
+.sgl-gd-prow:hover { background: var(--sgl-bg); }
+@media (max-width: 900px) {
+  .sgl-gd-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .sgl-gd-score { font-size: 44px; }
+  .sgl-gd-teamname { font-size: 14px; }
+}
+
+/* ============================================================
    HOME — BUILD YOUR FIVE
    ============================================================ */
 .sgl-byf-grid {
@@ -1746,6 +1766,77 @@ body {
 }
 
 /* ============================================================
+   SPONSORS + PODCAST (light redesign)
+   ============================================================ */
+.sponsors-section,
+.podcast-section {
+  background: #fff !important;
+  border: 1px solid var(--sgl-line-2) !important;
+  border-radius: var(--sgl-r-xl) !important;
+  box-shadow: var(--sgl-shadow-card);
+  overflow: hidden;
+}
+.sponsors-section::before,
+.podcast-section::before {
+  background: linear-gradient(90deg, var(--sgl-orange), var(--sgl-cyan)) !important;
+  height: 4px !important;
+}
+
+.sponsors-tag,
+.podcast-tag {
+  color: var(--sgl-orange) !important;
+  background: rgba(241, 95, 34, 0.1) !important;
+  border: 1px solid rgba(241, 95, 34, 0.2) !important;
+  font-family: var(--sgl-body);
+}
+.sponsors-title,
+.podcast-title {
+  font-family: var(--sgl-head);
+  color: var(--sgl-ink) !important;
+}
+.sponsors-title i,
+.podcast-title i { color: var(--sgl-orange) !important; }
+.sponsors-subtitle,
+.podcast-subtitle { color: var(--sgl-muted) !important; }
+
+/* Sponsor cards */
+.sponsor-item {
+  background: var(--sgl-bg) !important;
+  border: 1px solid var(--sgl-line-2) !important;
+}
+.sponsor-item:hover {
+  background: #fff !important;
+  border-color: rgba(241, 95, 34, 0.3) !important;
+  box-shadow: var(--sgl-shadow-sm);
+}
+.sponsor-logo { filter: none !important; }
+.sponsor-item:hover .sponsor-logo { filter: none !important; }
+.sponsor-label { color: var(--sgl-muted-2) !important; }
+.sponsor-item:hover .sponsor-label { color: var(--sgl-ink) !important; }
+.sponsor-name-fallback { color: var(--sgl-muted-2) !important; }
+.sponsor-name-fallback i { color: var(--sgl-orange) !important; }
+.sponsor-name-fallback span { color: var(--sgl-ink) !important; }
+
+/* Podcast cards */
+.podcast-card {
+  background: var(--sgl-bg) !important;
+  border: 1px solid var(--sgl-line-2) !important;
+  border-radius: var(--sgl-r-md) !important;
+  color: var(--sgl-ink) !important;
+}
+.podcast-card:hover {
+  background: #fff !important;
+  border-color: rgba(241, 95, 34, 0.3) !important;
+  box-shadow: var(--sgl-shadow-sm);
+}
+.podcast-thumbnail { background: #ece3dc !important; }
+.podcast-thumb-placeholder { color: var(--sgl-muted) !important; }
+.podcast-card-title { font-family: var(--sgl-head); color: var(--sgl-ink) !important; }
+.podcast-card-desc { color: var(--sgl-muted-3) !important; }
+.podcast-card-date { color: var(--sgl-muted) !important; }
+.podcast-card-date i { color: var(--sgl-orange) !important; }
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 980px) {
@@ -1758,4 +1849,68 @@ body {
   .sgl-hero h1 { font-size: 34px; }
   .sgl-h2 { font-size: 22px; }
   .footer-container { padding: 36px 22px 24px; }
+}
+
+/* ============================================================
+   MOBILE RESPONSIVE — redesigned pages (creative phone reflow)
+   The page heroes set their own inline padding/font-size, so the
+   real desktop look stays; here we restructure for small screens.
+   Inline font sizes are made fluid with clamp() in the JSX; the
+   structural overrides below need !important to beat inline styles.
+   ============================================================ */
+
+/* Hero padding: the inline "44px 34px" desktop padding crowds a
+   phone, so reclaim the horizontal space. */
+@media (max-width: 600px) {
+  .sgl-hero { padding: 26px 20px 20px !important; }
+}
+@media (max-width: 400px) {
+  .sgl-hero { padding: 22px 15px 16px !important; }
+}
+
+/* Utility referenced by the standings title-race row */
+@media (max-width: 620px) {
+  .sgl-hide-md-inline { display: none !important; }
+}
+
+/* HOME — mini standings + upcoming widget rows */
+@media (max-width: 480px) {
+  .sgl-std-row {
+    grid-template-columns: 32px 1fr 38px 38px 64px;
+    gap: 6px;
+    padding: 12px 14px;
+  }
+}
+
+/* STANDINGS — a 7-column conference table can't breathe on a phone.
+   Show the five columns fans scan first (#, team, W, L, win%) and
+   hide games-behind + last-10 (tagged .sgl-std2-extra in the JSX). */
+@media (max-width: 620px) {
+  .sgl-std2-row {
+    grid-template-columns: 26px 1fr 32px 32px 54px;
+    gap: 6px;
+    padding: 11px 14px;
+  }
+  .sgl-std2-extra { display: none !important; }
+}
+
+/* STATS — leaderboard row: tighten gutters so the value never clips */
+@media (max-width: 420px) {
+  .sgl-stats-row { grid-template-columns: 26px 1fr 66px; gap: 9px; padding: 9px 16px; }
+}
+
+/* PLAYERS — ranked table already drops to 4 cols at 760; squeeze a
+   little more on very narrow phones. */
+@media (max-width: 400px) {
+  .sgl-prow { grid-template-columns: 28px 1fr 44px 44px; gap: 6px; padding: 11px 14px; }
+}
+
+/* PLAYER DETAIL — recent-games log: keep date / opponent / PTS / REB */
+@media (max-width: 400px) {
+  .sgl-glog { grid-template-columns: 56px 1fr 40px 40px; gap: 6px; padding: 10px 14px; }
+}
+
+/* HOME — landing hero headline scales down on the smallest screens */
+@media (max-width: 420px) {
+  .sgl-hero-title { font-size: 42px; }
 }

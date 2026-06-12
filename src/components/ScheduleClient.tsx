@@ -55,6 +55,49 @@ function record(team: Team | null): string {
   return `${s.wins ?? 0}-${s.losses ?? 0}`;
 }
 
+/** Team logo badge: real logo when available, else a colored initial. */
+function LogoBadge({
+  team,
+  size,
+  radius,
+  fallback,
+  fallbackBg,
+}: {
+  team: Team | null;
+  size: number;
+  radius: number;
+  fallback: string;
+  fallbackBg: string;
+}) {
+  const base = { width: size, height: size, borderRadius: radius, flex: "none" as const };
+  if (team?.logo) {
+    return (
+      <img
+        src={team.logo}
+        alt={team.shortName || "Team"}
+        style={{ ...base, objectFit: "contain", background: "#fff", padding: 3 }}
+      />
+    );
+  }
+  return (
+    <span
+      style={{
+        ...base,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: team?.colors?.primary || fallbackBg,
+        fontFamily: "var(--sgl-head)",
+        fontSize: size <= 34 ? 12 : 14,
+        fontWeight: 700,
+        color: "#fff",
+      }}
+    >
+      {team?.shortName?.charAt(0) || fallback}
+    </span>
+  );
+}
+
 export default function ScheduleClient() {
   const { season, loading: seasonLoading } = useActiveSeason();
   const seasonId = season?.id ?? null;
@@ -157,7 +200,7 @@ export default function ScheduleClient() {
               {season?.year ?? 2026} оны улирал
             </span>
           </div>
-          <h1 style={{ fontSize: 52 }}>ТОГЛОЛТЫН ХУВААРЬ</h1>
+          <h1 style={{ fontSize: "clamp(28px, 8vw, 52px)" }}>ТОГЛОЛТЫН ХУВААРЬ</h1>
         </div>
       </section>
 
@@ -180,9 +223,7 @@ export default function ScheduleClient() {
                     </div>
                     <div style={{ padding: "15px 16px 13px" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 11 }}>
-                        <span style={{ width: 34, height: 34, borderRadius: 10, flex: "none", display: "flex", alignItems: "center", justifyContent: "center", background: g.homeTeam?.colors?.primary || "#F15F22", fontFamily: "var(--sgl-head)", fontSize: 12, fontWeight: 700, color: "#fff" }}>
-                          {g.homeTeam?.shortName?.charAt(0) || "H"}
-                        </span>
+                        <LogoBadge team={g.homeTeam} size={34} radius={10} fallback="H" fallbackBg="#F15F22" />
                         <span style={{ fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: 22, color: homeWon ? "#F15F22" : "var(--sgl-ink)", minWidth: 30, textAlign: "center" }}>
                           {finished ? g.homeScore : ""}
                         </span>
@@ -190,9 +231,7 @@ export default function ScheduleClient() {
                         <span style={{ fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: 22, color: awayWon ? "#F15F22" : "var(--sgl-ink)", minWidth: 30, textAlign: "center" }}>
                           {finished ? g.awayScore : ""}
                         </span>
-                        <span style={{ width: 34, height: 34, borderRadius: 10, flex: "none", display: "flex", alignItems: "center", justifyContent: "center", background: g.awayTeam?.colors?.primary || "#0072BC", fontFamily: "var(--sgl-head)", fontSize: 12, fontWeight: 700, color: "#fff" }}>
-                          {g.awayTeam?.shortName?.charAt(0) || "A"}
-                        </span>
+                        <LogoBadge team={g.awayTeam} size={34} radius={10} fallback="A" fallbackBg="#0072BC" />
                       </div>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 11, fontSize: 11, fontWeight: 700, color: "var(--sgl-muted)" }}>
                         <span style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, flex: 1 }}>
@@ -315,9 +354,7 @@ export default function ScheduleClient() {
                         {i === 1 && <div style={{ height: 1, background: "rgba(23,23,31,.05)" }} />}
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 0" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 11, minWidth: 0 }}>
-                            <span style={{ width: 38, height: 38, borderRadius: 11, flex: "none", display: "flex", alignItems: "center", justifyContent: "center", background: row.team?.colors?.primary || "#999", fontFamily: "var(--sgl-head)", fontSize: 14, fontWeight: 700, color: "#fff" }}>
-                              {row.team?.shortName?.charAt(0) || "?"}
-                            </span>
+                            <LogoBadge team={row.team} size={38} radius={11} fallback="?" fallbackBg="#999" />
                             <span style={{ fontFamily: "var(--sgl-head)", fontWeight: 600, fontSize: 17, color: "var(--sgl-ink)" }}>
                               {row.team?.shortName || "TBD"}
                             </span>

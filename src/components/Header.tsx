@@ -83,6 +83,16 @@ export default function Header() {
               <i className="fas fa-shopping-bag"></i>
               <span className="merch-store-label">Дэлгүүр</span>
             </a>
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="merch-store-btn nexus-btn"
+              title="NEXUS"
+            >
+              <i className="fas fa-bolt"></i>
+              <span className="merch-store-label">NEXUS</span>
+            </a>
             {showAuth && (
               <>
                 {user ? (
@@ -198,6 +208,16 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <i className="fas fa-shopping-bag"></i> Дэлгүүр
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <i className="fas fa-bolt"></i> NEXUS
               </a>
             </li>
           </ul>

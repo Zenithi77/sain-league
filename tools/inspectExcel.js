@@ -24,7 +24,7 @@ async function main() {
 
   console.log("SHEETS:", wb.worksheets.map((w) => `${w.name} (${w.rowCount}r x ${w.columnCount}c)`).join(" | "));
 
-  for (const name of ["SGLallplayersList", "FinalScores"]) {
+  for (const name of ["Standings"]) {
     const ws = wb.getWorksheet(name);
     if (!ws) {
       console.log(`\n!! sheet "${name}" not found`);

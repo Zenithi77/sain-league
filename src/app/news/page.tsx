@@ -113,7 +113,7 @@ export default function NewsPage() {
               Сүүлийн үйл явдал
             </span>
           </div>
-          <h1 style={{ fontSize: 58 }}>МЭДЭЭ</h1>
+          <h1 style={{ fontSize: "clamp(34px, 9vw, 58px)" }}>МЭДЭЭ</h1>
           <p>Лигийн сүүлийн мэдээ, шинжилгээ, тоглогчдын онцлох мөчүүд.</p>
         </div>
       </section>
@@ -144,7 +144,7 @@ export default function NewsPage() {
                     <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#C7C7CE" }} />
                     <span style={{ fontSize: 12, fontWeight: 700, color: "var(--sgl-muted)" }}>{formatDate(featured.date)}</span>
                   </div>
-                  <h2 style={{ fontFamily: "var(--sgl-head)", fontSize: 32, fontWeight: 700, lineHeight: 1.08, color: "var(--sgl-ink)" }}>
+                  <h2 style={{ fontFamily: "var(--sgl-head)", fontSize: "clamp(23px, 5vw, 32px)", fontWeight: 700, lineHeight: 1.08, color: "var(--sgl-ink)" }}>
                     {featured.title}
                   </h2>
                   <p style={{ fontSize: 15, lineHeight: 1.6, color: "var(--sgl-muted-3)", fontWeight: 500, marginTop: 14 }}>

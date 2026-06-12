@@ -103,7 +103,7 @@ export default function NewsDetailPage() {
             </span>
             <span style={{ fontSize: 13, fontWeight: 700, color: "var(--sgl-muted)" }}>{formatDate(article.date)}</span>
           </div>
-          <h1 style={{ fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: 44, lineHeight: 1.06, letterSpacing: 0.3, color: "var(--sgl-ink)" }}>
+          <h1 style={{ fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: "clamp(27px, 6.5vw, 44px)", lineHeight: 1.06, letterSpacing: 0.3, color: "var(--sgl-ink)" }}>
             {article.title}
           </h1>
 

@@ -66,13 +66,21 @@ export default function TipOffCountdown({ game }: { game: GameWithTeams | null }
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
-              <span style={{ width: 42, height: 42, borderRadius: 12, background: home?.colors?.primary || "#F15F22", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: 12, color: "#fff" }}>
-                {home?.shortName || "HOM"}
-              </span>
+              {home?.logo ? (
+                <img src={home.logo} alt={home.shortName || "Home"} style={{ width: 42, height: 42, borderRadius: 12, objectFit: "contain", background: "#fff", padding: 3 }} />
+              ) : (
+                <span style={{ width: 42, height: 42, borderRadius: 12, background: home?.colors?.primary || "#F15F22", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: 12, color: "#fff" }}>
+                  {home?.shortName || "HOM"}
+                </span>
+              )}
               <span style={{ fontFamily: "var(--sgl-head)", fontSize: 20, fontWeight: 600, color: "#6E6E7A" }}>VS</span>
-              <span style={{ width: 42, height: 42, borderRadius: 12, background: away?.colors?.primary || "#0072BC", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: 12, color: "#fff" }}>
-                {away?.shortName || "AWY"}
-              </span>
+              {away?.logo ? (
+                <img src={away.logo} alt={away.shortName || "Away"} style={{ width: 42, height: 42, borderRadius: 12, objectFit: "contain", background: "#fff", padding: 3 }} />
+              ) : (
+                <span style={{ width: 42, height: 42, borderRadius: 12, background: away?.colors?.primary || "#0072BC", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--sgl-head)", fontWeight: 700, fontSize: 12, color: "#fff" }}>
+                  {away?.shortName || "AWY"}
+                </span>
+              )}
             </div>
             <span style={{ fontSize: 13, color: "var(--sgl-muted)", fontWeight: 600, maxWidth: 200, lineHeight: 1.35 }}>
               {home?.name} – {away?.name} тоглолт хүртэл
