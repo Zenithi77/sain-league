@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#FFF7F1;color:#17171F;font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{text-decoration:none;color:inherit}
+  input{font-family:inherit;outline:none}
+  ::selection{background:#F15F22;color:#fff}
+  @keyframes revealUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(241,95,34,.55)}70%{box-shadow:0 0 0 9px rgba(241,95,34,0)}100%{box-shadow:0 0 0 0 rgba(241,95,34,0)}}
+  @keyframes blob{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(20px,-16px) scale(1.07)}66%{transform:translate(-16px,14px) scale(.96)}}
+  @media(max-width:980px){.nav-links{display:none!important}.podium{grid-template-columns:1fr!important}}
+  @media(max-width:680px){.h1big{font-size:46px!important}.prow{grid-template-columns:30px 1fr 50px!important}.pcol-hide{display:none!important}}
+</style>
+</helmet>
+
+<div style="max-width:1280px;margin:0 auto">
+
+<!-- NAV -->
+<header style="position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(255,247,241,.82);border-bottom:1px solid rgba(23,23,31,.07)">
+  <nav style="display:flex;align-items:center;justify-content:space-between;padding:16px 26px;max-width:1280px;margin:0 auto">
+    <a href="Home.dc.html" style="display:flex;align-items:center;gap:11px">
+      <span style="position:relative;width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8244,#E0490F);display:inline-block;box-shadow:0 6px 16px -4px rgba(241,95,34,.6)">
+        <span style="position:absolute;left:50%;top:0;width:2px;height:100%;background:rgba(0,0,0,.4);transform:translateX(-50%)"></span>
+        <span style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(0,0,0,.4);transform:translateY(-50%)"></span>
+      </span>
+      <span style="display:flex;flex-direction:column;line-height:1">
+        <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;letter-spacing:.5px">SAIN<span style="color:#F15F22">.</span>LEAGUE</span>
+        <span style="font-size:10px;letter-spacing:3px;color:#9A9AA4;font-weight:600;margin-top:2px">GIRLS BASKETBALL</span>
+      </span>
+    </a>
+    <div class="nav-links" style="display:flex;align-items:center;gap:4px">
+      <a href="Home.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 13px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navHome }}</a>
+      <a href="Teams.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 13px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navTeams }}</a>
+      <a href="Standings.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 13px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navStandings }}</a>
+      <a href="Schedule.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 13px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navSchedule }}</a>
+      <a href="Players.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 13px;border-radius:9px;color:#F15F22;background:rgba(241,95,34,.1)">{{ t.navPlayers }}</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;background:#fff;border:1px solid rgba(23,23,31,.1);border-radius:999px;padding:3px;box-shadow:0 4px 12px -8px rgba(0,0,0,.3)">
+        <button onClick="{{ setMn }}" style="{{ langMnStyle }}">МН</button>
+        <button onClick="{{ setEn }}" style="{{ langEnStyle }}">EN</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- HEADER -->
+<section style="position:relative;padding:46px 26px 16px;overflow:hidden">
+  <div style="position:absolute;top:-70px;right:8%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(241,95,34,.15),transparent 68%);animation:blob 16s ease-in-out infinite;z-index:0"></div>
+  <div style="position:relative;z-index:2">
+    <div style="display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid rgba(241,95,34,.25);padding:7px 15px;border-radius:999px;box-shadow:0 8px 22px -14px rgba(241,95,34,.6)">
+      <span style="width:9px;height:9px;border-radius:50%;background:#F15F22;animation:pulseDot 1.8s infinite"></span>
+      <span style="font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#F15F22">{{ t.eyebrow }}</span>
+    </div>
+    <h1 class="h1big" style="font-family:'Oswald',sans-serif;font-weight:700;font-size:60px;line-height:1.02;margin:16px 0 0;letter-spacing:.5px">{{ t.title }}</h1>
+    <p style="font-size:15px;color:#5B5B66;font-weight:500;margin-top:10px;max-width:460px">{{ t.lead }}</p>
+  </div>
+</section>
+
+<!-- LEADERS PODIUM -->
+<section style="padding:8px 26px 6px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <h2 style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700">{{ t.topBy }} {{ sortLabel }}</h2>
+    <span style="font-size:12px;font-weight:700;color:#9A9AA4">{{ t.podiumHint }}</span>
+  </div>
+  <div class="podium" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+    <sc-for list="{{ podium }}" as="p" hint-placeholder-count="3">
+      <div data-reveal style="position:relative;background:#fff;border-radius:22px;padding:20px;border:1px solid rgba(23,23,31,.05);box-shadow:0 18px 40px -30px rgba(0,0,0,.5);overflow:hidden" style-hover="transform:translateY(-4px)">
+        <div style="position:absolute;top:0;left:0;right:0;height:5px;background:{{ p.color }}"></div>
+        <div style="position:absolute;right:16px;top:14px;font-family:'Oswald',sans-serif;font-size:54px;font-weight:700;color:{{ p.medalBg }};line-height:1;opacity:.18">{{ p.rank }}</div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="position:relative;width:62px;height:74px;border-radius:14px;flex:none;background:{{ p.soft }};border:1px solid {{ p.color }}33;display:flex;align-items:flex-end;justify-content:center;overflow:hidden">
+            <span style="position:absolute;top:6px;left:7px;font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:{{ p.color }};line-height:1">{{ p.num }}</span>
+            <span style="font-family:monospace;font-size:7px;color:#C99;padding-bottom:6px">photo</span>
+          </div>
+          <div style="min-width:0">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:{{ p.medalBg }};color:#fff;font-size:10px;font-weight:800;letter-spacing:.5px;padding:3px 9px;border-radius:999px;margin-bottom:7px">{{ p.medal }}</div>
+            <div style="font-family:'Oswald',sans-serif;font-size:19px;font-weight:600;line-height:1.05">{{ p.name }}</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
+              <span style="width:10px;height:10px;border-radius:50%;background:{{ p.color }}"></span>
+              <span style="font-size:11px;font-weight:700;color:#9A9AA4">{{ p.team }} · {{ p.pos }}</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:16px">
+          <div style="display:flex;flex-direction:column">
+            <span style="font-family:'Oswald',sans-serif;font-size:38px;font-weight:700;color:{{ p.color }};line-height:1">{{ p.val }}</span>
+            <span style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:#B0B0B8;margin-top:2px">{{ sortLabel }}</span>
+          </div>
+          <div style="display:flex;gap:14px">
+            <div style="text-align:center"><div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#17171F">{{ p.pts }}</div><div style="font-size:9px;font-weight:700;color:#C0C0C8">PTS</div></div>
+            <div style="text-align:center"><div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#17171F">{{ p.reb }}</div><div style="font-size:9px;font-weight:700;color:#C0C0C8">REB</div></div>
+            <div style="text-align:center"><div style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#17171F">{{ p.ast }}</div><div style="font-size:9px;font-weight:700;color:#C0C0C8">AST</div></div>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<!-- CONTROLS -->
+<section style="padding:18px 26px 4px">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+    <div style="position:relative;flex:1;min-width:220px">
+      <span style="position:absolute;left:15px;top:50%;transform:translateY(-50%);width:13px;height:13px;border:2px solid #B0B0B8;border-radius:50%"></span>
+      <span style="position:absolute;left:25px;top:calc(50% + 5px);width:7px;height:2px;background:#B0B0B8;transform:rotate(45deg)"></span>
+      <input type="text" value="{{ search }}" onInput="{{ onSearch }}" placeholder="{{ t.searchPh }}" style="width:100%;background:#fff;border:1px solid rgba(23,23,31,.1);border-radius:14px;padding:13px 16px 13px 38px;font-size:14px;font-weight:600;color:#17171F;box-shadow:0 6px 16px -12px rgba(0,0,0,.4)">
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <sc-for list="{{ posFilters }}" as="pf" hint-placeholder-count="6">
+        <button onClick="{{ pf.onClick }}" style="{{ pf.style }}">{{ pf.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- TABLE -->
+<section style="padding:14px 26px 38px">
+  <div style="background:#fff;border-radius:22px;overflow:hidden;border:1px solid rgba(23,23,31,.05);box-shadow:0 22px 50px -34px rgba(0,0,0,.5)">
+    <div class="prow" style="display:grid;grid-template-columns:46px 1fr 70px 70px 70px 70px;gap:8px;padding:13px 20px;background:#FBF2EC;align-items:center">
+      <span style="font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:#9A9AA4">#</span>
+      <span style="font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:#9A9AA4;text-transform:uppercase">{{ t.player }}</span>
+      <sc-for list="{{ statHeads }}" as="sh" hint-placeholder-count="4">
+        <button onClick="{{ sh.onClick }}" style="{{ sh.style }}">{{ sh.label }} {{ sh.arrow }}</button>
+      </sc-for>
+    </div>
+    <sc-for list="{{ rows }}" as="r" hint-placeholder-count="10">
+      <div class="prow" style="display:grid;grid-template-columns:46px 1fr 70px 70px 70px 70px;gap:8px;padding:12px 20px;align-items:center;border-top:1px solid rgba(23,23,31,.05)" style-hover="background:#FFF7F1">
+        <span style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:{{ r.rankColor }}">{{ r.rank }}</span>
+        <span style="display:flex;align-items:center;gap:12px;min-width:0">
+          <span style="position:relative;width:38px;height:38px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ r.color }};font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;color:#fff">{{ r.num }}</span>
+          <span style="display:flex;flex-direction:column;min-width:0">
+            <span style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span>
+            <span style="font-size:11px;color:#9A9AA4;font-weight:600;display:flex;align-items:center;gap:6px"><span>{{ r.team }} · {{ r.pos }}</span><span class="pcol-hide" style="background:rgba(23,23,31,.06);padding:1px 7px;border-radius:999px;font-size:10px">{{ r.grade }}</span></span>
+          </span>
+        </span>
+        <span style="{{ r.ptsStyle }}">{{ r.pts }}</span>
+        <span style="{{ r.rebStyle }}">{{ r.reb }}</span>
+        <span style="{{ r.astStyle }}">{{ r.ast }}</span>
+        <span style="{{ r.stlStyle }}">{{ r.stl }}</span>
+      </div>
+    </sc-for>
+    <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center;padding:44px 20px;color:#9A9AA4">
+        <div style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#C7C7CE">{{ t.noPlayers }}</div>
+        <p style="font-size:14px;font-weight:600;margin-top:8px">{{ t.noPlayersSub }}</p>
+      </div>
+    </sc-if>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="margin-top:10px;background:#17171F;color:#fff;border-radius:30px 30px 0 0;padding:40px 36px 28px">
+  <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center">
+    <div style="display:flex;align-items:center;gap:11px">
+      <span style="position:relative;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8244,#E0490F);display:inline-block">
+        <span style="position:absolute;left:50%;top:0;width:2px;height:100%;background:rgba(0,0,0,.4);transform:translateX(-50%)"></span>
+        <span style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(0,0,0,.4);transform:translateY(-50%)"></span>
+      </span>
+      <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:19px">SAIN<span style="color:#F15F22">.</span>LEAGUE</span>
+    </div>
+    <div style="display:flex;gap:22px;flex-wrap:wrap">
+      <a href="Home.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navHome }}</a>
+      <a href="Teams.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navTeams }}</a>
+      <a href="Standings.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navStandings }}</a>
+      <a href="Schedule.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navSchedule }}</a>
+    </div>
+    <span style="font-size:12px;color:#5B5B66;font-weight:500">© 2026 Sain Girls League</span>
+  </div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: 'mn', search: '', pos: 'ALL', sort: 'pts', data: null };
+
+  T = {
+    mn: { navHome:'Нүүр', navTeams:'Багууд', navStandings:'Байр', navSchedule:'Хуваарь', navPlayers:'Тоглогчид',
+      eyebrow:'2026 ОНЫ УЛИРАЛ', title:'ТОГЛОГЧИД',
+      lead:'Лигийн шилдэг тоглогчид. Нэрээр хайх, байрлалаар шүүх, статистикаар эрэмбэл.',
+      topBy:'Тэргүүлэгчид:', podiumHint:'Баганы гарчиг дээр дарж эрэмбэл', searchPh:'Тоглогчийн нэрээр хайх...',
+      player:'Тоглогч', noPlayers:'Тоглогч олдсонгүй', noPlayersSub:'Өөр нэр эсвэл байрлал сонгоно уу.',
+      all:'Бүгд', gold:'АЛТ', silver:'МӨНГӨ', bronze:'ХҮРЭЛ',
+      pts:'Оноо', reb:'Самбар', ast:'Дамжуулалт', stl:'Таслалт' },
+    en: { navHome:'Home', navTeams:'Teams', navStandings:'Standings', navSchedule:'Schedule', navPlayers:'Players',
+      eyebrow:'2026 SEASON', title:'PLAYERS',
+      lead:'The league\u2019s best players. Search by name, filter by position, and sort by any stat.',
+      topBy:'Leaders:', podiumHint:'Tap a column header to re-rank', searchPh:'Search players by name...',
+      player:'Player', noPlayers:'No players found', noPlayersSub:'Try another name or position.',
+      all:'All', gold:'GOLD', silver:'SILVER', bronze:'BRONZE',
+      pts:'Points', reb:'Rebounds', ast:'Assists', stl:'Steals' },
+  };
+
+  STAT_SHORT = { pts:'PTS', reb:'REB', ast:'AST', stl:'STL' };
+  STAT_COLOR = { pts:'#F15F22', reb:'#20C4F4', ast:'#0072BC', stl:'#1F9E5A' };
+  STAT_SOFT = { pts:'rgba(241,95,34,.1)', reb:'rgba(32,196,244,.12)', ast:'rgba(0,114,188,.1)', stl:'rgba(31,158,90,.12)' };
+
+  componentDidMount() {
+    try { const v = localStorage.getItem('sgl_lang'); if (v) this.setState({ lang: v }); } catch(e){}
+    import('./league-data.js').then(m => { this.setState({ data: { TEAMS: m.TEAMS, PLAYERS: m.PLAYERS } }); this._reveal(); }).catch(e => console.error(e));
+  }
+  _reveal() {
+    if (!('IntersectionObserver' in window)) return;
+    if (this._io) this._io.disconnect();
+    this._io = new IntersectionObserver((es) => es.forEach(en => { if (en.isIntersecting) { en.target.style.animation = 'revealUp .6s cubic-bezier(.2,.7,.2,1) both'; this._io.unobserve(en.target); } }), { threshold: 0.06 });
+    setTimeout(() => document.querySelectorAll('[data-reveal]').forEach((el,i) => { el.style.animationDelay = (i*0.06)+'s'; this._io.observe(el); }), 80);
+  }
+  _setLang(l){ try { localStorage.setItem('sgl_lang', l); } catch(e){} this.setState({ lang: l }); }
+  _langPill(a){ const b="font-size:12px;font-weight:700;padding:6px 13px;border-radius:999px;cursor:pointer;border:none;transition:all .2s;"; return a?b+"background:#F15F22;color:#fff;":b+"background:transparent;color:#9A9AA4;"; }
+  _posPill(a){ const b="font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;padding:8px 13px;border-radius:11px;cursor:pointer;border:1.5px solid;transition:all .2s;"; return a?b+"background:#17171F;color:#fff;border-color:#17171F;":b+"background:#fff;color:#9A9AA4;border-color:rgba(23,23,31,.08);"; }
+
+  renderVals() {
+    const lang = this.state.lang, t = this.T[lang], d = this.state.data, sort = this.state.sort;
+    const base = {
+      t, lang, search: this.state.search,
+      langMnStyle: this._langPill(lang==='mn'), langEnStyle: this._langPill(lang==='en'),
+      setMn: () => this._setLang('mn'), setEn: () => this._setLang('en'),
+      onSearch: (e) => this.setState({ search: e.target.value }),
+      sortLabel: this.STAT_SHORT[sort],
+    };
+    if (!d) return { ...base, podium: undefined, rows: undefined, posFilters: undefined, statHeads: undefined, empty:false };
+
+    const { TEAMS, PLAYERS } = d;
+    const positions = ['ALL','PG','SG','SF','PF','C'];
+    const posFilters = positions.map(p => ({
+      label: p==='ALL' ? t.all : p, onClick: () => this.setState({ pos: p }), style: this._posPill(this.state.pos===p),
+    }));
+
+    const statHeads = ['pts','reb','ast','stl'].map(k => ({
+      label: this.STAT_SHORT[k],
+      arrow: sort===k ? '↓' : '',
+      onClick: () => this.setState({ sort: k }),
+      style: "font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;text-align:center;padding:5px 4px;border-radius:8px;cursor:pointer;border:none;transition:all .2s;background:" + (sort===k ? this.STAT_COLOR[k] : 'transparent') + ";color:" + (sort===k ? '#fff' : '#9A9AA4') + ";",
+    }));
+
+    const q = this.state.search.trim().toLowerCase();
+    let list = PLAYERS.filter(p => {
+      if (this.state.pos !== 'ALL' && p.pos !== this.state.pos) return false;
+      if (q && !(p.name.toLowerCase().includes(q) || p.en.toLowerCase().includes(q) || p.team.toLowerCase().includes(q))) return false;
+      return true;
+    });
+    list = [...list].sort((a,b) => b[sort] - a[sort]);
+
+    const cellStyle = (k, isMax) => "text-align:center;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;color:" + (k===sort ? this.STAT_COLOR[k] : '#17171F') + ";" + (k===sort ? "background:"+this.STAT_SOFT[k]+";border-radius:8px;padding:5px 0;" : "");
+
+    const rows = list.map((p, i) => ({
+      rank: i+1, rankColor: i===0 ? '#F15F22' : (i<3 ? '#0072BC' : '#B0B0B8'),
+      num: p.num, name: lang==='mn' ? p.name : p.en, team: p.team, pos: p.pos,
+      color: (TEAMS[p.team]||{}).color || '#999',
+      grade: 'G' + p.grade,
+      pts: p.pts.toFixed(1), reb: p.reb.toFixed(1), ast: p.ast.toFixed(1), stl: p.stl.toFixed(1),
+      ptsStyle: cellStyle('pts'), rebStyle: cellStyle('reb'), astStyle: cellStyle('ast'), stlStyle: cellStyle('stl'),
+    }));
+
+    const medals = [
+      { medal: t.gold, medalBg: '#E0A800' },
+      { medal: t.silver, medalBg: '#9AA0AA' },
+      { medal: t.bronze, medalBg: '#C77B3B' },
+    ];
+    const podium = list.slice(0,3).map((p, i) => ({
+      rank: i+1, medal: medals[i].medal, medalBg: medals[i].medbg || medals[i].medalBg,
+      num: p.num, name: lang==='mn' ? p.name : p.en, team: p.team, pos: p.pos,
+      color: (TEAMS[p.team]||{}).color || '#999', soft: this.STAT_SOFT[sort],
+      val: p[sort].toFixed(1), pts: p.pts.toFixed(1), reb: p.reb.toFixed(1), ast: p.ast.toFixed(1),
+    }));
+
+    return { ...base, posFilters, statHeads, rows, podium, empty: rows.length===0 };
+  }
+}
+</script>
+</body>
+</html>

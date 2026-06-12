@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#FFF7F1;color:#17171F;font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{text-decoration:none;color:inherit}
+  ::selection{background:#F15F22;color:#fff}
+  @keyframes revealUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulseLive{0%{box-shadow:0 0 0 0 rgba(229,57,70,.55)}70%{box-shadow:0 0 0 9px rgba(229,57,70,0)}100%{box-shadow:0 0 0 0 rgba(229,57,70,0)}}
+  @media(max-width:980px){.nav-links{display:none!important}.gd-grid{grid-template-columns:1fr!important}}
+  @media(max-width:680px){.scorebig{font-size:60px!important}.teamname{font-size:18px!important}}
+</style>
+</helmet>
+
+<div style="max-width:1280px;margin:0 auto">
+
+<!-- NAV -->
+<header style="position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(255,247,241,.82);border-bottom:1px solid rgba(23,23,31,.07)">
+  <nav style="display:flex;align-items:center;justify-content:space-between;padding:16px 26px;max-width:1280px;margin:0 auto">
+    <a href="Home.dc.html" style="display:flex;align-items:center;gap:11px">
+      <span style="position:relative;width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8244,#E0490F);display:inline-block;box-shadow:0 6px 16px -4px rgba(241,95,34,.6)">
+        <span style="position:absolute;left:50%;top:0;width:2px;height:100%;background:rgba(0,0,0,.4);transform:translateX(-50%)"></span>
+        <span style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(0,0,0,.4);transform:translateY(-50%)"></span>
+      </span>
+      <span style="display:flex;flex-direction:column;line-height:1">
+        <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;letter-spacing:.5px">SAIN<span style="color:#F15F22">.</span>LEAGUE</span>
+        <span style="font-size:10px;letter-spacing:3px;color:#9A9AA4;font-weight:600;margin-top:2px">GIRLS BASKETBALL</span>
+      </span>
+    </a>
+    <div class="nav-links" style="display:flex;align-items:center;gap:2px">
+      <a href="Home.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navHome }}</a>
+      <a href="Teams.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navTeams }}</a>
+      <a href="Standings.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navStandings }}</a>
+      <a href="Schedule.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#F15F22;background:rgba(241,95,34,.1)">{{ t.navSchedule }}</a>
+      <a href="Players.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navPlayers }}</a>
+      <a href="News.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navNews }}</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;background:#fff;border:1px solid rgba(23,23,31,.1);border-radius:999px;padding:3px;box-shadow:0 4px 12px -8px rgba(0,0,0,.3)">
+        <button onClick="{{ setMn }}" style="{{ langMnStyle }}">МН</button>
+        <button onClick="{{ setEn }}" style="{{ langEnStyle }}">EN</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- BREADCRUMB -->
+<div style="padding:16px 26px 0;font-size:12px;font-weight:700;color:#9A9AA4;display:flex;align-items:center;gap:7px">
+  <a href="Schedule.dc.html" style="color:#9A9AA4" style-hover="color:#F15F22">{{ t.navSchedule }}</a><span>/</span><span style="color:#17171F">{{ g.matchup }}</span>
+</div>
+
+<!-- SCOREBOARD -->
+<section style="padding:14px 26px 0">
+  <div data-reveal style="position:relative;border-radius:26px;overflow:hidden;background:#17171F;color:#fff;padding:30px 30px 26px">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:50%;background:{{ g.homeColor }};opacity:.16"></div>
+    <div style="position:absolute;right:0;top:0;bottom:0;width:50%;background:{{ g.awayColor }};opacity:.16"></div>
+    <div style="position:relative;z-index:2">
+      <div style="display:flex;justify-content:center;margin-bottom:18px">
+        <span style="{{ g.statusStyle }}">{{ g.statusText }}</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px">
+        <!-- home -->
+        <a href="{{ g.homeHref }}" style="display:flex;flex-direction:column;align-items:center;gap:11px;flex:1;min-width:0">
+          <span style="width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;background:{{ g.homeColor }};font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#fff">{{ g.home }}</span>
+          <span class="teamname" style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:600;text-align:center;line-height:1.05">{{ g.homeName }}</span>
+        </a>
+        <!-- score -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:none">
+          <div style="display:flex;align-items:center;gap:16px">
+            <span class="scorebig" style="font-family:'Oswald',sans-serif;font-size:74px;font-weight:700;line-height:1;color:{{ g.homeScoreColor }}">{{ g.homeScore }}</span>
+            <span style="font-family:'Oswald',sans-serif;font-size:30px;font-weight:600;color:#5B5B66">–</span>
+            <span class="scorebig" style="font-family:'Oswald',sans-serif;font-size:74px;font-weight:700;line-height:1;color:{{ g.awayScoreColor }}">{{ g.awayScore }}</span>
+          </div>
+          <sc-if value="{{ g.isLive }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:8px;margin-top:10px;background:rgba(229,57,70,.16);padding:5px 14px;border-radius:999px">
+              <span style="width:7px;height:7px;border-radius:50%;background:#E53946;animation:pulseLive 1.4s infinite"></span>
+              <span style="font-size:12px;font-weight:800;color:#FF6B73">{{ g.quarter }} · {{ g.clock }}</span>
+            </div>
+          </sc-if>
+        </div>
+        <!-- away -->
+        <a href="{{ g.awayHref }}" style="display:flex;flex-direction:column;align-items:center;gap:11px;flex:1;min-width:0">
+          <span style="width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;background:{{ g.awayColor }};font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#fff">{{ g.away }}</span>
+          <span class="teamname" style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:600;text-align:center;line-height:1.05">{{ g.awayName }}</span>
+        </a>
+      </div>
+      <div style="display:flex;justify-content:center;gap:18px;margin-top:20px;font-size:12px;font-weight:600;color:#9A9AA4">
+        <span>📅 {{ g.dateLabel }}</span><span>📍 {{ g.venue }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUARTERS -->
+<section style="padding:18px 26px 4px">
+  <div data-reveal style="background:#fff;border-radius:22px;overflow:hidden;border:1px solid rgba(23,23,31,.05);box-shadow:0 22px 50px -34px rgba(0,0,0,.5)">
+    <div style="display:grid;grid-template-columns:1fr 56px 56px 56px 56px 70px;gap:6px;padding:13px 22px;background:#FBF2EC;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:.8px;color:#9A9AA4;text-transform:uppercase;align-items:center">
+      <span>{{ t.team }}</span>
+      <sc-for list="{{ qHeads }}" as="qh" hint-placeholder-count="5">
+        <span style="text-align:center">{{ qh }}</span>
+      </sc-for>
+    </div>
+    <sc-for list="{{ qRows }}" as="r" hint-placeholder-count="2">
+      <div style="display:grid;grid-template-columns:1fr 56px 56px 56px 56px 70px;gap:6px;padding:14px 22px;align-items:center;border-top:1px solid rgba(23,23,31,.05)">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:{{ r.color }};font-family:'Oswald',sans-serif;font-size:10px;font-weight:700;color:#fff">{{ r.short }}</span>
+          <span style="font-weight:700;font-size:14px">{{ r.name }}</span>
+        </span>
+        <sc-for list="{{ r.q }}" as="qv" hint-placeholder-count="5">
+          <span style="{{ qv.style }}">{{ qv.val }}</span>
+        </sc-for>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<!-- TEAM COMPARE + PERFORMERS -->
+<section style="padding:18px 26px 30px">
+  <div class="gd-grid" style="display:grid;grid-template-columns:1.1fr 1fr;gap:18px;align-items:start">
+    <!-- tug of war -->
+    <div data-reveal style="background:#fff;border-radius:22px;padding:24px;border:1px solid rgba(23,23,31,.05);box-shadow:0 22px 50px -34px rgba(0,0,0,.5)">
+      <h3 style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;margin-bottom:6px">{{ t.teamCompare }}</h3>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+        <span style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800"><span style="width:11px;height:11px;border-radius:4px;background:{{ g.homeColor }}"></span>{{ g.home }}</span>
+        <span style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800">{{ g.away }}<span style="width:11px;height:11px;border-radius:4px;background:{{ g.awayColor }}"></span></span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <sc-for list="{{ compare }}" as="c" hint-placeholder-count="7">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <span style="font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:{{ c.homeColor }}">{{ c.homeVal }}</span>
+              <span style="font-size:11px;font-weight:800;letter-spacing:.5px;color:#9A9AA4">{{ c.label }}</span>
+              <span style="font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:{{ c.awayColor }}">{{ c.awayVal }}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:3px;height:10px">
+              <div style="flex:1;display:flex;justify-content:flex-end;height:100%;border-radius:999px 0 0 999px;background:rgba(23,23,31,.05);overflow:hidden"><span style="display:block;height:100%;width:{{ c.homeBar }};background:{{ g.homeColor }};border-radius:999px 0 0 999px"></span></div>
+              <div style="flex:1;height:100%;border-radius:0 999px 999px 0;background:rgba(23,23,31,.05);overflow:hidden"><span style="display:block;height:100%;width:{{ c.awayBar }};background:{{ g.awayColor }};border-radius:0 999px 999px 0"></span></div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- top performers -->
+    <div data-reveal style="display:flex;flex-direction:column;gap:14px">
+      <sc-for list="{{ performers }}" as="grp" hint-placeholder-count="2">
+        <div style="background:#fff;border-radius:22px;overflow:hidden;border:1px solid rgba(23,23,31,.05);box-shadow:0 22px 50px -34px rgba(0,0,0,.5)">
+          <div style="padding:14px 20px;background:{{ grp.soft }};display:flex;align-items:center;gap:10px">
+            <span style="width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:{{ grp.color }};font-family:'Oswald',sans-serif;font-size:9px;font-weight:700;color:#fff">{{ grp.short }}</span>
+            <span style="font-family:'Oswald',sans-serif;font-size:15px;font-weight:700">{{ grp.title }}</span>
+            <span style="font-size:11px;font-weight:700;color:#9A9AA4;margin-left:auto">{{ t.topPerformers }}</span>
+          </div>
+          <div style="padding:6px 0">
+            <sc-for list="{{ grp.players }}" as="pl" hint-placeholder-count="3">
+              <a href="{{ pl.href }}" style="display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer" style-hover="background:#FFF7F1">
+                <span style="width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ grp.soft }};color:{{ grp.color }};font-family:'Oswald',sans-serif;font-size:12px;font-weight:700">{{ pl.num }}</span>
+                <span style="flex:1;min-width:0;font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pl.name }}</span>
+                <span style="display:flex;gap:13px">
+                  <span style="text-align:center"><span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;color:{{ grp.color }}">{{ pl.pts }}</span><span style="display:block;font-size:8px;font-weight:700;color:#C0C0C8">PTS</span></span>
+                  <span style="text-align:center"><span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;color:#17171F">{{ pl.reb }}</span><span style="display:block;font-size:8px;font-weight:700;color:#C0C0C8">REB</span></span>
+                  <span style="text-align:center"><span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;color:#17171F">{{ pl.ast }}</span><span style="display:block;font-size:8px;font-weight:700;color:#C0C0C8">AST</span></span>
+                </span>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="margin-top:6px;background:#17171F;color:#fff;border-radius:30px 30px 0 0;padding:40px 36px 28px">
+  <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center">
+    <div style="display:flex;align-items:center;gap:11px">
+      <span style="position:relative;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8244,#E0490F);display:inline-block">
+        <span style="position:absolute;left:50%;top:0;width:2px;height:100%;background:rgba(0,0,0,.4);transform:translateX(-50%)"></span>
+        <span style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(0,0,0,.4);transform:translateY(-50%)"></span>
+      </span>
+      <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:19px">SAIN<span style="color:#F15F22">.</span>LEAGUE</span>
+    </div>
+    <div style="display:flex;gap:22px;flex-wrap:wrap">
+      <a href="Home.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navHome }}</a>
+      <a href="Teams.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navTeams }}</a>
+      <a href="Standings.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navStandings }}</a>
+      <a href="News.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navNews }}</a>
+    </div>
+    <span style="font-size:12px;color:#5B5B66;font-weight:500">© 2026 Sain Girls League</span>
+  </div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: 'mn', game: 'SPK-HWK', data: null };
+
+  T = {
+    mn: { navHome:'Нүүр', navTeams:'Багууд', navStandings:'Байр', navSchedule:'Хуваарь', navPlayers:'Тоглогчид', navNews:'Мэдээ',
+      team:'Баг', total:'Нийт', live:'ШУУД', final:'ДУУССАН', teamCompare:'Багуудын харьцуулалт', topPerformers:'Шилдгүүд',
+      fg:'Хаялтын %', tp:'3 онооны %', ft:'Чөлөөт %', reb:'Самбар', ast:'Дамжуулалт', stl:'Таслалт', to:'Алдаа' },
+    en: { navHome:'Home', navTeams:'Teams', navStandings:'Standings', navSchedule:'Schedule', navPlayers:'Players', navNews:'News',
+      team:'Team', total:'Total', live:'LIVE', final:'FINAL', teamCompare:'Team comparison', topPerformers:'Top performers',
+      fg:'FG %', tp:'3PT %', ft:'FT %', reb:'Rebounds', ast:'Assists', stl:'Steals', to:'Turnovers' },
+  };
+
+  componentDidMount() {
+    try { const v = localStorage.getItem('sgl_lang'); if (v) this.setState({ lang: v }); } catch(e){}
+    this._applyHash();
+    this._onHash = () => this._applyHash();
+    window.addEventListener('hashchange', this._onHash);
+    import('./league-data.js').then(m => { this.setState({ data: m }); this._reveal(); }).catch(e => console.error(e));
+  }
+  componentWillUnmount(){ window.removeEventListener('hashchange', this._onHash); }
+  _applyHash(){ const h=(location.hash||'').replace('#','').toUpperCase(); if(h) this.setState({ game: h }); }
+  _reveal(){ if(!('IntersectionObserver' in window))return; if(this._io)this._io.disconnect(); this._io=new IntersectionObserver((es)=>es.forEach(en=>{if(en.isIntersecting){en.target.style.animation='revealUp .6s cubic-bezier(.2,.7,.2,1) both';this._io.unobserve(en.target);}}),{threshold:0.05}); setTimeout(()=>document.querySelectorAll('[data-reveal]').forEach((el,i)=>{el.style.animationDelay=(i*0.07)+'s';this._io.observe(el);}),80); }
+  _setLang(l){ try{localStorage.setItem('sgl_lang',l);}catch(e){} this.setState({lang:l}); }
+  _langPill(a){ const b="font-size:12px;font-weight:700;padding:6px 13px;border-radius:999px;cursor:pointer;border:none;transition:all .2s;"; return a?b+"background:#F15F22;color:#fff;":b+"background:transparent;color:#9A9AA4;"; }
+
+  renderVals() {
+    const lang=this.state.lang, t=this.T[lang], d=this.state.data;
+    const base = { t, lang, langMnStyle:this._langPill(lang==='mn'), langEnStyle:this._langPill(lang==='en'), setMn:()=>this._setLang('mn'), setEn:()=>this._setLang('en') };
+    if (!d) return { ...base, g:{matchup:'',homeColor:'#F15F22',awayColor:'#0072BC'}, qHeads:undefined, qRows:undefined, compare:undefined, performers:undefined };
+
+    const TEAMS=d.TEAMS;
+    let key=this.state.game; if(!d.GAME_DETAIL[key]) key='SPK-HWK';
+    const gd=d.GAME_DETAIL[key];
+    const [home,away]=key.split('-');
+    const ht=TEAMS[home], at=TEAMS[away];
+    const isLive=gd.status==='live';
+    const sum=(arr)=>arr.reduce((a,b)=>a+(b||0),0);
+    const homeTotal=sum(gd.quarters.home), awayTotal=sum(gd.quarters.away);
+    const homeWon=homeTotal>=awayTotal;
+
+    const g = {
+      matchup: home+' vs '+away, home, away, homeName:ht.name, awayName:at.name,
+      homeColor:ht.color, awayColor:at.color,
+      homeScore:String(homeTotal), awayScore:String(awayTotal),
+      homeScoreColor: isLive ? '#fff' : (homeWon?'#fff':'#7A7A86'),
+      awayScoreColor: isLive ? '#fff' : (!homeWon?'#fff':'#7A7A86'),
+      isLive, quarter: lang==='mn'?gd.q:gd.qEn, clock: gd.clock,
+      dateLabel: lang==='mn'?gd.dLabelMn:gd.dLabelEn, venue: lang==='mn'?gd.venueMn:gd.venueEn,
+      homeHref:'TeamDetail.dc.html#'+home, awayHref:'TeamDetail.dc.html#'+away,
+      statusText: isLive ? t.live : t.final,
+      statusStyle: isLive
+        ? "display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:1px;color:#FF6B73;background:rgba(229,57,70,.16);padding:6px 16px;border-radius:999px;"
+        : "font-size:12px;font-weight:800;letter-spacing:1px;color:#9A9AA4;background:rgba(255,255,255,.08);padding:6px 16px;border-radius:999px;",
+    };
+
+    const qHeads = ['Q1','Q2','Q3','Q4', t.total];
+    const mkQRow = (short, color, qs, total, won) => {
+      const cells = [0,1,2,3].map(i => {
+        const v = qs[i];
+        return { val: v==null ? '–' : String(v), style: "text-align:center;font-family:'Oswald',sans-serif;font-weight:600;font-size:16px;color:#5B5B66;" };
+      });
+      cells.push({ val: String(total), style: "text-align:center;font-family:'Oswald',sans-serif;font-weight:700;font-size:18px;color:"+(won?color:'#17171F')+";" });
+      return { short, name: TEAMS[short].name, color, q: cells };
+    };
+    const qRows = [
+      mkQRow(home, ht.color, gd.quarters.home, homeTotal, homeWon),
+      mkQRow(away, at.color, gd.quarters.away, awayTotal, !homeWon),
+    ];
+
+    const hs=gd.teamStats.home, as=gd.teamStats.away;
+    const mkCmp = (label, hv, av, suffix) => {
+      const tot = hv+av || 1;
+      return {
+        label, homeVal: hv+(suffix||''), awayVal: av+(suffix||''),
+        homeBar: Math.round(hv/tot*100)+'%', awayBar: Math.round(av/tot*100)+'%',
+        homeColor: hv>=av?'#17171F':'#9A9AA4', awayColor: av>hv?'#17171F':'#9A9AA4',
+      };
+    };
+    const compare = [
+      mkCmp(t.fg, hs.fg, as.fg, '%'), mkCmp(t.tp, hs.tp, as.tp, '%'), mkCmp(t.ft, hs.ft, as.ft, '%'),
+      mkCmp(t.reb, hs.reb, as.reb), mkCmp(t.ast, hs.ast, as.ast), mkCmp(t.stl, hs.stl, as.stl), mkCmp(t.to, hs.to, as.to),
+    ];
+
+    const mkPerf = (short, color, leaders) => ({
+      short, title: TEAMS[short].name, color, soft: color+'15',
+      players: leaders.map(L => ({ num: L[2], name: lang==='mn'?L[0]:L[1], pts:L[3], reb:L[4], ast:L[5], href:'TeamDetail.dc.html#'+short })),
+    });
+    const performers = [ mkPerf(home, ht.color, gd.leadersHome), mkPerf(away, at.color, gd.leadersAway) ];
+
+    return { ...base, g, qHeads, qRows, compare, performers };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#FFF7F1;color:#17171F;font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{text-decoration:none;color:inherit}
+  ::selection{background:#F15F22;color:#fff}
+  ::-webkit-scrollbar{height:6px}::-webkit-scrollbar-thumb{background:rgba(23,23,31,.15);border-radius:9px}
+  @keyframes revealUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(241,95,34,.55)}70%{box-shadow:0 0 0 9px rgba(241,95,34,0)}100%{box-shadow:0 0 0 0 rgba(241,95,34,0)}}
+  @keyframes popNum{0%{opacity:0;transform:scale(.7)}60%{transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+  @keyframes blob{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(20px,-16px) scale(1.07)}66%{transform:translate(-16px,14px) scale(.96)}}
+  @media(max-width:980px){.nav-links{display:none!important}.lead-grid{grid-template-columns:1fr!important}.hero-score{font-size:120px!important}}
+  @media(max-width:680px){.h1big{font-size:46px!important}.snap{grid-template-columns:repeat(3,1fr)!important}.hero-flex{flex-direction:column!important;align-items:flex-start!important}.hero-score{font-size:96px!important}}
+</style>
+</helmet>
+
+<div style="max-width:1280px;margin:0 auto">
+
+<!-- NAV -->
+<header style="position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(255,247,241,.82);border-bottom:1px solid rgba(23,23,31,.07)">
+  <nav style="display:flex;align-items:center;justify-content:space-between;padding:16px 26px;max-width:1280px;margin:0 auto">
+    <a href="Home.dc.html" style="display:flex;align-items:center;gap:11px">
+      <span style="position:relative;width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8244,#E0490F);display:inline-block;box-shadow:0 6px 16px -4px rgba(241,95,34,.6)">
+        <span style="position:absolute;left:50%;top:0;width:2px;height:100%;background:rgba(0,0,0,.4);transform:translateX(-50%)"></span>
+        <span style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(0,0,0,.4);transform:translateY(-50%)"></span>
+      </span>
+      <span style="display:flex;flex-direction:column;line-height:1">
+        <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;letter-spacing:.5px">SAIN<span style="color:#F15F22">.</span>LEAGUE</span>
+        <span style="font-size:10px;letter-spacing:3px;color:#9A9AA4;font-weight:600;margin-top:2px">GIRLS BASKETBALL</span>
+      </span>
+    </a>
+    <div class="nav-links" style="display:flex;align-items:center;gap:1px">
+      <a href="Home.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navHome }}</a>
+      <a href="Teams.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navTeams }}</a>
+      <a href="Standings.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navStandings }}</a>
+      <a href="Schedule.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navSchedule }}</a>
+      <a href="Stats.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#F15F22;background:rgba(241,95,34,.1)">{{ t.navStats }}</a>
+      <a href="Players.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navPlayers }}</a>
+      <a href="News.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navNews }}</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;background:#fff;border:1px solid rgba(23,23,31,.1);border-radius:999px;padding:3px;box-shadow:0 4px 12px -8px rgba(0,0,0,.3)">
+        <button onClick="{{ setMn }}" style="{{ langMnStyle }}">МН</button>
+        <button onClick="{{ setEn }}" style="{{ langEnStyle }}">EN</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- HEADER -->
+<section style="position:relative;padding:46px 26px 12px;overflow:hidden">
+  <div style="position:absolute;top:-70px;left:-40px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(241,95,34,.15),transparent 68%);animation:blob 16s ease-in-out infinite;z-index:0"></div>
+  <div style="position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:18px">
+    <div>
+      <div style="display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid rgba(241,95,34,.25);padding:7px 15px;border-radius:999px;box-shadow:0 8px 22px -14px rgba(241,95,34,.6)">
+        <span style="width:9px;height:9px;border-radius:50%;background:#F15F22;animation:pulseDot 1.8s infinite"></span>
+        <span style="font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#F15F22">{{ t.eyebrow }}</span>
+      </div>
+      <h1 class="h1big" style="font-family:'Oswald',sans-serif;font-weight:700;font-size:62px;line-height:1.0;margin:16px 0 0;letter-spacing:.5px">{{ t.title }}</h1>
+      <p style="font-size:15px;color:#5B5B66;font-weight:500;margin-top:10px;max-width:430px">{{ t.lead }}</p>
+    </div>
+    <!-- players/teams toggle -->
+    <div style="display:flex;background:#17171F;border-radius:999px;padding:5px;box-shadow:0 12px 30px -16px rgba(0,0,0,.6)">
+      <button onClick="{{ modePlayers }}" style="{{ mPlayers }}">{{ t.players }}</button>
+      <button onClick="{{ modeTeams }}" style="{{ mTeams }}">{{ t.teams }}</button>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORY RAIL -->
+<section style="padding:14px 26px 4px">
+  <div style="display:flex;gap:9px;overflow-x:auto;padding:4px 0 8px">
+    <sc-for list="{{ cats }}" as="c" hint-placeholder-count="9">
+      <button onClick="{{ c.onClick }}" style="{{ c.style }}">
+        <span style="font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;letter-spacing:.5px">{{ c.short }}</span>
+        <span style="font-size:10px;font-weight:700;letter-spacing:.5px;opacity:.8">{{ c.label }}</span>
+      </button>
+    </sc-for>
+  </div>
+</section>
+
+<!-- SCOREBOARD HERO + LEADERBOARD -->
+<section style="padding:10px 26px 16px">
+  <div class="lead-grid" style="display:grid;grid-template-columns:1fr 1.1fr;gap:18px;align-items:stretch">
+
+    <!-- LEADER SCOREBOARD -->
+    <a href="{{ leader.href }}" data-reveal style="position:relative;border-radius:26px;overflow:hidden;background:#17171F;color:#fff;padding:28px 30px;display:flex;flex-direction:column;justify-content:space-between;min-height:330px;box-shadow:0 26px 56px -32px rgba(0,0,0,.7)">
+      <div style="position:absolute;right:-40px;top:-50px;width:230px;height:230px;border:30px solid {{ cat.glow }};border-radius:50%;opacity:.5"></div>
+      <div style="position:absolute;left:0;top:0;bottom:0;width:6px;background:{{ cat.color }}"></div>
+      <div style="position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between">
+        <span style="display:inline-flex;align-items:center;gap:8px;background:{{ cat.color }};color:#fff;font-size:11px;font-weight:800;letter-spacing:1px;padding:6px 13px;border-radius:999px">★ {{ t.leagueLeader }}</span>
+        <span style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;color:#7A7A86">{{ cat.label }} · {{ t.perGame }}</span>
+      </div>
+      <div class="hero-flex" style="position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:20px;margin:10px 0">
+        <div style="min-width:0">
+          <div style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;color:{{ cat.color }};margin-bottom:6px">{{ leader.tag }}</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:34px;font-weight:700;line-height:1.0">{{ leader.name }}</div>
+          <div style="display:inline-flex;align-items:center;gap:8px;margin-top:12px;background:rgba(255,255,255,.08);padding:6px 13px;border-radius:999px">
+            <span style="width:9px;height:9px;border-radius:50%;background:{{ leader.teamColor }}"></span>
+            <span style="font-size:12px;font-weight:700;color:#C9C9D0">{{ leader.sub }}</span>
+          </div>
+        </div>
+        <div style="position:relative;flex:none;text-align:right">
+          <span class="hero-score" style="font-family:'Rajdhani',sans-serif;font-size:150px;font-weight:700;line-height:.8;color:{{ cat.color }};letter-spacing:-2px;display:block">{{ leader.value }}</span>
+        </div>
+      </div>
+      <div style="position:relative;z-index:2;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#9A9AA4">
+        <span>{{ t.viewProfile }}</span><span style="color:{{ cat.color }}">→</span>
+      </div>
+    </a>
+
+    <!-- RANKED LEADERBOARD -->
+    <div data-reveal style="background:#fff;border-radius:26px;overflow:hidden;border:1px solid rgba(23,23,31,.05);box-shadow:0 22px 50px -34px rgba(0,0,0,.5)">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px 12px">
+        <span style="font-family:'Oswald',sans-serif;font-size:17px;font-weight:700">{{ cat.full }}</span>
+        <span style="font-size:11px;font-weight:700;letter-spacing:.5px;color:#9A9AA4">TOP 10 · {{ t.perGame }}</span>
+      </div>
+      <div style="padding:0 0 8px">
+        <sc-for list="{{ board }}" as="r" hint-placeholder-count="10">
+          <a href="{{ r.href }}" style="display:grid;grid-template-columns:30px 1fr 78px;gap:11px;align-items:center;padding:9px 22px;cursor:pointer" style-hover="background:#FFF7F1">
+            <span style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:{{ r.rankColor }}">{{ r.rank }}</span>
+            <div style="min-width:0">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                <span style="width:7px;height:7px;border-radius:50%;background:{{ r.teamColor }};flex:none"></span>
+                <span style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span>
+                <span style="font-size:10px;font-weight:700;color:#9A9AA4;flex:none">{{ r.sub }}</span>
+              </div>
+              <span style="display:block;height:6px;border-radius:999px;background:rgba(23,23,31,.06);overflow:hidden"><span style="display:block;height:100%;border-radius:999px;width:{{ r.bar }};background:{{ cat.color }};transition:width .9s cubic-bezier(.2,.7,.2,1)"></span></span>
+            </div>
+            <span style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;text-align:right;color:#17171F">{{ r.value }}</span>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEAGUE SNAPSHOT -->
+<section style="padding:10px 26px 20px">
+  <div style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;color:#9A9AA4;text-transform:uppercase;margin-bottom:12px">{{ t.snapshot }} · {{ cat.full }}</div>
+  <div class="snap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+    <sc-for list="{{ snapshot }}" as="s" hint-placeholder-count="3">
+      <div data-reveal style="position:relative;background:#fff;border-radius:20px;padding:22px;border:1px solid rgba(23,23,31,.05);box-shadow:0 18px 40px -30px rgba(0,0,0,.5);overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:{{ s.color }}"></div>
+        <div style="font-size:12px;color:#9A9AA4;font-weight:700;letter-spacing:.5px;text-transform:uppercase">{{ s.label }}</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:42px;font-weight:700;line-height:1;color:{{ s.color }};margin-top:8px">{{ s.value }}</div>
+        <div style="font-size:12px;color:#70707C;font-weight:600;margin-top:8px">{{ s.sub }}</div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="margin-top:6px;background:#17171F;color:#fff;border-radius:30px 30px 0 0;padding:40px 36px 28px">
+  <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center">
+    <div style="display:flex;align-items:center;gap:11px">
+      <span style="position:relative;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8244,#E0490F);display:inline-block">
+        <span style="position:absolute;left:50%;top:0;width:2px;height:100%;background:rgba(0,0,0,.4);transform:translateX(-50%)"></span>
+        <span style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(0,0,0,.4);transform:translateY(-50%)"></span>
+      </span>
+      <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:19px">SAIN<span style="color:#F15F22">.</span>LEAGUE</span>
+    </div>
+    <div style="display:flex;gap:22px;flex-wrap:wrap">
+      <a href="Home.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navHome }}</a>
+      <a href="Standings.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navStandings }}</a>
+      <a href="Players.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navPlayers }}</a>
+      <a href="News.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navNews }}</a>
+    </div>
+    <span style="font-size:12px;color:#5B5B66;font-weight:500">© 2026 Sain Girls League</span>
+  </div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: 'mn', mode: 'players', cat: 'pts', data: null };
+
+  T = {
+    mn: { navHome:'Нүүр', navTeams:'Багууд', navStandings:'Байр', navSchedule:'Хуваарь', navStats:'Статистик', navPlayers:'Тоглогчид', navNews:'Мэдээ',
+      eyebrow:'2026 ОНЫ УЛИРАЛ', title:'СТАТИСТИК', lead:'Лигийн тэргүүлэгчид бүх ангиллаар. Тоглогч болон багуудын үзүүлэлтийг харьцуул.',
+      players:'Тоглогчид', teams:'Багууд', leagueLeader:'Лигийн тэргүүн', perGame:'тоглолт тутамд',
+      viewProfile:'Профайл харах', snapshot:'Лигийн зураглал', avg:'Дундаж', high:'Дээд', low:'Доод',
+      avgSub:'бүх тоглогчийн дундаж', highSub:'хамгийн өндөр үзүүлэлт', lowSub:'хамгийн бага үзүүлэлт',
+      avgSubT:'бүх багийн дундаж', highSubT:'хамгийн өндөр үзүүлэлт', lowSubT:'хамгийн бага үзүүлэлт' },
+    en: { navHome:'Home', navTeams:'Teams', navStandings:'Standings', navSchedule:'Schedule', navStats:'Stats', navPlayers:'Players', navNews:'News',
+      eyebrow:'2026 SEASON', title:'STATISTICS', lead:'League leaders in every category. Compare players and teams across the board.',
+      players:'Players', teams:'Teams', leagueLeader:'League leader', perGame:'per game',
+      viewProfile:'View profile', snapshot:'League snapshot', avg:'Average', high:'Highest', low:'Lowest',
+      avgSub:'across all players', highSub:'top single mark', lowSub:'lowest qualified',
+      avgSubT:'across all teams', highSubT:'top team mark', lowSubT:'lowest team mark' },
+  };
+
+  // category definitions: key, short, mn full, en full, pct?, color, glow
+  CATS = [
+    { key:'pts', short:'PTS', mn:'ОНОО', en:'POINTS', pct:false, color:'#F15F22', glow:'rgba(241,95,34,.16)' },
+    { key:'reb', short:'REB', mn:'САМБАР', en:'REBOUNDS', pct:false, color:'#20C4F4', glow:'rgba(32,196,244,.16)' },
+    { key:'ast', short:'AST', mn:'ДАМЖУУЛАЛТ', en:'ASSISTS', pct:false, color:'#0072BC', glow:'rgba(0,114,188,.18)' },
+    { key:'stl', short:'STL', mn:'ТАСЛАЛТ', en:'STEALS', pct:false, color:'#1F9E5A', glow:'rgba(31,158,90,.16)' },
+    { key:'blk', short:'BLK', mn:'БЛОК', en:'BLOCKS', pct:false, color:'#8B5CF6', glow:'rgba(139,92,246,.16)' },
+    { key:'tpm', short:'3PM', mn:'3 ОНОО', en:'3-POINTERS', pct:false, color:'#E0A800', glow:'rgba(224,168,0,.16)' },
+    { key:'fgp', short:'FG%', mn:'ШИДЭЛТ', en:'FIELD GOAL %', pct:true, color:'#E85AA0', glow:'rgba(232,90,160,.16)' },
+    { key:'tpp', short:'3P%', mn:'3 ОНОО %', en:'3-POINT %', pct:true, color:'#FF7043', glow:'rgba(255,112,67,.16)' },
+    { key:'ftp', short:'FT%', mn:'ТОРГУУЛЬ', en:'FREE THROW %', pct:true, color:'#00897B', glow:'rgba(0,137,123,.16)' },
+  ];
+  TEAM_CAT_KEYS = ['pts','reb','ast','stl','blk','tpm','fgp'];
+
+  componentDidMount() {
+    try { const v = localStorage.getItem('sgl_lang'); if (v) this.setState({ lang: v }); } catch(e){}
+    import('./league-data.js').then(m => { this.setState({ data: m }); this._reveal(); }).catch(e => console.error(e));
+  }
+  componentDidUpdate(){ const sig=this.state.mode+'|'+this.state.cat; if (this._sig!==sig){ this._sig=sig; this._reveal(); } }
+  _reveal(){ if(!('IntersectionObserver' in window))return; if(this._io)this._io.disconnect(); this._io=new IntersectionObserver((es)=>es.forEach(en=>{if(en.isIntersecting){en.target.style.animation='revealUp .6s cubic-bezier(.2,.7,.2,1) both';this._io.unobserve(en.target);}}),{threshold:0.04}); setTimeout(()=>document.querySelectorAll('[data-reveal]').forEach((el,i)=>{el.style.animationDelay=(i*0.07)+'s';this._io.observe(el);}),80); }
+  _setLang(l){ try{localStorage.setItem('sgl_lang',l);}catch(e){} this.setState({lang:l}); }
+  _langPill(a){ const b="font-size:12px;font-weight:700;padding:6px 13px;border-radius:999px;cursor:pointer;border:none;transition:all .2s;"; return a?b+"background:#F15F22;color:#fff;":b+"background:transparent;color:#9A9AA4;"; }
+  _modePill(a){ const b="font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;letter-spacing:.5px;padding:9px 22px;border-radius:999px;cursor:pointer;border:none;transition:all .2s;"; return a?b+"background:#F15F22;color:#fff;":b+"background:transparent;color:#9A9AA4;"; }
+
+  _fmt(cat, v){ return cat.pct ? v.toFixed(1) + '%' : v.toFixed(1); }
+
+  renderVals() {
+    const lang=this.state.lang, t=this.T[lang], d=this.state.data, mode=this.state.mode;
+    const base = {
+      t, lang, langMnStyle:this._langPill(lang==='mn'), langEnStyle:this._langPill(lang==='en'),
+      setMn:()=>this._setLang('mn'), setEn:()=>this._setLang('en'),
+      modePlayers:()=>this.setState({mode:'players'}), modeTeams:()=>this.setState({mode:'teams'}),
+      mPlayers:this._modePill(mode==='players'), mTeams:this._modePill(mode==='teams'),
+    };
+    if (!d) return { ...base, cats:undefined, board:undefined, leader:{name:'',value:'',href:'#',teamColor:'#F15F22',sub:'',tag:''}, cat:{color:'#F15F22',glow:'rgba(241,95,34,.16)',label:'',full:''}, snapshot:undefined };
+
+    const TEAMS = d.TEAMS;
+    // available cats depend on mode
+    const catList = mode==='teams' ? this.CATS.filter(c=>this.TEAM_CAT_KEYS.includes(c.key)) : this.CATS;
+    let catKey = this.state.cat;
+    if (!catList.find(c=>c.key===catKey)) catKey = 'pts';
+    const catDef = catList.find(c=>c.key===catKey);
+
+    const cats = catList.map(c => ({
+      short: c.short, label: lang==='mn'?c.mn:c.en,
+      onClick: () => this.setState({ cat: c.key }),
+      style: "flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:78px;padding:11px 14px;border-radius:15px;cursor:pointer;border:1.5px solid;transition:all .2s;"
+        + (c.key===catKey
+          ? "background:"+c.color+";color:#fff;border-color:"+c.color+";box-shadow:0 12px 24px -14px "+c.color+";"
+          : "background:#fff;color:#5B5B66;border-color:rgba(23,23,31,.08);"),
+    }));
+
+    // build entries
+    let entries;
+    if (mode==='players') {
+      entries = d.PLAYERS.map(p => {
+        const ext = d.statLine(p);
+        const all = { pts:p.pts, reb:p.reb, ast:p.ast, stl:p.stl, blk:ext.blk, tpm:ext.tpm, fgp:ext.fgp, tpp:ext.tpp, ftp:ext.ftp };
+        return {
+          id: p.team, name: lang==='mn'?p.name:p.en, sub: p.team + ' · ' + p.pos,
+          teamColor: (TEAMS[p.team]||{}).color || '#999',
+          value: all[catKey], href: 'PlayerDetail.dc.html#' + p.team + '-0',
+        };
+      });
+    } else {
+      entries = Object.keys(TEAMS).map(k => {
+        const s = d.teamStatLine(k);
+        return {
+          id: k, name: TEAMS[k].name, sub: k,
+          teamColor: TEAMS[k].color, value: s[catKey], href: 'TeamDetail.dc.html#' + k,
+        };
+      });
+    }
+    entries.sort((a,b)=>b.value-a.value);
+    const maxV = entries[0].value || 1;
+
+    const board = entries.slice(0,10).map((e,i) => ({
+      rank: i+1, rankColor: i===0 ? catDef.color : (i<3 ? '#0072BC' : '#B0B0B8'),
+      name: e.name, sub: e.sub, teamColor: e.teamColor,
+      value: this._fmt(catDef, e.value), bar: Math.round(e.value/maxV*100)+'%', href: e.href,
+    }));
+
+    const top = entries[0];
+    const leader = {
+      name: top.name, sub: top.sub, teamColor: top.teamColor, href: top.href,
+      value: this._fmt(catDef, top.value),
+      tag: mode==='players' ? (lang==='mn'?'ТОГЛОГЧ':'PLAYER') : (lang==='mn'?'БАГ':'TEAM'),
+    };
+
+    const vals = entries.map(e=>e.value);
+    const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+    const high = Math.max(...vals), low = Math.min(...vals);
+    const snapshot = [
+      { label: t.avg, value: this._fmt(catDef, avg), sub: mode==='players'?t.avgSub:t.avgSubT, color:'#F15F22' },
+      { label: t.high, value: this._fmt(catDef, high), sub: mode==='players'?t.highSub:t.highSubT, color:'#20C4F4' },
+      { label: t.low, value: this._fmt(catDef, low), sub: mode==='players'?t.lowSub:t.lowSubT, color:'#0072BC' },
+    ];
+
+    const cat = { color: catDef.color, glow: catDef.glow, label: catDef.short, full: lang==='mn'?catDef.mn:catDef.en };
+
+    return { ...base, cats, board, leader, cat, snapshot };
+  }
+}
+</script>
+</body>
+</html>

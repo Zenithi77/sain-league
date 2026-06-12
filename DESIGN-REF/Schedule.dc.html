@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#FFF7F1;color:#17171F;font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{text-decoration:none;color:inherit}
+  button{font-family:inherit}
+  ::selection{background:#F15F22;color:#fff}
+  .noscroll::-webkit-scrollbar{display:none}
+  .noscroll{-ms-overflow-style:none;scrollbar-width:none}
+  @keyframes revealUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(241,95,34,.55)}70%{box-shadow:0 0 0 9px rgba(241,95,34,0)}100%{box-shadow:0 0 0 0 rgba(241,95,34,0)}}
+  @keyframes pulseLive{0%{box-shadow:0 0 0 0 rgba(229,57,70,.5)}70%{box-shadow:0 0 0 8px rgba(229,57,70,0)}100%{box-shadow:0 0 0 0 rgba(229,57,70,0)}}
+  @media(max-width:980px){.nav-links{display:none!important}}
+  @media(max-width:680px){.h1big{font-size:42px!important}.games-grid{grid-template-columns:1fr!important}}
+</style>
+</helmet>
+
+<div style="max-width:1280px;margin:0 auto">
+
+<!-- NAV -->
+<header style="position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(255,247,241,.82);border-bottom:1px solid rgba(23,23,31,.07)">
+  <nav style="display:flex;align-items:center;justify-content:space-between;padding:16px 26px;max-width:1280px;margin:0 auto">
+    <a href="Home.dc.html" style="display:flex;align-items:center;gap:11px">
+      <span style="position:relative;width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8244,#E0490F);display:inline-block;box-shadow:0 6px 16px -4px rgba(241,95,34,.6)">
+        <span style="position:absolute;left:50%;top:0;width:2px;height:100%;background:rgba(0,0,0,.4);transform:translateX(-50%)"></span>
+        <span style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(0,0,0,.4);transform:translateY(-50%)"></span>
+      </span>
+      <span style="display:flex;flex-direction:column;line-height:1">
+        <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;letter-spacing:.5px">SAIN<span style="color:#F15F22">.</span>LEAGUE</span>
+        <span style="font-size:10px;letter-spacing:3px;color:#9A9AA4;font-weight:600;margin-top:2px">GIRLS BASKETBALL</span>
+      </span>
+    </a>
+    <div class="nav-links" style="display:flex;align-items:center;gap:2px">
+      <a href="Home.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navHome }}</a>
+      <a href="Teams.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navTeams }}</a>
+      <a href="Standings.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navStandings }}</a>
+      <a href="Schedule.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#F15F22;background:rgba(241,95,34,.1)">{{ t.navSchedule }}</a>
+      <a href="Stats.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navStats }}</a>
+      <a href="Players.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navPlayers }}</a>
+      <a href="News.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;padding:8px 11px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navNews }}</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;background:#fff;border:1px solid rgba(23,23,31,.1);border-radius:999px;padding:3px;box-shadow:0 4px 12px -8px rgba(0,0,0,.3)">
+        <button onClick="{{ setMn }}" style="{{ langMnStyle }}">МН</button>
+        <button onClick="{{ setEn }}" style="{{ langEnStyle }}">EN</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- TITLE -->
+<section style="position:relative;padding:40px 26px 6px;overflow:hidden">
+  <div style="position:absolute;top:-70px;right:-30px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(0,114,188,.13),transparent 68%);z-index:0"></div>
+  <div style="position:relative;z-index:2">
+    <div style="display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid rgba(241,95,34,.25);padding:7px 15px;border-radius:999px;box-shadow:0 8px 22px -14px rgba(241,95,34,.6)">
+      <span style="width:9px;height:9px;border-radius:50%;background:#F15F22;animation:pulseDot 1.8s infinite"></span>
+      <span style="font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#F15F22">{{ t.eyebrow }}</span>
+    </div>
+    <h1 class="h1big" style="font-family:'Oswald',sans-serif;font-weight:700;font-size:56px;line-height:1.0;margin:14px 0 0;letter-spacing:.5px">{{ t.title }}</h1>
+  </div>
+</section>
+
+<!-- ===== GAME TICKER ===== -->
+<section style="padding:18px 26px 6px">
+  <div style="display:flex;align-items:center;gap:10px">
+    <button onClick="{{ tickerLeft }}" style="flex:none;width:40px;height:40px;border-radius:13px;background:#fff;border:1px solid rgba(23,23,31,.1);box-shadow:0 6px 16px -10px rgba(0,0,0,.4);cursor:pointer;font-size:16px;color:#5B5B66;display:flex;align-items:center;justify-content:center" style-hover="color:#F15F22;border-color:#F15F22">‹</button>
+    <div class="noscroll" data-ticker-track style="flex:1;display:flex;gap:13px;overflow-x:auto;scroll-behavior:smooth;padding:4px 2px">
+      <sc-for list="{{ ticker }}" as="g" hint-placeholder-count="6">
+        <div style="flex:none;width:264px;background:#fff;border-radius:18px;border:1px solid rgba(23,23,31,.06);box-shadow:0 14px 34px -26px rgba(0,0,0,.5);overflow:hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid rgba(23,23,31,.05)">
+            <span style="font-size:11px;font-weight:700;color:#9A9AA4;letter-spacing:.3px">{{ g.dateLabel }}</span>
+            <span style="{{ g.badgeStyle }}">{{ g.badgeText }}</span>
+          </div>
+          <div style="padding:15px 16px 13px">
+            <div style="display:flex;align-items:center;justify-content:center;gap:11px">
+              <span style="width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ g.homeColor }};font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;color:#fff">{{ g.homeInitial }}</span>
+              <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;color:{{ g.homeValColor }};min-width:30px;text-align:center">{{ g.homeVal }}</span>
+              <span style="{{ g.centerStyle }}">{{ g.centerText }}</span>
+              <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;color:{{ g.awayValColor }};min-width:30px;text-align:center">{{ g.awayVal }}</span>
+              <span style="width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ g.awayColor }};font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;color:#fff">{{ g.awayInitial }}</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:11px;font-size:11px;font-weight:700;color:#9A9AA4">
+              <span style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1"><span style="color:#5B5B66">{{ g.homeShort }}</span><span style="font-size:10px;color:#B0B0B8">{{ g.homeRecord }}</span></span>
+              <span style="width:1px;height:22px;background:rgba(23,23,31,.08)"></span>
+              <span style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1"><span style="color:#5B5B66">{{ g.awayShort }}</span><span style="font-size:10px;color:#B0B0B8">{{ g.awayRecord }}</span></span>
+            </div>
+          </div>
+          <div style="display:flex;gap:7px;padding:0 16px 15px">
+            <sc-for list="{{ g.actions }}" as="a" hint-placeholder-count="1">
+              <a href="{{ a.href }}" style="{{ a.style }}">{{ a.label }}</a>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <button onClick="{{ tickerRight }}" style="flex:none;width:40px;height:40px;border-radius:13px;background:#fff;border:1px solid rgba(23,23,31,.1);box-shadow:0 6px 16px -10px rgba(0,0,0,.4);cursor:pointer;font-size:16px;color:#5B5B66;display:flex;align-items:center;justify-content:center" style-hover="color:#F15F22;border-color:#F15F22">›</button>
+  </div>
+</section>
+
+<!-- ===== DATE BAR ===== -->
+<section style="padding:14px 26px 6px">
+  <div style="display:flex;align-items:center;gap:10px">
+    <button onClick="{{ dateLeft }}" style="flex:none;width:38px;height:54px;border-radius:13px;background:#fff;border:1px solid rgba(23,23,31,.1);box-shadow:0 6px 16px -10px rgba(0,0,0,.4);cursor:pointer;font-size:16px;color:#5B5B66;display:flex;align-items:center;justify-content:center" style-hover="color:#F15F22;border-color:#F15F22">‹</button>
+    <div class="noscroll" data-date-track style="flex:1;display:flex;gap:9px;overflow-x:auto;scroll-behavior:smooth;padding:4px 2px">
+      <sc-for list="{{ dateItems }}" as="d" hint-placeholder-count="15">
+        <button onClick="{{ d.onClick }}" style="{{ d.btnStyle }}">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.5px;opacity:.75">{{ d.day }}</span>
+          <span style="font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;line-height:1;margin-top:3px;white-space:nowrap">{{ d.label }}</span>
+          <sc-if value="{{ d.hasGames }}" hint-placeholder-val="{{ false }}">
+            <span style="{{ d.countStyle }}">{{ d.count }}</span>
+          </sc-if>
+          <sc-if value="{{ d.isToday }}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:{{ d.dotColor }}"></span>
+          </sc-if>
+        </button>
+      </sc-for>
+    </div>
+    <button onClick="{{ dateRight }}" style="flex:none;width:38px;height:54px;border-radius:13px;background:#fff;border:1px solid rgba(23,23,31,.1);box-shadow:0 6px 16px -10px rgba(0,0,0,.4);cursor:pointer;font-size:16px;color:#5B5B66;display:flex;align-items:center;justify-content:center" style-hover="color:#F15F22;border-color:#F15F22">›</button>
+  </div>
+</section>
+
+<!-- ===== SELECTED DATE GAMES ===== -->
+<section style="padding:22px 26px 36px">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px">
+    <h2 style="font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;display:flex;align-items:center;gap:11px">
+      <span style="width:9px;height:24px;border-radius:3px;background:#F15F22;display:inline-block"></span>{{ headerLabel }}
+    </h2>
+    <span style="font-size:13px;font-weight:700;color:#9A9AA4;background:#fff;border:1px solid rgba(23,23,31,.07);padding:5px 13px;border-radius:999px">{{ gamesCount }}</span>
+  </div>
+
+  <sc-if value="{{ hasGames }}" hint-placeholder-val="{{ true }}">
+    <div class="games-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <sc-for list="{{ games }}" as="g" hint-placeholder-count="3">
+        <a href="{{ g.href }}" data-reveal style="display:block;background:#fff;border-radius:20px;overflow:hidden;border:1px solid rgba(23,23,31,.05);box-shadow:0 18px 42px -32px rgba(0,0,0,.5)" style-hover="transform:translateY(-4px)">
+          <div style="display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:1px solid rgba(23,23,31,.05)">
+            <span style="width:14px;height:14px;border:2px solid #C0C0C8;border-radius:3px;flex:none"></span>
+            <span style="font-size:12px;font-weight:700;color:#9A9AA4">{{ g.dateLabel }}</span>
+            <span style="{{ g.statusStyle }};margin-left:auto">{{ g.statusText }}</span>
+          </div>
+          <div style="padding:8px 18px 16px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0">
+              <div style="display:flex;align-items:center;gap:11px;min-width:0">
+                <span style="width:38px;height:38px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ g.homeColor }};font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:#fff">{{ g.homeInitial }}</span>
+                <span style="font-family:'Oswald',sans-serif;font-weight:600;font-size:17px;color:#17171F">{{ g.homeShort }}</span>
+              </div>
+              <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:24px;color:{{ g.homeScoreColor }}">{{ g.homeScore }}</span>
+            </div>
+            <div style="height:1px;background:rgba(23,23,31,.05)"></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0">
+              <div style="display:flex;align-items:center;gap:11px;min-width:0">
+                <span style="width:38px;height:38px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ g.awayColor }};font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:#fff">{{ g.awayInitial }}</span>
+                <span style="font-family:'Oswald',sans-serif;font-weight:600;font-size:17px;color:#17171F">{{ g.awayShort }}</span>
+              </div>
+              <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:24px;color:{{ g.awayScoreColor }}">{{ g.awayScore }}</span>
+            </div>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ noGames }}" hint-placeholder-val="{{ false }}">
+    <div style="text-align:center;padding:54px 20px;background:#fff;border-radius:22px;border:1px solid rgba(23,23,31,.05);box-shadow:0 18px 40px -32px rgba(0,0,0,.5)">
+      <div style="width:64px;height:64px;border-radius:50%;background:rgba(241,95,34,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+        <span style="width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8E54,#E0490F);display:inline-block;position:relative">
+          <span style="position:absolute;left:50%;top:0;width:1.5px;height:100%;background:rgba(80,20,0,.5);transform:translateX(-50%)"></span>
+          <span style="position:absolute;top:50%;left:0;width:100%;height:1.5px;background:rgba(80,20,0,.5);transform:translateY(-50%)"></span>
+        </span>
+      </div>
+      <div style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#17171F">{{ t.noGames }}</div>
+      <p style="font-size:14px;font-weight:600;color:#9A9AA4;margin-top:8px">{{ t.noGamesSub }}</p>
+    </div>
+  </sc-if>
+</section>
+
+<!-- FOOTER -->
+<footer style="margin-top:6px;background:#17171F;color:#fff;border-radius:30px 30px 0 0;padding:40px 36px 28px">
+  <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center">
+    <div style="display:flex;align-items:center;gap:11px">
+      <span style="position:relative;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8244,#E0490F);display:inline-block">
+        <span style="position:absolute;left:50%;top:0;width:2px;height:100%;background:rgba(0,0,0,.4);transform:translateX(-50%)"></span>
+        <span style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(0,0,0,.4);transform:translateY(-50%)"></span>
+      </span>
+      <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:19px">SAIN<span style="color:#F15F22">.</span>LEAGUE</span>
+    </div>
+    <div style="display:flex;gap:22px;flex-wrap:wrap">
+      <a href="Home.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navHome }}</a>
+      <a href="Standings.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navStandings }}</a>
+      <a href="Stats.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navStats }}</a>
+      <a href="News.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navNews }}</a>
+    </div>
+    <span style="font-size:12px;color:#5B5B66;font-weight:500">© 2026 Sain Girls League</span>
+  </div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: 'mn', selectedDate: '2026-03-12', data: null };
+  TODAY = '2026-03-12';
+
+  T = {
+    mn: { navHome:'Нүүр', navTeams:'Багууд', navStandings:'Байр', navSchedule:'Хуваарь', navStats:'Статистик', navPlayers:'Тоглогчид', navNews:'Мэдээ',
+      eyebrow:'2026 ОНЫ УЛИРАЛ', title:'ТОГЛОЛТЫН ХУВААРЬ',
+      todayGames:'ӨНӨӨДРИЙН ТОГЛОЛТУУД', gamesWord:'тоглолт', gamesSuffix:'Тоглолтууд',
+      scheduled:'Товлогдсон', live:'LIVE', finished:'Дууссан', vs:'VS', won:'Ялсан',
+      watch:'Шууд үзэх', viewGame:'Тоглолт харах', details:'Дэлгэрэнгүй',
+      noGames:'Тоглолт байхгүй', noGamesSub:'Энэ өдөр тоглолт товлогдоогүй байна',
+      weekdays:['Ням','Дав','Мяг','Лха','Пүр','Баа','Бям'],
+      months:['1 сар','2 сар','3 сар','4 сар','5 сар','6 сар','7 сар','8 сар','9 сар','10 сар','11 сар','12 сар'] },
+    en: { navHome:'Home', navTeams:'Teams', navStandings:'Standings', navSchedule:'Schedule', navStats:'Stats', navPlayers:'Players', navNews:'News',
+      eyebrow:'2026 SEASON', title:'SCHEDULE',
+      todayGames:"TODAY'S GAMES", gamesWord:'games', gamesSuffix:'Games',
+      scheduled:'Scheduled', live:'LIVE', finished:'Final', vs:'VS', won:'Won',
+      watch:'Watch live', viewGame:'Watch game', details:'Details',
+      noGames:'No games', noGamesSub:'No games are scheduled for this day',
+      weekdays:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+      months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] },
+  };
+
+  componentDidMount() {
+    try { const v = localStorage.getItem('sgl_lang'); if (v) this.setState({ lang: v }); } catch(e){}
+    import('./league-data.js').then(m => { this.setState({ data: m }); this._reveal(); setTimeout(()=>this._scrollToDate(),120); }).catch(e => console.error(e));
+  }
+  componentDidUpdate(){ const sig=this.state.selectedDate+'|'+this.state.lang; if (this._sig!==sig){ this._sig=sig; this._reveal(); this._scrollToDate(); } }
+  _reveal(){ if(!('IntersectionObserver' in window))return; if(this._io)this._io.disconnect(); this._io=new IntersectionObserver((es)=>es.forEach(en=>{if(en.isIntersecting){en.target.style.animation='revealUp .6s cubic-bezier(.2,.7,.2,1) both';this._io.unobserve(en.target);}}),{threshold:0.05}); setTimeout(()=>document.querySelectorAll('[data-reveal]').forEach((el,i)=>{el.style.animationDelay=(i*0.05)+'s';this._io.observe(el);}),60); }
+  _scrollToDate(){ const track=document.querySelector('[data-date-track]'); if(!track)return; const center=this._parse(this.TODAY); const sel=this._parse(this.state.selectedDate); const diff=Math.round((sel-center)/86400000); const idx=7+diff; const el=track.children[idx]; if(!el)return; const pos=el.offsetLeft - track.offsetWidth/2 + el.offsetWidth/2; track.scrollTo({left:Math.max(0,pos),behavior:'smooth'}); }
+  _scroll(sel, amt){ const el=document.querySelector(sel); if(el) el.scrollBy({left:amt,behavior:'smooth'}); }
+  _setLang(l){ try{localStorage.setItem('sgl_lang',l);}catch(e){} this.setState({lang:l}); }
+  _langPill(a){ const b="font-size:12px;font-weight:700;padding:6px 13px;border-radius:999px;cursor:pointer;border:none;transition:all .2s;"; return a?b+"background:#F15F22;color:#fff;":b+"background:transparent;color:#9A9AA4;"; }
+
+  _parse(s){ const [y,m,d]=s.split('-').map(Number); return new Date(y, m-1, d); }
+  _fmtKey(dt){ return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
+
+  _gameHref(g){ const key=g.home+'-'+g.away; const has=this.state.data && this.state.data.GAME_DETAIL[key]; return 'GameDetail.dc.html#'+(has?key:(g.status==='final'?'PHX-WLV':'SPK-HWK')); }
+
+  renderVals() {
+    const lang=this.state.lang, t=this.T[lang], d=this.state.data;
+    const base = { t, lang, langMnStyle:this._langPill(lang==='mn'), langEnStyle:this._langPill(lang==='en'), setMn:()=>this._setLang('mn'), setEn:()=>this._setLang('en'),
+      tickerLeft:()=>this._scroll('[data-ticker-track]',-300), tickerRight:()=>this._scroll('[data-ticker-track]',300),
+      dateLeft:()=>this._scroll('[data-date-track]',-220), dateRight:()=>this._scroll('[data-date-track]',220) };
+    if (!d) return { ...base, ticker:undefined, dateItems:undefined, games:undefined, headerLabel:'', gamesCount:'', hasGames:false, noGames:false };
+
+    const TEAMS=d.TEAMS;
+    const rec=(k)=>TEAMS[k].w+'-'+TEAMS[k].l;
+    const tickerDate=(key)=>{ const dt=this._parse(key); return t.weekdays[dt.getDay()]+', '+t.months[dt.getMonth()]+' '+dt.getDate(); };
+
+    // flatten all games with their date
+    const all=[];
+    [...d.SCHEDULE].sort((a,b)=>a.date<b.date?-1:1).forEach(day=>{
+      day.games.forEach(g=>all.push({ ...g, date:day.date }));
+    });
+
+    // count by date
+    const countByDate={};
+    all.forEach(g=>{ countByDate[g.date]=(countByDate[g.date]||0)+1; });
+
+    // ---- TICKER (all games) ----
+    const ticker = all.map(g=>{
+      const ht=TEAMS[g.home], at=TEAMS[g.away];
+      const isLive=g.status==='live', isFinal=g.status==='final';
+      const homeWon=isFinal && g.hs>g.as, awayWon=isFinal && g.as>g.hs;
+      let centerText, centerStyle, homeVal, awayVal, homeValColor, awayValColor;
+      const scoreColor=(won)=>won?'#17171F':'#B0B0B8';
+      if (isFinal || isLive) {
+        homeVal=String(g.hs); awayVal=String(g.as);
+        homeValColor=isLive?'#17171F':scoreColor(homeWon); awayValColor=isLive?'#17171F':scoreColor(awayWon);
+        centerText=isLive?t.live:'–';
+        centerStyle=isLive
+          ? "font-size:9px;font-weight:800;letter-spacing:.5px;color:#fff;background:#E53946;padding:3px 7px;border-radius:999px;animation:pulseLive 1.4s infinite;"
+          : "font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;color:#C7C7CE;";
+      } else {
+        homeVal=g.home; awayVal=g.away; homeValColor='#5B5B66'; awayValColor='#5B5B66';
+        centerText=t.vs; centerStyle="font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;color:#C7C7CE;";
+      }
+      const badge=(()=>{ if(isLive) return {text:t.live, style:"display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:800;letter-spacing:.5px;color:#E53946;background:rgba(229,57,70,.1);padding:3px 9px;border-radius:999px;"};
+        if(isFinal) return {text:t.finished, style:"font-size:9px;font-weight:800;letter-spacing:.5px;color:#0072BC;background:rgba(0,114,188,.1);padding:3px 9px;border-radius:999px;text-transform:uppercase;"};
+        return {text:t.scheduled, style:"font-size:9px;font-weight:700;letter-spacing:.3px;color:#9A9AA4;background:rgba(23,23,31,.05);padding:3px 9px;border-radius:999px;"}; })();
+      const href=this._gameHref(g);
+      const btn=(label,primary)=>({ label, href, style:"flex:1;text-align:center;font-size:11px;font-weight:700;padding:8px 6px;border-radius:10px;transition:all .2s;"+(primary?"background:#F15F22;color:#fff;":"background:rgba(23,23,31,.05);color:#5B5B66;") });
+      const actions = isFinal ? [btn(t.viewGame,true), btn(t.details,false)] : (isLive ? [btn(t.watch,true)] : [btn(t.details,false)]);
+      return {
+        dateLabel:tickerDate(g.date),
+        homeColor:ht.color, awayColor:at.color, homeInitial:g.home.charAt(0), awayInitial:g.away.charAt(0),
+        homeShort:g.home, awayShort:g.away, homeRecord:rec(g.home), awayRecord:rec(g.away),
+        homeVal, awayVal, homeValColor, awayValColor, centerText, centerStyle,
+        badgeText:badge.text, badgeStyle:badge.style, actions,
+      };
+    });
+
+    // ---- DATE BAR (±7 around TODAY) ----
+    const center=this._parse(this.TODAY);
+    const dateItems=[];
+    for (let i=-7;i<=7;i++){
+      const dt=new Date(center); dt.setDate(center.getDate()+i);
+      const key=this._fmtKey(dt);
+      const sel=key===this.state.selectedDate, today=key===this.TODAY;
+      const cnt=countByDate[key]||0;
+      const baseB="position:relative;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:74px;height:70px;border-radius:16px;cursor:pointer;border:1.5px solid;transition:all .2s;padding:6px 4px;";
+      const style=sel
+        ? baseB+"background:#F15F22;color:#fff;border-color:#F15F22;box-shadow:0 12px 24px -14px rgba(241,95,34,.8);"
+        : (today ? baseB+"background:#fff;color:#17171F;border-color:#F15F22;" : baseB+"background:#fff;color:#5B5B66;border-color:rgba(23,23,31,.08);");
+      dateItems.push({
+        key, day:t.weekdays[dt.getDay()], label:t.months[dt.getMonth()].replace(' сар','')+' '+dt.getDate(),
+        isToday:today, hasGames:cnt>0, count:String(cnt), dotColor:sel?'#fff':'#F15F22',
+        btnStyle:style,
+        countStyle:"margin-top:4px;font-size:9px;font-weight:800;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;border-radius:999px;"+(sel?"background:rgba(255,255,255,.25);color:#fff;":"background:rgba(241,95,34,.12);color:#F15F22;"),
+        onClick:()=>this.setState({selectedDate:key}),
+      });
+    }
+
+    // ---- SELECTED DATE GAMES ----
+    const dayGames=all.filter(g=>g.date===this.state.selectedDate);
+    const games=dayGames.map(g=>{
+      const isLive=g.status==='live', isFinal=g.status==='final', sched=g.status==='scheduled';
+      const homeWon=isFinal && g.hs>g.as, awayWon=isFinal && g.as>g.hs;
+      const status=(()=>{ if(isLive) return {text:t.live, style:"display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:.5px;color:#E53946;background:rgba(229,57,70,.1);padding:4px 10px;border-radius:999px;"};
+        if(isFinal) return {text:t.finished, style:"font-size:10px;font-weight:800;letter-spacing:.5px;color:#0072BC;background:rgba(0,114,188,.1);padding:4px 10px;border-radius:999px;text-transform:uppercase;"};
+        return {text:t.scheduled, style:"font-size:10px;font-weight:700;letter-spacing:.3px;color:#9A9AA4;background:rgba(23,23,31,.05);padding:4px 10px;border-radius:999px;"}; })();
+      return {
+        href:this._gameHref(g), dateLabel:tickerDate(g.date),
+        statusText:status.text, statusStyle:status.style,
+        homeColor:TEAMS[g.home].color, awayColor:TEAMS[g.away].color,
+        homeInitial:g.home.charAt(0), awayInitial:g.away.charAt(0), homeShort:g.home, awayShort:g.away,
+        homeScore:sched?'–':String(g.hs), awayScore:sched?'–':String(g.as),
+        homeScoreColor:sched?'#C7C7CE':(homeWon?'#1F9E5A':'#17171F'),
+        awayScoreColor:sched?'#C7C7CE':(awayWon?'#1F9E5A':'#17171F'),
+      };
+    });
+
+    // header label
+    const selDt=this._parse(this.state.selectedDate);
+    const headerLabel = this.state.selectedDate===this.TODAY
+      ? t.todayGames
+      : (t.months[selDt.getMonth()].replace(' сар','')+' '+selDt.getDate()+(lang==='mn'?' — '+t.gamesSuffix:' — '+t.gamesSuffix));
+
+    return { ...base, ticker, dateItems, games,
+      headerLabel, gamesCount: games.length+' '+t.gamesWord,
+      hasGames: games.length>0, noGames: games.length===0 };
+  }
+}
+</script>
+</body>
+</html>

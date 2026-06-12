@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#FFF7F1;color:#17171F;font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{text-decoration:none;color:inherit}
+  ::selection{background:#F15F22;color:#fff}
+  @keyframes revealUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulseLive{0%{box-shadow:0 0 0 0 rgba(229,57,70,.5)}70%{box-shadow:0 0 0 8px rgba(229,57,70,0)}100%{box-shadow:0 0 0 0 rgba(229,57,70,0)}}
+  @media(max-width:980px){.nav-links{display:none!important}.td-grid{grid-template-columns:1fr!important}}
+  @media(max-width:680px){.h1big{font-size:40px!important}.trow{grid-template-columns:34px 1fr 54px 54px!important}.tcol-hide{display:none!important}}
+</style>
+</helmet>
+
+<div style="max-width:1280px;margin:0 auto">
+
+<!-- NAV -->
+<header style="position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(255,247,241,.82);border-bottom:1px solid rgba(23,23,31,.07)">
+  <nav style="display:flex;align-items:center;justify-content:space-between;padding:16px 26px;max-width:1280px;margin:0 auto">
+    <a href="Home.dc.html" style="display:flex;align-items:center;gap:11px">
+      <span style="position:relative;width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8244,#E0490F);display:inline-block;box-shadow:0 6px 16px -4px rgba(241,95,34,.6)">
+        <span style="position:absolute;left:50%;top:0;width:2px;height:100%;background:rgba(0,0,0,.4);transform:translateX(-50%)"></span>
+        <span style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(0,0,0,.4);transform:translateY(-50%)"></span>
+      </span>
+      <span style="display:flex;flex-direction:column;line-height:1">
+        <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;letter-spacing:.5px">SAIN<span style="color:#F15F22">.</span>LEAGUE</span>
+        <span style="font-size:10px;letter-spacing:3px;color:#9A9AA4;font-weight:600;margin-top:2px">GIRLS BASKETBALL</span>
+      </span>
+    </a>
+    <div class="nav-links" style="display:flex;align-items:center;gap:2px">
+      <a href="Home.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navHome }}</a>
+      <a href="Teams.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#F15F22;background:rgba(241,95,34,.1)">{{ t.navTeams }}</a>
+      <a href="Standings.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navStandings }}</a>
+      <a href="Schedule.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navSchedule }}</a>
+      <a href="Players.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navPlayers }}</a>
+      <a href="News.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navNews }}</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;background:#fff;border:1px solid rgba(23,23,31,.1);border-radius:999px;padding:3px;box-shadow:0 4px 12px -8px rgba(0,0,0,.3)">
+        <button onClick="{{ setMn }}" style="{{ langMnStyle }}">МН</button>
+        <button onClick="{{ setEn }}" style="{{ langEnStyle }}">EN</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- BREADCRUMB -->
+<div style="padding:16px 26px 0;font-size:12px;font-weight:700;color:#9A9AA4;display:flex;align-items:center;gap:7px">
+  <a href="Teams.dc.html" style="color:#9A9AA4" style-hover="color:#F15F22">{{ t.navTeams }}</a><span>/</span><span style="color:#17171F">{{ team.name }}</span>
+</div>
+
+<!-- HERO -->
+<section style="padding:14px 26px 0">
+  <div data-reveal style="position:relative;border-radius:26px;overflow:hidden;background:{{ team.color }};color:#fff;padding:34px 34px 28px">
+    <div style="position:absolute;right:-40px;top:-50px;width:240px;height:240px;border:34px solid rgba(255,255,255,.1);border-radius:50%"></div>
+    <div style="position:absolute;left:30%;bottom:-90px;width:200px;height:200px;border:26px solid rgba(255,255,255,.08);border-radius:50%"></div>
+    <div style="position:relative;z-index:2;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+      <div style="width:92px;height:92px;border-radius:24px;background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:34px;font-weight:700;flex:none">{{ team.short }}</div>
+      <div style="flex:1;min-width:200px">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);padding:5px 13px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:1px;margin-bottom:10px">#{{ team.rank }} · {{ team.confLabel }}</div>
+        <h1 class="h1big" style="font-family:'Oswald',sans-serif;font-weight:700;font-size:52px;line-height:.96;letter-spacing:.5px">{{ team.name }}</h1>
+        <div style="font-size:14px;font-weight:600;opacity:.9;margin-top:6px">{{ team.school }}</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div style="background:rgba(255,255,255,.16);border-radius:16px;padding:14px 18px;text-align:center;min-width:78px">
+          <div style="font-family:'Oswald',sans-serif;font-size:30px;font-weight:700;line-height:1;white-space:nowrap">{{ team.w }}-{{ team.l }}</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;opacity:.85;margin-top:4px">{{ t.record }}</div>
+        </div>
+        <div style="background:rgba(255,255,255,.16);border-radius:16px;padding:14px 18px;text-align:center;min-width:78px">
+          <div style="font-family:'Oswald',sans-serif;font-size:30px;font-weight:700;line-height:1">{{ team.pct }}</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;opacity:.85;margin-top:4px">{{ t.winpct }}</div>
+        </div>
+        <div style="background:rgba(255,255,255,.16);border-radius:16px;padding:14px 18px;text-align:center;min-width:78px">
+          <div style="font-family:'Oswald',sans-serif;font-size:30px;font-weight:700;line-height:1">{{ team.ppg }}</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:1px;opacity:.85;margin-top:4px">{{ t.ppg }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TABS -->
+<section style="padding:20px 26px 4px">
+  <div style="display:flex;gap:6px;background:#fff;border:1px solid rgba(23,23,31,.07);border-radius:999px;padding:5px;width:fit-content;box-shadow:0 6px 16px -12px rgba(0,0,0,.4)">
+    <button onClick="{{ tabRoster }}" style="{{ tRoster }}">{{ t.roster }}</button>
+    <button onClick="{{ tabSchedule }}" style="{{ tSchedule }}">{{ t.schedule }}</button>
+    <button onClick="{{ tabStats }}" style="{{ tStats }}">{{ t.teamStats }}</button>
+  </div>
+</section>
+
+<!-- ROSTER TAB -->
+<sc-if value="{{ showRoster }}" hint-placeholder-val="{{ true }}">
+<section style="padding:14px 26px 30px">
+  <div style="background:#fff;border-radius:22px;overflow:hidden;border:1px solid rgba(23,23,31,.05);box-shadow:0 22px 50px -34px rgba(0,0,0,.5)">
+    <div class="trow" style="display:grid;grid-template-columns:54px 1fr 64px 54px 54px 54px;gap:8px;padding:13px 22px;background:#FBF2EC;font-family:'Oswald',sans-serif;font-size:11px;font-weight:600;letter-spacing:.8px;color:#9A9AA4;text-transform:uppercase;align-items:center">
+      <span>#</span><span>{{ t.player }}</span><span class="tcol-hide" style="text-align:center">{{ t.pos }}</span><span style="text-align:center">PTS</span><span style="text-align:center">REB</span><span style="text-align:center">AST</span>
+    </div>
+    <sc-for list="{{ roster }}" as="p" hint-placeholder-count="11">
+      <a href="{{ p.href }}" class="trow" style="display:grid;grid-template-columns:54px 1fr 64px 54px 54px 54px;gap:8px;padding:12px 22px;align-items:center;border-top:1px solid rgba(23,23,31,.05);cursor:pointer" style-hover="background:#FFF7F1">
+        <span style="width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:{{ p.numBg }};color:{{ p.numColor }};font-family:'Oswald',sans-serif;font-size:14px;font-weight:700">{{ p.num }}</span>
+        <span style="display:flex;align-items:center;gap:10px;min-width:0">
+          <span style="display:flex;flex-direction:column;min-width:0">
+            <span style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:7px">{{ p.name }}<sc-if value="{{ p.isStar }}" hint-placeholder-val="{{ false }}"><span style="font-size:9px;font-weight:800;color:#fff;background:{{ team.color }};padding:2px 7px;border-radius:999px;letter-spacing:.5px">★ {{ t.star }}</span></sc-if></span>
+            <span style="font-size:11px;color:#9A9AA4;font-weight:600">{{ p.gradeLabel }}</span>
+          </span>
+        </span>
+        <span class="tcol-hide" style="text-align:center"><span style="font-size:11px;font-weight:800;color:{{ team.color }};background:{{ team.soft }};padding:3px 9px;border-radius:999px">{{ p.pos }}</span></span>
+        <span style="text-align:center;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px">{{ p.pts }}</span>
+        <span style="text-align:center;font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;color:#5B5B66">{{ p.reb }}</span>
+        <span style="text-align:center;font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;color:#5B5B66">{{ p.ast }}</span>
+      </a>
+    </sc-for>
+  </div>
+</section>
+</sc-if>
+
+<!-- SCHEDULE TAB -->
+<sc-if value="{{ showSchedule }}" hint-placeholder-val="{{ false }}">
+<section style="padding:14px 26px 30px">
+  <div style="display:flex;flex-direction:column;gap:13px">
+    <sc-for list="{{ teamGames }}" as="g" hint-placeholder-count="4">
+      <a href="{{ g.href }}" style="display:block;background:#fff;border-radius:20px;padding:17px 20px;border:1px solid rgba(23,23,31,.05);box-shadow:0 16px 38px -30px rgba(0,0,0,.5);position:relative;overflow:hidden" style-hover="transform:translateY(-2px)">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:{{ g.accent }}"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px;width:150px">
+            <span style="font-size:11px;font-weight:700;color:#9A9AA4">{{ g.dateLabel }}</span>
+            <span style="{{ g.statusStyle }}">{{ g.statusText }}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:9px;flex:1;min-width:0;justify-content:center">
+            <span style="font-weight:700;font-size:14px;text-align:right;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.homeName }}</span>
+            <span style="width:28px;height:28px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ g.homeColor }};font-family:'Oswald',sans-serif;font-size:9px;font-weight:700;color:#fff">{{ g.home }}</span>
+            <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:17px;white-space:nowrap;padding:0 4px;color:{{ g.scoreColor }}">{{ g.score }}</span>
+            <span style="width:28px;height:28px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ g.awayColor }};font-family:'Oswald',sans-serif;font-size:9px;font-weight:700;color:#fff">{{ g.away }}</span>
+            <span style="font-weight:700;font-size:14px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.awayName }}</span>
+          </div>
+          <span style="font-size:12px;font-weight:800;color:{{ g.resultColor }};width:84px;text-align:right">{{ g.result }}</span>
+        </div>
+      </a>
+    </sc-for>
+  </div>
+</section>
+</sc-if>
+
+<!-- STATS TAB -->
+<sc-if value="{{ showStats }}" hint-placeholder-val="{{ false }}">
+<section style="padding:14px 26px 30px">
+  <div class="td-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div style="background:#fff;border-radius:22px;padding:24px;border:1px solid rgba(23,23,31,.05);box-shadow:0 22px 50px -34px rgba(0,0,0,.5)">
+      <h3 style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;margin-bottom:18px">{{ t.seasonAvg }}</h3>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <sc-for list="{{ teamBars }}" as="b" hint-placeholder-count="5">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:7px"><span style="color:#5B5B66">{{ b.label }}</span><span style="font-family:'Oswald',sans-serif;color:#17171F">{{ b.value }}</span></div>
+            <div style="height:9px;border-radius:999px;background:rgba(23,23,31,.06);overflow:hidden"><span style="display:block;height:100%;border-radius:999px;width:{{ b.bar }};background:{{ team.color }};transition:width 1s cubic-bezier(.2,.7,.2,1)"></span></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="background:#17171F;color:#fff;border-radius:22px;padding:24px;position:relative;overflow:hidden">
+      <div style="position:absolute;right:-30px;top:-40px;width:160px;height:160px;border:22px solid rgba(255,255,255,.06);border-radius:50%"></div>
+      <h3 style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;margin-bottom:18px;position:relative;z-index:2">{{ t.leaders }}</h3>
+      <div style="display:flex;flex-direction:column;gap:14px;position:relative;z-index:2">
+        <sc-for list="{{ teamLeaders }}" as="l" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:13px">
+            <span style="width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ team.color }};font-family:'Oswald',sans-serif;font-size:12px;font-weight:700">{{ l.num }}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ l.name }}</div>
+              <div style="font-size:11px;color:#9A9AA4;font-weight:600">{{ l.cat }}</div>
+            </div>
+            <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;color:#FF8244">{{ l.val }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</section>
+</sc-if>
+
+<!-- TEAM SWITCHER -->
+<section style="padding:6px 26px 40px">
+  <div style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;color:#9A9AA4;text-transform:uppercase;margin-bottom:12px">{{ t.otherTeams }}</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <sc-for list="{{ switcher }}" as="s" hint-placeholder-count="16">
+      <a href="{{ s.href }}" style="{{ s.style }}">{{ s.short }}</a>
+    </sc-for>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="margin-top:6px;background:#17171F;color:#fff;border-radius:30px 30px 0 0;padding:40px 36px 28px">
+  <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center">
+    <div style="display:flex;align-items:center;gap:11px">
+      <span style="position:relative;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8244,#E0490F);display:inline-block">
+        <span style="position:absolute;left:50%;top:0;width:2px;height:100%;background:rgba(0,0,0,.4);transform:translateX(-50%)"></span>
+        <span style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(0,0,0,.4);transform:translateY(-50%)"></span>
+      </span>
+      <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:19px">SAIN<span style="color:#F15F22">.</span>LEAGUE</span>
+    </div>
+    <div style="display:flex;gap:22px;flex-wrap:wrap">
+      <a href="Home.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navHome }}</a>
+      <a href="Standings.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navStandings }}</a>
+      <a href="Schedule.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navSchedule }}</a>
+      <a href="News.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navNews }}</a>
+    </div>
+    <span style="font-size:12px;color:#5B5B66;font-weight:500">© 2026 Sain Girls League</span>
+  </div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: 'mn', team: 'SPK', tab: 'roster', data: null };
+
+  T = {
+    mn: { navHome:'Нүүр', navTeams:'Багууд', navStandings:'Байр', navSchedule:'Хуваарь', navPlayers:'Тоглогчид', navNews:'Мэдээ',
+      record:'Х-Я', winpct:'Хувь', ppg:'Дундаж оноо', roster:'Бүрэлдэхүүн', schedule:'Хуваарь', teamStats:'Статистик',
+      player:'Тоглогч', pos:'Байрлал', star:'Од', grade:'анги', seasonAvg:'Улирлын дундаж', leaders:'Тэргүүлэгчид',
+      otherTeams:'Бусад багууд', west:'Баруун', east:'Зүүн',
+      ptsFor:'Авсан оноо', ptsAgainst:'Алдсан оноо', rebAvg:'Самбар', astAvg:'Дамжуулалт', stlAvg:'Таслалт',
+      win:'ХОЖСОН', loss:'ХОЖИГДСОН', live:'ШУУД', upcoming:'УДАХГҮЙ', vs:'VS',
+      catPts:'Оноогоор', catReb:'Самбараар', catAst:'Дамжуулалтаар' },
+    en: { navHome:'Home', navTeams:'Teams', navStandings:'Standings', navSchedule:'Schedule', navPlayers:'Players', navNews:'News',
+      record:'Record', winpct:'Win %', ppg:'PPG', roster:'Roster', schedule:'Schedule', teamStats:'Stats',
+      player:'Player', pos:'Pos', star:'Star', grade:'grade', seasonAvg:'Season averages', leaders:'Team leaders',
+      otherTeams:'Other teams', west:'West', east:'East',
+      ptsFor:'Points for', ptsAgainst:'Points against', rebAvg:'Rebounds', astAvg:'Assists', stlAvg:'Steals',
+      win:'WIN', loss:'LOSS', live:'LIVE', upcoming:'UPCOMING', vs:'VS',
+      catPts:'Points', catReb:'Rebounds', catAst:'Assists' },
+  };
+
+  componentDidMount() {
+    try { const v = localStorage.getItem('sgl_lang'); if (v) this.setState({ lang: v }); } catch(e){}
+    this._applyHash();
+    this._onHash = () => this._applyHash();
+    window.addEventListener('hashchange', this._onHash);
+    import('./league-data.js').then(m => { this.setState({ data: m }); this._reveal(); }).catch(e => console.error(e));
+  }
+  componentWillUnmount(){ window.removeEventListener('hashchange', this._onHash); }
+  _applyHash(){ const h = (location.hash||'').replace('#','').toUpperCase(); if (h) this.setState({ team: h }); }
+  _reveal(){ if(!('IntersectionObserver' in window))return; if(this._io)this._io.disconnect(); this._io=new IntersectionObserver((es)=>es.forEach(en=>{if(en.isIntersecting){en.target.style.animation='revealUp .6s cubic-bezier(.2,.7,.2,1) both';this._io.unobserve(en.target);}}),{threshold:0.05}); setTimeout(()=>document.querySelectorAll('[data-reveal]').forEach((el,i)=>{el.style.animationDelay=(i*0.06)+'s';this._io.observe(el);}),80); }
+  _setLang(l){ try{localStorage.setItem('sgl_lang',l);}catch(e){} this.setState({lang:l}); }
+  _langPill(a){ const b="font-size:12px;font-weight:700;padding:6px 13px;border-radius:999px;cursor:pointer;border:none;transition:all .2s;"; return a?b+"background:#F15F22;color:#fff;":b+"background:transparent;color:#9A9AA4;"; }
+  _tab(a){ const b="font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;letter-spacing:.5px;padding:9px 20px;border-radius:999px;cursor:pointer;border:none;transition:all .2s;"; return a?b+"background:#17171F;color:#fff;":b+"background:transparent;color:#9A9AA4;"; }
+
+  renderVals() {
+    const lang = this.state.lang, t = this.T[lang], d = this.state.data;
+    const base = {
+      t, lang,
+      langMnStyle: this._langPill(lang==='mn'), langEnStyle: this._langPill(lang==='en'),
+      setMn: () => this._setLang('mn'), setEn: () => this._setLang('en'),
+      tabRoster: () => this.setState({tab:'roster'}), tabSchedule: () => this.setState({tab:'schedule'}), tabStats: () => this.setState({tab:'stats'}),
+      tRoster: this._tab(this.state.tab==='roster'), tSchedule: this._tab(this.state.tab==='schedule'), tStats: this._tab(this.state.tab==='stats'),
+      showRoster: this.state.tab==='roster', showSchedule: this.state.tab==='schedule', showStats: this.state.tab==='stats',
+    };
+    if (!d) return { ...base, team: { name:'', color:'#F15F22', soft:'rgba(241,95,34,.1)' }, roster: undefined, teamGames: undefined, teamBars: undefined, teamLeaders: undefined, switcher: undefined };
+
+    const TEAMS = d.TEAMS;
+    let short = this.state.team;
+    if (!TEAMS[short]) short = 'SPK';
+    const tm = TEAMS[short];
+    const pct = tm.w/(tm.w+tm.l);
+    const rankMap = {}; ['west','east'].forEach(cf => d.ord(cf).forEach((k,i)=>rankMap[k]=i+1));
+    const soft = tm.color + '18';
+
+    const team = {
+      short, name: tm.name, school: tm.school, color: tm.color, soft,
+      w: tm.w, l: tm.l, ppg: tm.ppg.toFixed(1),
+      pct: pct.toFixed(3).replace(/^0/, ''), rank: rankMap[short], confLabel: tm.conf==='west'?t.west:t.east,
+    };
+
+    const roster = d.rosterFor(short).map((p, i) => ({
+      num: p.num, name: lang==='mn'?p.name:p.en, pos: p.pos,
+      gradeLabel: (p.grade) + '-' + t.grade, isStar: p.role==='star',
+      pts: p.pts.toFixed(1), reb: p.reb.toFixed(1), ast: p.ast.toFixed(1),
+      numBg: p.role==='star' ? tm.color : soft, numColor: p.role==='star' ? '#fff' : tm.color,
+      href: 'PlayerDetail.dc.html#' + short + '-' + i,
+    }));
+
+    // team games from schedule
+    const accentFor = (s) => s==='live'?'#E53946' : s==='final'?'#0072BC' : '#F15F22';
+    const teamGames = [];
+    [...d.SCHEDULE].sort((a,b)=>a.date<b.date?1:-1).forEach(day => {
+      day.games.forEach(g => {
+        if (g.home!==short && g.away!==short) return;
+        const isFinal = g.status==='final', isLive = g.status==='live';
+        const showScore = isFinal || isLive;
+        let result = '', resultColor = '#9A9AA4';
+        if (isFinal) {
+          const teamHome = g.home===short;
+          const myScore = teamHome?g.hs:g.as, oppScore = teamHome?g.as:g.hs;
+          const won = myScore>oppScore;
+          result = (won?t.win:t.loss); resultColor = won?'#1F9E5A':'#C76B6B';
+        } else if (isLive) { result = t.live; resultColor = '#E53946'; }
+        else { result = t.upcoming; resultColor = '#9A9AA4'; }
+        teamGames.push({
+          home:g.home, away:g.away, homeName:TEAMS[g.home].name, awayName:TEAMS[g.away].name,
+          homeColor:TEAMS[g.home].color, awayColor:TEAMS[g.away].color,
+          dateLabel: lang==='mn'?day.dLabelMn:day.dLabelEn, accent: accentFor(g.status),
+          statusText: isLive?t.live:(isFinal?'':t.vs),
+          statusStyle: isLive? "display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:800;letter-spacing:.5px;color:#E53946;background:rgba(229,57,70,.1);padding:3px 8px;border-radius:999px;" : "display:none;",
+          score: showScore ? (g.hs+'–'+g.as) : t.vs,
+          scoreColor: isLive?'#E53946':(showScore?'#17171F':'#C7C7CE'),
+          result, resultColor,
+          href: (d.GAME_DETAIL[g.home+'-'+g.away] ? 'GameDetail.dc.html#'+g.home+'-'+g.away : 'GameDetail.dc.html#SPK-HWK'),
+        });
+      });
+    });
+
+    // team season bars
+    const oppg = (tm.ppg - (tm.w-tm.l)*0.9);
+    const mk = (label, value, max) => ({ label, value: value.toFixed(1), bar: Math.round(Math.min(100, value/max*100))+'%' });
+    const teamBars = [
+      mk(t.ptsFor, tm.ppg, 85),
+      mk(t.ptsAgainst, oppg, 85),
+      mk(t.rebAvg, 30 + (tm.w-tm.l)*0.4, 45),
+      mk(t.astAvg, 13 + (tm.w-tm.l)*0.3, 24),
+      mk(t.stlAvg, 7 + (tm.w-tm.l)*0.12, 12),
+    ];
+
+    // team leaders (from roster top by category)
+    const rs = d.rosterFor(short);
+    const topBy = (k) => [...rs].sort((a,b)=>b[k]-a[k])[0];
+    const lp = topBy('pts'), lr = topBy('reb'), la = topBy('ast');
+    const teamLeaders = [
+      { num: lp.num, name: lang==='mn'?lp.name:lp.en, cat: t.catPts, val: lp.pts.toFixed(1) },
+      { num: lr.num, name: lang==='mn'?lr.name:lr.en, cat: t.catReb, val: lr.reb.toFixed(1) },
+      { num: la.num, name: lang==='mn'?la.name:la.en, cat: t.catAst, val: la.ast.toFixed(1) },
+    ];
+
+    const switcher = Object.keys(TEAMS).map(k => ({
+      short: k, href: 'TeamDetail.dc.html#' + k,
+      style: "font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;padding:9px 14px;border-radius:12px;transition:all .2s;border:1.5px solid " + (k===short?TEAMS[k].color:'rgba(23,23,31,.08)') + ";background:" + (k===short?TEAMS[k].color:'#fff') + ";color:" + (k===short?'#fff':'#5B5B66') + ";",
+    }));
+
+    return { ...base, team, roster, teamGames, teamBars, teamLeaders, switcher };
+  }
+}
+</script>
+</body>
+</html>

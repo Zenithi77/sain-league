@@ -50,10 +50,10 @@ export default function OnboardingPage() {
   // ── Loading / guard rendering ──────────────────────────────────────────
   if (!mounted || loading) {
     return (
-      <div className="auth-container">
-        <div className="auth-card" style={{ textAlign: "center" }}>
-          <p>Ачааллаж байна...</p>
-        </div>
+      <div className="sgl-onb-wrap">
+        <p style={{ textAlign: "center", padding: 60, color: "var(--sgl-muted)" }}>
+          Ачааллаж байна...
+        </p>
       </div>
     );
   }
@@ -78,30 +78,158 @@ export default function OnboardingPage() {
   const stepLabels = ["Сонголт", "Мэдээлэл", "Шалгах"];
 
   return (
-    <div className="auth-container">
-      <div className="onboarding-card">
-        {/* Header */}
-        <div className="auth-header">
-          <div className="auth-logo">🏀</div>
-          <h1>Бүртгэл</h1>
-          <p>SAIN Girls League-д тавтай морил!</p>
-        </div>
+    <div className="sgl-onb-wrap">
+      {/* background blobs */}
+      <div
+        className="sgl-hero-blob"
+        style={{
+          top: -80,
+          left: -60,
+          width: 340,
+          height: 340,
+          background: "radial-gradient(circle,rgba(241,95,34,.16),transparent 68%)",
+          animation: "sgl-blob 15s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="sgl-hero-blob"
+        style={{
+          bottom: -100,
+          right: -70,
+          width: 380,
+          height: 380,
+          background: "radial-gradient(circle,rgba(32,196,244,.14),transparent 68%)",
+          animation: "sgl-blob 18s ease-in-out infinite reverse",
+        }}
+      />
 
-        {/* Progress bar */}
-        <div className="onboarding-progress">
-          {stepLabels.map((label, i) => (
+      <div className="sgl-onb-card">
+        {/* gradient top bar */}
+        <div
+          style={{
+            height: 6,
+            background: "linear-gradient(90deg,#F15F22,#20C4F4,#0072BC)",
+          }}
+        />
+
+        <div className="sgl-onb-inner">
+          {/* Header */}
+          <div style={{ textAlign: "center", marginBottom: 26 }}>
             <div
-              key={label}
-              className={`progress-step ${i < step ? "done" : ""} ${i === step ? "active" : ""}`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 9,
+                background: "#fff",
+                border: "1px solid rgba(241,95,34,.25)",
+                padding: "7px 15px",
+                borderRadius: 999,
+                boxShadow: "0 8px 22px -14px rgba(241,95,34,.6)",
+              }}
             >
-              <span className="progress-dot">{i < step ? "✓" : i + 1}</span>
-              <span className="progress-label">{label}</span>
+              <span
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: "#F15F22",
+                  animation: "sgl-pulse-dot 1.8s infinite",
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: "var(--sgl-head)",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  letterSpacing: 1.5,
+                  textTransform: "uppercase",
+                  color: "#F15F22",
+                }}
+              >
+                Sain Girls League
+              </span>
             </div>
-          ))}
-        </div>
+            <h1
+              style={{
+                fontFamily: "var(--sgl-head)",
+                fontSize: 36,
+                fontWeight: 700,
+                letterSpacing: 0.5,
+                color: "var(--sgl-ink)",
+                margin: "14px 0 6px",
+              }}
+            >
+              БҮРТГЭЛ
+            </h1>
+            <p style={{ fontSize: 14, fontWeight: 500, color: "var(--sgl-muted-2)" }}>
+              SAIN Girls League-д тавтай морил!
+            </p>
+          </div>
 
-        {/* Active step */}
-        {renderStep()}
+          {/* Progress stepper */}
+          <div className="sgl-onb-stepper">
+            {stepLabels.map((label, i) => {
+              const done = i < step;
+              const active = i === step;
+              return (
+                <div key={label} style={{ display: "flex", alignItems: "center", flex: i < stepLabels.length - 1 ? 1 : "none" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 7, flex: "none" }}>
+                    <span
+                      style={{
+                        width: 38,
+                        height: 38,
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "var(--sgl-head)",
+                        fontSize: 15,
+                        fontWeight: 700,
+                        background: done
+                          ? "#1F9E5A"
+                          : active
+                            ? "#F15F22"
+                            : "#fff",
+                        color: done || active ? "#fff" : "var(--sgl-muted)",
+                        border: done || active ? "none" : "1.5px solid rgba(23,23,31,.12)",
+                        boxShadow: active ? "0 10px 22px -10px rgba(241,95,34,.8)" : "none",
+                        transition: "all .25s ease",
+                      }}
+                    >
+                      {done ? "✓" : i + 1}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: 0.5,
+                        color: active ? "var(--sgl-ink)" : "var(--sgl-muted)",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                  {i < stepLabels.length - 1 && (
+                    <span
+                      style={{
+                        flex: 1,
+                        height: 3,
+                        borderRadius: 999,
+                        margin: "0 10px 18px",
+                        background: i < step ? "#1F9E5A" : "rgba(23,23,31,.08)",
+                        transition: "background .25s ease",
+                      }}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Active step */}
+          {renderStep()}
+        </div>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 export default function SchedulePage() {
   return (
-    <main className="main-content nba-schedule-page">
+    <main style={{ paddingTop: 24, paddingBottom: 8 }}>
       <ScheduleClient />
     </main>
   );

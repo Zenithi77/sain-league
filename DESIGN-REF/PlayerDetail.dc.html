@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#FFF7F1;color:#17171F;font-family:'Plus Jakarta Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{text-decoration:none;color:inherit}
+  ::selection{background:#F15F22;color:#fff}
+  @keyframes revealUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes growBar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+  @media(max-width:980px){.nav-links{display:none!important}.pd-grid{grid-template-columns:1fr!important}}
+  @media(max-width:680px){.h1big{font-size:38px!important}.glog{grid-template-columns:64px 1fr 44px 44px 44px!important}.gcol-hide{display:none!important}.stat4{grid-template-columns:repeat(2,1fr)!important}}
+</style>
+</helmet>
+
+<div style="max-width:1280px;margin:0 auto">
+
+<!-- NAV -->
+<header style="position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(255,247,241,.82);border-bottom:1px solid rgba(23,23,31,.07)">
+  <nav style="display:flex;align-items:center;justify-content:space-between;padding:16px 26px;max-width:1280px;margin:0 auto">
+    <a href="Home.dc.html" style="display:flex;align-items:center;gap:11px">
+      <span style="position:relative;width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8244,#E0490F);display:inline-block;box-shadow:0 6px 16px -4px rgba(241,95,34,.6)">
+        <span style="position:absolute;left:50%;top:0;width:2px;height:100%;background:rgba(0,0,0,.4);transform:translateX(-50%)"></span>
+        <span style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(0,0,0,.4);transform:translateY(-50%)"></span>
+      </span>
+      <span style="display:flex;flex-direction:column;line-height:1">
+        <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;letter-spacing:.5px">SAIN<span style="color:#F15F22">.</span>LEAGUE</span>
+        <span style="font-size:10px;letter-spacing:3px;color:#9A9AA4;font-weight:600;margin-top:2px">GIRLS BASKETBALL</span>
+      </span>
+    </a>
+    <div class="nav-links" style="display:flex;align-items:center;gap:2px">
+      <a href="Home.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navHome }}</a>
+      <a href="Teams.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navTeams }}</a>
+      <a href="Standings.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navStandings }}</a>
+      <a href="Schedule.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navSchedule }}</a>
+      <a href="Players.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#F15F22;background:rgba(241,95,34,.1)">{{ t.navPlayers }}</a>
+      <a href="News.dc.html" style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.6px;padding:8px 12px;border-radius:9px;color:#5B5B66" style-hover="color:#17171F;background:rgba(23,23,31,.05)">{{ t.navNews }}</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;background:#fff;border:1px solid rgba(23,23,31,.1);border-radius:999px;padding:3px;box-shadow:0 4px 12px -8px rgba(0,0,0,.3)">
+        <button onClick="{{ setMn }}" style="{{ langMnStyle }}">МН</button>
+        <button onClick="{{ setEn }}" style="{{ langEnStyle }}">EN</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- BREADCRUMB -->
+<div style="padding:16px 26px 0;font-size:12px;font-weight:700;color:#9A9AA4;display:flex;align-items:center;gap:7px">
+  <a href="Players.dc.html" style="color:#9A9AA4" style-hover="color:#F15F22">{{ t.navPlayers }}</a><span>/</span>
+  <a href="{{ p.teamHref }}" style="color:#9A9AA4" style-hover="color:#F15F22">{{ p.teamName }}</a><span>/</span><span style="color:#17171F">{{ p.name }}</span>
+</div>
+
+<!-- HERO -->
+<section style="padding:14px 26px 0">
+  <div data-reveal style="position:relative;border-radius:26px;overflow:hidden;background:linear-gradient(120deg,{{ p.color }},{{ p.color2 }});color:#fff;padding:30px 34px">
+    <div style="position:absolute;right:-30px;top:-50px;width:230px;height:230px;border:32px solid rgba(255,255,255,.1);border-radius:50%"></div>
+    <div style="position:relative;z-index:2;display:flex;align-items:center;gap:26px;flex-wrap:wrap">
+      <div style="position:relative;width:120px;height:140px;border-radius:20px;background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.32);display:flex;align-items:flex-end;justify-content:center;overflow:hidden;flex:none">
+        <span style="position:absolute;top:10px;left:12px;font-family:'Oswald',sans-serif;font-size:44px;font-weight:700;line-height:1">{{ p.num }}</span>
+        <span style="font-family:monospace;font-size:9px;opacity:.7;padding-bottom:10px">player photo</span>
+      </div>
+      <div style="flex:1;min-width:220px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:11px">
+          <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.18);padding:5px 13px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.5px">{{ p.pos }} · {{ p.team }}</span>
+          <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.18);padding:5px 13px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.5px">{{ p.gradeLabel }}</span>
+          <sc-if value="{{ p.isStar }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:6px;background:#fff;color:{{ p.color }};padding:5px 13px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.5px">★ {{ t.star }}</span></sc-if>
+        </div>
+        <h1 class="h1big" style="font-family:'Oswald',sans-serif;font-weight:700;font-size:50px;line-height:.96;letter-spacing:.5px">{{ p.name }}</h1>
+        <a href="{{ p.teamHref }}" style="font-size:14px;font-weight:700;opacity:.92;margin-top:7px;display:inline-flex;align-items:center;gap:7px" style-hover="opacity:1">{{ p.teamName }} →</a>
+      </div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <sc-for list="{{ heroStats }}" as="h" hint-placeholder-count="4">
+          <div style="background:rgba(255,255,255,.15);border-radius:16px;padding:14px 16px;text-align:center;min-width:70px">
+            <div style="font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;line-height:1">{{ h.val }}</div>
+            <div style="font-size:10px;font-weight:800;letter-spacing:1px;opacity:.85;margin-top:4px">{{ h.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODE TOGGLE -->
+<section style="padding:20px 26px 4px">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <h2 style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700">{{ t.seasonStats }}</h2>
+    <div style="display:flex;gap:5px;background:#fff;border:1px solid rgba(23,23,31,.07);border-radius:999px;padding:5px;box-shadow:0 6px 16px -12px rgba(0,0,0,.4)">
+      <button onClick="{{ modePer }}" style="{{ mPer }}">{{ t.perGame }}</button>
+      <button onClick="{{ modeTot }}" style="{{ mTot }}">{{ t.totals }}</button>
+    </div>
+  </div>
+</section>
+
+<!-- STAT TILES -->
+<section style="padding:12px 26px 4px">
+  <div class="stat4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+    <sc-for list="{{ tiles }}" as="s" hint-placeholder-count="4">
+      <div data-reveal style="position:relative;background:#fff;border-radius:20px;padding:20px;border:1px solid rgba(23,23,31,.05);box-shadow:0 18px 40px -30px rgba(0,0,0,.5);overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:{{ s.color }}"></div>
+        <div style="font-family:'Oswald',sans-serif;font-size:40px;font-weight:700;line-height:1;color:{{ s.color }}">{{ s.val }}</div>
+        <div style="font-size:12px;color:#9A9AA4;font-weight:700;margin-top:6px">{{ s.label }}</div>
+        <div style="font-size:11px;color:#B0B0B8;font-weight:600;margin-top:10px">{{ t.leagueRank }} <span style="color:#17171F;font-weight:800">{{ s.rank }}</span></div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<!-- COMPARE + GAMELOG -->
+<section style="padding:18px 26px 30px">
+  <div class="pd-grid" style="display:grid;grid-template-columns:1fr 1.25fr;gap:18px;align-items:start">
+    <!-- vs league -->
+    <div data-reveal style="background:#fff;border-radius:22px;padding:24px;border:1px solid rgba(23,23,31,.05);box-shadow:0 22px 50px -34px rgba(0,0,0,.5)">
+      <h3 style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;margin-bottom:6px">{{ t.vsLeague }}</h3>
+      <p style="font-size:12px;color:#9A9AA4;font-weight:600;margin-bottom:18px">{{ t.vsLeagueSub }}</p>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <sc-for list="{{ compare }}" as="c" hint-placeholder-count="4">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:8px"><span style="color:#5B5B66">{{ c.label }}</span><span style="font-family:'Oswald',sans-serif;color:{{ c.color }}">{{ c.val }} <span style="color:#C0C0C8;font-size:11px;font-weight:600">/ {{ c.avg }} {{ t.avg }}</span></span></div>
+            <div style="position:relative;height:10px;border-radius:999px;background:rgba(23,23,31,.06);overflow:hidden">
+              <span style="display:block;height:100%;border-radius:999px;width:{{ c.bar }};background:{{ c.color }};transition:width 1s cubic-bezier(.2,.7,.2,1)"></span>
+              <span style="position:absolute;top:-3px;bottom:-3px;width:2px;background:#17171F;left:{{ c.avgMark }};border-radius:2px"></span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(23,23,31,.06);display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#9A9AA4">
+        <span style="width:14px;height:3px;background:#17171F;border-radius:2px;display:inline-block"></span>{{ t.leagueAvgMark }}
+      </div>
+    </div>
+
+    <!-- game log -->
+    <div data-reveal style="background:#fff;border-radius:22px;overflow:hidden;border:1px solid rgba(23,23,31,.05);box-shadow:0 22px 50px -34px rgba(0,0,0,.5)">
+      <div style="padding:18px 22px 6px"><h3 style="font-family:'Oswald',sans-serif;font-size:18px;font-weight:700">{{ t.gameLog }}</h3></div>
+      <div class="glog" style="display:grid;grid-template-columns:90px 1fr 50px 50px 50px 50px;gap:8px;padding:10px 22px;font-family:'Oswald',sans-serif;font-size:10px;font-weight:600;letter-spacing:.8px;color:#9A9AA4;text-transform:uppercase">
+        <span>{{ t.date }}</span><span>{{ t.opp }}</span><span style="text-align:center">PTS</span><span style="text-align:center">REB</span><span style="text-align:center">AST</span><span class="gcol-hide" style="text-align:center">STL</span>
+      </div>
+      <sc-for list="{{ gameLog }}" as="g" hint-placeholder-count="6">
+        <div class="glog" style="display:grid;grid-template-columns:90px 1fr 50px 50px 50px 50px;gap:8px;padding:11px 22px;align-items:center;border-top:1px solid rgba(23,23,31,.05)" style-hover="background:#FFF7F1">
+          <span style="font-size:12px;font-weight:700;color:#9A9AA4">{{ g.date }}</span>
+          <span style="display:flex;align-items:center;gap:9px;min-width:0">
+            <span style="font-size:11px;font-weight:800;color:{{ g.resultColor }};width:16px">{{ g.wl }}</span>
+            <span style="width:24px;height:24px;border-radius:7px;flex:none;display:flex;align-items:center;justify-content:center;background:{{ g.oppColor }};font-family:'Oswald',sans-serif;font-size:8px;font-weight:700;color:#fff">{{ g.opp }}</span>
+            <span style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.score }}</span>
+          </span>
+          <span style="text-align:center;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;color:{{ p.color }}">{{ g.pts }}</span>
+          <span style="text-align:center;font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;color:#5B5B66">{{ g.reb }}</span>
+          <span style="text-align:center;font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;color:#5B5B66">{{ g.ast }}</span>
+          <span class="gcol-hide" style="text-align:center;font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;color:#5B5B66">{{ g.stl }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- TEAMMATES -->
+<section style="padding:6px 26px 40px">
+  <div style="font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;color:#9A9AA4;text-transform:uppercase;margin-bottom:12px">{{ t.teammates }}</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <sc-for list="{{ teammates }}" as="m" hint-placeholder-count="8">
+      <a href="{{ m.href }}" style="{{ m.style }}"><span style="font-family:'Oswald',sans-serif;font-weight:700">{{ m.num }}</span> {{ m.name }}</a>
+    </sc-for>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="margin-top:6px;background:#17171F;color:#fff;border-radius:30px 30px 0 0;padding:40px 36px 28px">
+  <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center">
+    <div style="display:flex;align-items:center;gap:11px">
+      <span style="position:relative;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8244,#E0490F);display:inline-block">
+        <span style="position:absolute;left:50%;top:0;width:2px;height:100%;background:rgba(0,0,0,.4);transform:translateX(-50%)"></span>
+        <span style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(0,0,0,.4);transform:translateY(-50%)"></span>
+      </span>
+      <span style="font-family:'Oswald',sans-serif;font-weight:700;font-size:19px">SAIN<span style="color:#F15F22">.</span>LEAGUE</span>
+    </div>
+    <div style="display:flex;gap:22px;flex-wrap:wrap">
+      <a href="Home.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navHome }}</a>
+      <a href="Teams.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navTeams }}</a>
+      <a href="Standings.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navStandings }}</a>
+      <a href="News.dc.html" style="font-size:13px;color:#C9C9D0;font-weight:600" style-hover="color:#fff">{{ t.navNews }}</a>
+    </div>
+    <span style="font-size:12px;color:#5B5B66;font-weight:500">© 2026 Sain Girls League</span>
+  </div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: 'mn', team: 'SPK', idx: 0, mode: 'per', data: null };
+
+  T = {
+    mn: { navHome:'Нүүр', navTeams:'Багууд', navStandings:'Байр', navSchedule:'Хуваарь', navPlayers:'Тоглогчид', navNews:'Мэдээ',
+      star:'Од', grade:'анги', seasonStats:'Улирлын статистик', perGame:'Тоглолт тутамд', totals:'Нийт',
+      leagueRank:'Лигт', vsLeague:'Лигийн дундажтай харьцуулсан нь', vsLeagueSub:'Энэ тоглогч лигийн дундажаас хэр давсныг харуул.',
+      avg:'дундаж', leagueAvgMark:'Лигийн дундаж', gameLog:'Сүүлийн тоглолтууд', date:'Огноо', opp:'Өрсөлдөгч',
+      teammates:'Багийн хамтрагчид', pts:'ОНОО', reb:'САМБАР', ast:'ДАМЖ', stl:'ТАСЛАЛТ',
+      win:'Х', loss:'Я' },
+    en: { navHome:'Home', navTeams:'Teams', navStandings:'Standings', navSchedule:'Schedule', navPlayers:'Players', navNews:'News',
+      star:'Star', grade:'grade', seasonStats:'Season statistics', perGame:'Per game', totals:'Totals',
+      leagueRank:'League', vsLeague:'Compared to league average', vsLeagueSub:'See how far above the league average this player ranks.',
+      avg:'avg', leagueAvgMark:'League average', gameLog:'Recent games', date:'Date', opp:'Opponent',
+      teammates:'Teammates', pts:'PTS', reb:'REB', ast:'AST', stl:'STL',
+      win:'W', loss:'L' },
+  };
+
+  LG_AVG = { pts: 12.5, reb: 6.5, ast: 4.0, stl: 1.6 };
+  GAMES_PLAYED = 12;
+
+  componentDidMount() {
+    try { const v = localStorage.getItem('sgl_lang'); if (v) this.setState({ lang: v }); } catch(e){}
+    this._applyHash();
+    this._onHash = () => this._applyHash();
+    window.addEventListener('hashchange', this._onHash);
+    import('./league-data.js').then(m => { this.setState({ data: m }); this._reveal(); }).catch(e => console.error(e));
+  }
+  componentWillUnmount(){ window.removeEventListener('hashchange', this._onHash); }
+  _applyHash(){ const h=(location.hash||'').replace('#',''); if(!h)return; const parts=h.split('-'); const team=(parts[0]||'SPK').toUpperCase(); const idx=parseInt(parts[1]||'0',10)||0; this.setState({ team, idx }); }
+  _reveal(){ if(!('IntersectionObserver' in window))return; if(this._io)this._io.disconnect(); this._io=new IntersectionObserver((es)=>es.forEach(en=>{if(en.isIntersecting){en.target.style.animation='revealUp .6s cubic-bezier(.2,.7,.2,1) both';this._io.unobserve(en.target);}}),{threshold:0.05}); setTimeout(()=>document.querySelectorAll('[data-reveal]').forEach((el,i)=>{el.style.animationDelay=(i*0.06)+'s';this._io.observe(el);}),80); }
+  _setLang(l){ try{localStorage.setItem('sgl_lang',l);}catch(e){} this.setState({lang:l}); }
+  _langPill(a){ const b="font-size:12px;font-weight:700;padding:6px 13px;border-radius:999px;cursor:pointer;border:none;transition:all .2s;"; return a?b+"background:#F15F22;color:#fff;":b+"background:transparent;color:#9A9AA4;"; }
+  _seg(a){ const b="font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;padding:8px 16px;border-radius:999px;cursor:pointer;border:none;transition:all .2s;"; return a?b+"background:#17171F;color:#fff;":b+"background:transparent;color:#9A9AA4;"; }
+
+  _shade(hex, amt){ const n=parseInt(hex.slice(1),16); let r=(n>>16)+amt,g=((n>>8)&255)+amt,b=(n&255)+amt; r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b)); return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1); }
+
+  renderVals() {
+    const lang=this.state.lang, t=this.T[lang], d=this.state.data;
+    const base = {
+      t, lang,
+      langMnStyle:this._langPill(lang==='mn'), langEnStyle:this._langPill(lang==='en'),
+      setMn:()=>this._setLang('mn'), setEn:()=>this._setLang('en'),
+      modePer:()=>this.setState({mode:'per'}), modeTot:()=>this.setState({mode:'tot'}),
+      mPer:this._seg(this.state.mode==='per'), mTot:this._seg(this.state.mode==='tot'),
+    };
+    if (!d) return { ...base, p:{name:'',color:'#F15F22',color2:'#FF8244'}, heroStats:undefined, tiles:undefined, compare:undefined, gameLog:undefined, teammates:undefined };
+
+    const TEAMS=d.TEAMS;
+    let short=this.state.team; if(!TEAMS[short]) short='SPK';
+    const tm=TEAMS[short];
+    const roster=d.rosterFor(short);
+    let idx=this.state.idx; if(idx<0||idx>=roster.length) idx=0;
+    const pl=roster[idx];
+    const color2=this._shade(tm.color, 38);
+
+    const p = {
+      num: pl.num, name: lang==='mn'?pl.name:pl.en, team: short, teamName: tm.name,
+      pos: pl.pos, gradeLabel: pl.grade + '-' + t.grade, isStar: pl.role==='star',
+      color: tm.color, color2, soft: tm.color+'18',
+      teamHref: 'TeamDetail.dc.html#' + short,
+    };
+
+    const mode=this.state.mode, gp=this.GAMES_PLAYED;
+    const fmt = (v) => mode==='per' ? v.toFixed(1) : Math.round(v*gp);
+    const heroStats = [
+      { val: fmt(pl.pts), label: t.pts }, { val: fmt(pl.reb), label: t.reb },
+      { val: fmt(pl.ast), label: t.ast }, { val: fmt(pl.stl), label: t.stl },
+    ];
+
+    // ranks (vs roster-ish synthetic): position among all 16 notable for pts etc — approximate by value
+    const rankFor = (v, avg) => { const r = Math.max(1, Math.round((avg*2.4 - v) * 1.1)); return '#' + Math.max(1, Math.min(64, r)); };
+    const tiles = [
+      { val: fmt(pl.pts), label: t.pts, color:'#F15F22', rank: rankFor(pl.pts, this.LG_AVG.pts) },
+      { val: fmt(pl.reb), label: t.reb, color:'#20C4F4', rank: rankFor(pl.reb, this.LG_AVG.reb) },
+      { val: fmt(pl.ast), label: t.ast, color:'#0072BC', rank: rankFor(pl.ast, this.LG_AVG.ast) },
+      { val: fmt(pl.stl), label: t.stl, color:'#1F9E5A', rank: rankFor(pl.stl, this.LG_AVG.stl) },
+    ];
+
+    const cmp = (label, v, avg, color, max) => ({
+      label, val: v.toFixed(1), avg: avg.toFixed(1), color,
+      bar: Math.round(Math.min(100, v/max*100)) + '%',
+      avgMark: Math.round(Math.min(100, avg/max*100)) + '%',
+    });
+    const compare = [
+      cmp(t.pts, pl.pts, this.LG_AVG.pts, '#F15F22', 28),
+      cmp(t.reb, pl.reb, this.LG_AVG.reb, '#20C4F4', 14),
+      cmp(t.ast, pl.ast, this.LG_AVG.ast, '#0072BC', 10),
+      cmp(t.stl, pl.stl, this.LG_AVG.stl, '#1F9E5A', 4),
+    ];
+
+    // deterministic game log
+    const oppPool = Object.keys(TEAMS).filter(k=>k!==short);
+    let seed=0; for(const c of (short+pl.num)) seed+=c.charCodeAt(0);
+    const dates = lang==='mn'
+      ? ['3-р сар 12','3-р сар 8','3-р сар 5','3-р сар 1','2-р сар 26','2-р сар 22']
+      : ['Mar 12','Mar 8','Mar 5','Mar 1','Feb 26','Feb 22'];
+    const gameLog = dates.map((dt, i) => {
+      const opp = oppPool[(seed + i*5) % oppPool.length];
+      const won = ((seed + i*7) % 10) / 10 < (tm.w/(tm.w+tm.l));
+      const myS = 55 + ((seed+i*3)%26), opS = 50 + ((seed+i*11)%24);
+      const vr = ((seed + i*13) % 9) - 4;
+      const pts = Math.max(2, Math.round(pl.pts + vr));
+      const reb = Math.max(0, Math.round(pl.reb + (vr/2)));
+      const ast = Math.max(0, Math.round(pl.ast + ((seed+i)%5 - 2)));
+      const stl = Math.max(0, Math.round(pl.stl + ((seed+i)%3 - 1)));
+      return {
+        date: dt, opp, oppColor: TEAMS[opp].color,
+        wl: won?t.win:t.loss, resultColor: won?'#1F9E5A':'#C76B6B',
+        score: (won?myS:opS) + '–' + (won?opS:myS),
+        pts, reb, ast, stl,
+      };
+    });
+
+    const teammates = roster.map((m, i) => ({
+      num: m.num, name: (lang==='mn'?m.name:m.en).split(' ')[0], href: 'PlayerDetail.dc.html#'+short+'-'+i,
+      style: "display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;padding:8px 13px;border-radius:12px;transition:all .2s;border:1.5px solid "+(i===idx?tm.color:'rgba(23,23,31,.08)')+";background:"+(i===idx?tm.color:'#fff')+";color:"+(i===idx?'#fff':'#5B5B66')+";",
+    }));
+
+    return { ...base, p, heroStats, tiles, compare, gameLog, teammates };
+  }
+}
+</script>
+</body>
+</html>

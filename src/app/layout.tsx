@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import SiteShell from "@/components/SiteShell";
 import { Providers } from "@/components/Providers";
 import "./globals.css";
+import "./theme.css";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -12,6 +13,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Sain Girls League - Mongolian Women's Basketball",
   description: "Монголын охидын сагсан бөмбөгийн лиг - Sain Girls League",
+  icons: {
+    icon: "/images/favicon.ico",
+    shortcut: "/images/favicon.ico",
+    apple: "/images/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -29,7 +35,7 @@ export default function RootLayout({
           crossOrigin=""
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Oswald:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&family=Roboto:wght@300;400;500;700&display=swap"
           rel="stylesheet"
         />
         <link
