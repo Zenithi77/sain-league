@@ -279,7 +279,11 @@ body {
 .menu-toggle { color: var(--sgl-ink); }
 
 /* Auth buttons / user menu */
-.auth-buttons { display: flex; align-items: center; gap: 8px; }
+/* NB: don't set `display` here — globals.css hides .auth-buttons below
+   768px and shows it (flex) at >=768px. Forcing display:flex here would
+   override that and leak the desktop login/signup buttons into the mobile
+   header, overflowing it. Only restyle. */
+.auth-buttons { align-items: center; gap: 8px; }
 .auth-link {
   font-size: 13px;
   font-weight: 700;
@@ -1189,7 +1193,7 @@ body {
   font-weight: 450;
   font-family: var(--sgl-body);
 }
-.news-detail-prose p { margin-bottom: 20px; }
+.news-detail-prose p { margin-bottom: 20px; color: #33333d; }
 .news-detail-prose h2,
 .news-detail-prose h3,
 .news-detail-prose h4 {
@@ -1871,6 +1875,16 @@ body {
 /* Utility referenced by the standings title-race row */
 @media (max-width: 620px) {
   .sgl-hide-md-inline { display: none !important; }
+}
+
+/* HEADER — keep the mobile bar (logo + merch/nexus icons + hamburger)
+   from overflowing on narrow phones: trim side padding and the icon gap,
+   shrink the logo slightly. The desktop login/signup buttons are already
+   hidden < 768px by globals.css (see .auth-buttons note above). */
+@media (max-width: 480px) {
+  .header-container { padding: 0 14px; }
+  .header-right { gap: 9px; }
+  .logo-image { height: 42px; }
 }
 
 /* HOME — mini standings + upcoming widget rows */

@@ -689,11 +689,64 @@ export async function getPlayerByIdFromFirestore(
 // TEAMS WITH AVERAGES (Firestore)
 // ============================================
 
+/** Fetch all teamAggregate docs for a season, keyed by teamId. */
+async function getTeamAggregates(
+  seasonId: string,
+): Promise<Record<string, Record<string, unknown>>> {
+  const snap = await getDocs(collection(db, `seasons/${seasonId}/teamAggregates`));
+  const map: Record<string, Record<string, unknown>> = {};
+  snap.forEach((d) => (map[d.id] = d.data()));
+  return map;
+}
+
+/**
+ * Build TeamWithAverages from a season teamAggregate doc — the same source the
+ * Stats page reads, so the Teams grid and Team detail pages show identical
+ * numbers. `points` is the real pointsFor (final scores); rebounds/assists/
+ * steals/blocks are the box-score rollups.
+ */
+function teamWithAveragesFromAggregate(
+  team: Team,
+  agg: Record<string, unknown>,
+): TeamWithAverages {
+  const n = (v: unknown) => Number(v ?? 0) || 0;
+  const gp = n(agg.gamesPlayed) || team.stats.gamesPlayed || 1;
+  const wins = n(agg.wins ?? team.stats.wins);
+  const losses = n(agg.losses ?? team.stats.losses);
+  const totalGames = wins + losses;
+  return {
+    ...team,
+    winPercentage:
+      totalGames > 0 ? ((wins / totalGames) * 100).toFixed(1) : "0.0",
+    averages: {
+      pointsPerGame: (n(agg.points) / gp).toFixed(1),
+      reboundsPerGame: (n(agg.totalRebounds) / gp).toFixed(1),
+      assistsPerGame: (n(agg.assists) / gp).toFixed(1),
+      stealsPerGame: (n(agg.steals) / gp).toFixed(1),
+      blocksPerGame: (n(agg.blocks) / gp).toFixed(1),
+      pointsAllowedPerGame: (
+        n(agg.pointsAgainst ?? team.stats.pointsAgainst) / gp
+      ).toFixed(1),
+    },
+  };
+}
+
 export async function getTeamsWithAveragesFromFirestore(): Promise<
   TeamWithAverages[]
 > {
-  const [teams, players] = await Promise.all([getTeams(), getPlayers()]);
-  return teams.map((team) => calculateTeamAverages(team, players));
+  const [teams, players, seasonId] = await Promise.all([
+    getTeams(),
+    getPlayers(),
+    getActiveSeasonId(),
+  ]);
+  const teamAggs = seasonId ? await getTeamAggregates(seasonId) : {};
+  return teams.map((team) =>
+    stripTimestamps(
+      teamAggs[team.id]
+        ? teamWithAveragesFromAggregate(team, teamAggs[team.id])
+        : calculateTeamAverages(team, players),
+    ),
+  );
 }
 
 export async function getTeamByIdFromFirestore(
@@ -707,9 +760,18 @@ export async function getTeamByIdFromFirestore(
   if (!team) return null;
 
   const teamPlayers = allPlayers.filter((p) => p.teamId === id);
-  const aggregates = seasonId ? await getPlayerAggregates(seasonId) : {};
+  const [aggregates, teamAggs] = await Promise.all([
+    seasonId
+      ? getPlayerAggregates(seasonId)
+      : Promise.resolve({} as Record<string, PlayerAggregateData>),
+    seasonId
+      ? getTeamAggregates(seasonId)
+      : Promise.resolve({} as Record<string, Record<string, unknown>>),
+  ]);
 
-  const teamWithAverages = calculateTeamAverages(team, allPlayers);
+  const teamWithAverages = teamAggs[id]
+    ? teamWithAveragesFromAggregate(team, teamAggs[id])
+    : calculateTeamAverages(team, allPlayers);
   const playersWithAverages = teamPlayers.map((player) => {
     const agg = aggregates[player.id] ?? emptyStats();
     const merged: Player = { ...player, stats: { ...agg } };
