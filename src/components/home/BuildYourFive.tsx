@@ -193,7 +193,7 @@ export default function BuildYourFive({
             {POSITIONS.map((pos) => (
               <div key={pos}>
                 <div style={{ fontFamily: "var(--sgl-head)", fontSize: 12, fontWeight: 700, letterSpacing: 1.5, color: "#B0AAA3", marginBottom: 8 }}>{pos}</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                <div className="sgl-byf-picks">
                   {byPos[pos].slice(0, 3).map((c) => {
                     const active = lineup[pos]?.id === c.id;
                     return (
